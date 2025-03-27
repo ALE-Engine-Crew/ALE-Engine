@@ -8,12 +8,10 @@ class MainState extends flixel.FlxState
     override function create()
     {
         super.create();
-        
-        FlxG.updateFramerate = FlxG.drawFramerate = 240;
-
+    
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 
-		CoolUtil.loadSong('milf', 'hard');
+		CoolUtil.loadSong('stress', 'hard');
 
         //MusicBeatState.switchState(new CustomState('introState'));
     }

@@ -8,7 +8,7 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="ALE Engine" file="ALEEngine" main="core.Main" version="Alpha 1" company="AlejoGDOfficial" />
+	<app title="ALE Engine" file="ALEEngine" main="core.Main" packageName="com.alejogdofficial.aleengine" package="com.alejogdofficial.aleengine" version="Alpha 1" company="AlejoGDOfficial" />
 
 	<app preloader="flixel.system.FlxPreloader" />
 
@@ -29,7 +29,7 @@
 	<set name="BUILD_DIR" value="export" />
 	<source path="source" />
 
-	<assets path="assets" embed="false"/>
+	<assets path="assets" />
 	<assets path="mods" embed="false" />
 
 	<!-- _______________________________ Libraries ______________________________ -->
@@ -43,6 +43,8 @@
 	<haxelib name="SScript" />
 
 	<haxelib name="tjson" />
+
+	<haxelib name="extension-androidtools" if="android" />
 
 	<!-- ______________________________ Haxe Defines _____________________________ -->
 

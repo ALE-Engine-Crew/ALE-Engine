@@ -18,5 +18,7 @@ haxelib install setup/sscript.zip
 haxelib install lime
 haxelib install tjson
 
+haxelib install extension-androidtools 2.1.1
+
 echo Finished!
 pause
