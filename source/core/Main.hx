@@ -4,13 +4,6 @@ package core;
 import android.content.Context;
 #end
 
-#if linux
-@:cppInclude('./cpp/gamemode_client.h')
-@:cppFileCode('
-	#define GAMEMODE_AUTO
-')
-#end
-
 import haxe.io.Path;
 
 import flixel.FlxGame;
@@ -21,6 +14,15 @@ import core.config.CopyState;
 
 import openfl.Lib;
 import openfl.events.Event;
+
+#if linux
+import lime.graphics.Image;
+
+@:cppInclude('./cpp/gamemode_client.h')
+@:cppFileCode('
+	#define GAMEMODE_AUTO
+')
+#end
 
 class Main extends Sprite
 {
