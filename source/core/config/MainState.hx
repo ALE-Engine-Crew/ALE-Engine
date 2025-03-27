@@ -13,7 +13,7 @@ class MainState extends flixel.FlxState
 
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 
-		CoolUtil.loadSong('stress', 'hard');
+		CoolUtil.loadSong('milf', 'hard');
 
         //MusicBeatState.switchState(new CustomState('introState'));
     }

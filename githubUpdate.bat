@@ -12,9 +12,9 @@ echo Running git commit with the provided name...
 
 git commit -m "%commitMessage%"
 
-echo Pushing to the 'alpha' branch...
+echo Pushing to the 'main' branch...
 
-git push origin alpha
+git push origin main
 
 echo Finished!
 
