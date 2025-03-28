@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
+	<!-- _________________________ Application Settings _________________________ -->
+
+	<app title="ALE Engine" file="ALEEngine" main="core.Main" packageName="com.alejogdofficial.aleengine" package="com.alejogdofficial.aleengine" version="Alpha 1" company="AlejoGDOfficial" />
+
+	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB" />
+
+	<app preloader="flixel.system.FlxPreloader" />
+
+	<set name="SWF_VERSION" value="11.8" />
+
 	<!-- _____________________________ ALE Defines _______________________________ -->
 
 	<haxedef name="MODS_ALLOWED" if="cpp" />
 
 	<haxedef name="HSCRIPT_ALLOWED" if="cpp" />
 	<haxedef name="LUA_ALLOWED" if="cpp" />
-
-	<!-- _________________________ Application Settings _________________________ -->
-
-	<app title="ALE Engine" file="ALEEngine" main="core.Main" packageName="com.alejogdofficial.aleengine" package="com.alejogdofficial.aleengine" version="Alpha 1" company="AlejoGDOfficial" />
-
-	<app preloader="flixel.system.FlxPreloader" />
-
-	<set name="SWF_VERSION" value="11.8" />
 
 	<!-- ____________________________ Window Settings ___________________________ -->
 
@@ -42,6 +44,8 @@
 	<haxelib name="away3d"/>
 
 	<haxelib name="SScript" />
+
+	<haxelib name="linc_luajit" />
 
 	<haxelib name="tjson" />
 

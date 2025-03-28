@@ -62,6 +62,8 @@ class CustomState extends ScriptState
 
     override public function destroy()
     {
+        callOnScripts('onDestroy');
+
         destroyScripts();
 
         instance = null;

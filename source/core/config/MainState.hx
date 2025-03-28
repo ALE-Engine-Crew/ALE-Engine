@@ -1,9 +1,12 @@
 package core.config;
 
+import llua.*;
+import llua.Lua.Lua_helper;
+
 /**
  * Used to configure and add the necessary elements before starting the game
  */
-class MainState extends flixel.FlxState
+class MainState extends /* flixel.FlxState */ MusicBeatState
 {
     override function create()
     {

@@ -82,6 +82,10 @@ class Main extends Sprite
 			#end
 		}
 
+		#if LUA_ALLOWED
+		llua.Lua.set_callbacks_function(cpp.Callable.fromStaticFunction(utils.scripting.lua.LuaCallbackHandler.call));
+		#end
+
 		addChild(new FlxGame(game.width, game.height, game.initialState, game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 		
 		#if linux

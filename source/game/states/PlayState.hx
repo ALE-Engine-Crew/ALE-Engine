@@ -165,8 +165,12 @@ class PlayState extends ScriptState
 	private function loadScripts()
 	{
 		for (script in FileSystem.readDirectory(Paths.getPath('data/' + CoolUtil.formatSongPath(SONG.song))))
+		{
 			if (script.endsWith('.hx'))
 				loadHScript('data/' + CoolUtil.formatSongPath(SONG.song) + '/' + script.substr(0, script.length - 3));
+			else if (script.endsWith('.lua'))
+				loadLuaScript('data/' + CoolUtil.formatSongPath(SONG.song) + '/' + script.substr(0, script.length - 4));
+		}
 	}
 
 	private function createCameras():Void
@@ -678,6 +682,8 @@ class PlayState extends ScriptState
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 		
+		callOnScripts('onDestroy');
+
 		destroyScripts();
 
 		instance = null;

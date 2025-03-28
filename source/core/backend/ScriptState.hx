@@ -2,11 +2,15 @@ package core.backend;
 
 import utils.scripting.haxe.HScript;
 
+import utils.scripting.lua.LuaScript;
+
 class ScriptState extends MusicBeatState
 {
     public static var instance:ScriptState;
 
-    private var hscripts:Array<HScript> = [];
+    public var hScripts:Array<HScript> = [];
+
+    public var luaScripts:Array<LuaScript> = [];
 
     override public function create()
     {
@@ -27,6 +31,10 @@ class ScriptState extends MusicBeatState
         #if HSCRIPT_ALLOWED
         loadHScript(path);
         #end
+
+        #if LUA_ALLOWED
+        loadLuaScript(path);
+        #end
     }
 
     public inline function loadHScript(path:String)
@@ -44,7 +52,7 @@ class ScriptState extends MusicBeatState
 
                     script.destroy();
                 } else {
-                    hscripts.push(script);
+                    hScripts.push(script);
         
                     script.set('game', FlxG.state);
             
@@ -53,10 +61,44 @@ class ScriptState extends MusicBeatState
             
                     script.set('controls', controls);
         
-                    script.set('debugPrint', debugPrint);
+                    script.set('debugPrint', function(oso:String)
+                    {
+                        debugPrint(oso);
+                    }
+                    );
                 }
             } catch (error) {
                 debugPrint('Error: ' + error.message, FlxColor.RED);
+            }
+        }
+        #end
+    }
+
+    public inline function loadLuaScript(path:String)
+    {
+        #if LUA_ALLOWED
+        if (Paths.fileExists(path + '.lua'))
+        {
+            var script:LuaScript = new LuaScript(Paths.getPath(path + '.lua'));
+
+            try
+            {
+                luaScripts.push(script);
+
+                script.setFunction('add', FlxG.state.add);
+                script.setFunction('insert', FlxG.state.insert);
+        
+                script.set('FlxSprite', FlxSprite);
+    
+                script.setFunction('debugPrint', function(text:String, ?color:String)
+                    {
+                        debugPrint(text, color == null ? null : CoolUtil.colorFromString(color));
+                    }
+                );
+
+                script.setFunction('getProperty', function(name:String) { return Reflect.getProperty(game.states.PlayState.instance, name); });
+            } catch(error) {
+                debugPrint('Error: ' + error, FlxColor.RED);
             }
         }
         #end
@@ -67,14 +109,34 @@ class ScriptState extends MusicBeatState
         #if HSCRIPT_ALLOWED
         setOnHScripts(name, value);
         #end
+
+        #if LUA_ALLOWED
+        setOnLuaScripts(name, value);
+        #end
     }
 
     public inline function setOnHScripts(name:String, value:Dynamic)
     {
         #if HSCRIPT_ALLOWED
-        if (hscripts.length > 0)
-            for (script in hscripts)
+        if (hScripts.length > 0)
+            for (script in hScripts)
                 script.set(name, value);
+        #end
+    }
+
+    public inline function setOnLuaScripts(name:String, value:Dynamic)
+    {
+        #if LUA_ALLOWED
+        if (luaScripts.length > 0)
+        {
+            for (script in luaScripts)
+            {
+                if (Reflect.isFunction(value))
+                    script.setFunction(name, value);
+                else
+                    script.set(name, value);
+            }
+        }
         #end
     }
 
@@ -83,16 +145,39 @@ class ScriptState extends MusicBeatState
         #if HSCRIPT_ALLOWED
         callOnHScripts(callback, arguments);
         #end
+
+        #if LUA_ALLOWED
+        callOnLuaScripts(callback, arguments);
+        #end
     }
 
     public function callOnHScripts(callback:String, arguments:Array<Dynamic> = null)
     {
         #if HSCRIPT_ALLOWED
-        if (hscripts.length > 0)
+        if (hScripts.length > 0)
         {
             try
             {
-                for (script in hscripts)
+                for (script in hScripts)
+                {
+                    if (script == null)
+                        continue;
+
+                    script.call(callback, arguments);
+                }
+            } catch(_) {}
+        }
+        #end
+    }
+
+    public function callOnLuaScripts(callback:String, arguments:Array<Dynamic> = null)
+    {
+        #if LUA_ALLOWED
+        if (luaScripts.length > 0)
+        {
+            try
+            {
+                for (script in luaScripts)
                 {
                     if (script == null)
                         continue;
@@ -109,14 +194,39 @@ class ScriptState extends MusicBeatState
         #if HSCRIPT_ALLOWED
         destroyHScripts();
         #end
+
+        #if LUA_ALLOWED
+        destroyLuaScripts();
+        #end
     }
 
     public inline function destroyHScripts()
     {
         #if HSCRIPT_ALLOWED
-        if (hscripts.length > 0)
-            for (script in hscripts)
+        if (hScripts.length > 0)
+        {
+            for (script in hScripts)
+            {
                 script.destroy();
+
+                hScripts.remove(script);
+            }
+        }
+        #end
+    }
+
+    public inline function destroyLuaScripts()
+    {
+        #if LUA_ALLOWED
+        if (luaScripts.length > 0)
+        {
+            for (script in luaScripts)
+            {
+                script.close();
+
+                luaScripts.remove(script);
+            }
+        }
         #end
     }
 }
