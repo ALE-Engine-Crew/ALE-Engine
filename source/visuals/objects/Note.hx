@@ -84,11 +84,9 @@ class Note extends FlxSprite
         if (!active || strum == null)
             return;
 
-        if (strum.y + (strumTime * scrollSpeed) - (Conductor.songPosition * scrollSpeed) < FlxG.height)
-            y = CoolUtil.fpsLerp(y, strum.y + (strumTime * scrollSpeed) - (Conductor.songPosition * scrollSpeed), 1);
-
-        if (y < FlxG.height)
-            x = strum.x + strum.width / 2 - this.width / 2;
+        y = CoolUtil.fpsLerp(y, strum.y + (strumTime * scrollSpeed) - (Conductor.songPosition * scrollSpeed), 1);
+        
+        x = strum.x + strum.width / 2 - this.width / 2;
 
         visible = y < FlxG.height || y >= -height;
 

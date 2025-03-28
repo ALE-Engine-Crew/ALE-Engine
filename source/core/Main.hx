@@ -31,7 +31,7 @@ class Main extends Sprite
 		height: 720,
 		initialState: #if android CopyState #else MainState #end,
 		zoom: -1.0,
-		framerate: 240,
+		framerate: #if android 60 #else 240 #end,
 		skipSplash: true,
 		startFullscreen: false
 	};

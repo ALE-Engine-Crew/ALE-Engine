@@ -1,5 +1,9 @@
 package game.states;
-
+import flixel.FlxG;
+import flixel.FlxState;
+import flixel.FlxGame;
+import openfl.Lib;
+import openfl.display.Sprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxGroup;
 import flixel.sound.FlxSound;
@@ -24,6 +28,8 @@ import core.enums.ALECharacterType;
 class PlayState extends ScriptState
 {
 	public static var instance:PlayState;
+
+	public static var startPosition:Float = 0;
 
 	public static var SONG:ALESong = null;
 
@@ -177,12 +183,12 @@ class PlayState extends ScriptState
 		camGame.followLerp = 2.4;
 
 		camHUD = new FlxCamera();
-		camHUD.bgColor.alpha = 0;
+		camHUD.bgColor = FlxColor.TRANSPARENT;
 		
 		FlxG.cameras.add(camHUD, false);
 
 		camOther = new FlxCamera();
-		camOther.bgColor.alpha = 0;
+		camOther.bgColor = FlxColor.TRANSPARENT;
 		
 		FlxG.cameras.add(camOther, false);
 	}
@@ -546,6 +552,8 @@ class PlayState extends ScriptState
 		voices.play();
 
 		FlxG.sound.list.add(voices);
+
+		FlxG.sound.music.time = voices.time = startPosition;
 	}
 
 	function onKeyPress(event:KeyboardEvent)
@@ -620,7 +628,11 @@ class PlayState extends ScriptState
 			botplay = !botplay;
 
 		if (FlxG.keys.justPressed.R)
+		{
 			FlxG.resetState();
+
+			PlayState.startPosition = FlxMath.bound(FlxG.sound.music.time - 5000, 0, FlxG.sound.music.length);
+		}
 
 		updateCameras();
 

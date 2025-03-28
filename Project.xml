@@ -5,6 +5,7 @@
 	<haxedef name="MODS_ALLOWED" if="cpp" />
 
 	<haxedef name="HSCRIPT_ALLOWED" if="cpp" />
+	<haxedef name="LUA_ALLOWED" if="cpp" />
 
 	<!-- _________________________ Application Settings _________________________ -->
 

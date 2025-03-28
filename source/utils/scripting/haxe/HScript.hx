@@ -7,6 +7,9 @@ import tea.SScript.TeaCall;
 
 class HScript extends SScript
 {
+	override public function new(file:String)
+		super(file);
+
     override public function preset()
     {
 		super.preset();
@@ -68,10 +71,7 @@ class HScript extends SScript
 		{
 			var errorString:String = 'Error: ' + callValue.calledFunction + ' - ' + callValue.exceptions[0].message;
 			
-			if (MusicBeatState.instance == null)
-				Sys.println(errorString);
-			else	
-				MusicBeatState.instance.debugPrint(errorString, FlxColor.RED);
+			MusicBeatState.instance.debugPrint(errorString, FlxColor.RED);
 		}
 
 		if (callValue != null)

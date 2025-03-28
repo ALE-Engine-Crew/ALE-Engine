@@ -34,19 +34,30 @@ class ScriptState extends MusicBeatState
         #if HSCRIPT_ALLOWED
         if (Paths.fileExists(path + '.hx'))
         {
-            var script:HScript = new HScript();
-            script.doString(File.getContent(Paths.getPath(path + '.hx')));
-
-            hscripts.push(script);
-
-            script.set('game', FlxG.state);
+            try
+            {
+                var script:HScript = new HScript(Paths.getPath(path + '.hx'));
     
-            script.set('add', FlxG.state.add);
-            script.set('insert', FlxG.state.insert);
-    
-            script.set('controls', controls);
+                if (script.parsingException != null)
+                {
+                    debugPrint('Error on Loading: ' + script.parsingException.message, FlxColor.RED);
 
-            script.set('debugPrint', debugPrint);
+                    script.destroy();
+                } else {
+                    hscripts.push(script);
+        
+                    script.set('game', FlxG.state);
+            
+                    script.set('add', FlxG.state.add);
+                    script.set('insert', FlxG.state.insert);
+            
+                    script.set('controls', controls);
+        
+                    script.set('debugPrint', debugPrint);
+                }
+            } catch (error) {
+                debugPrint('Error: ' + error.message, FlxColor.RED);
+            }
         }
         #end
     }
@@ -88,7 +99,7 @@ class ScriptState extends MusicBeatState
 
                     script.call(callback, arguments);
                 }
-            } catch(e:Dynamic) {}
+            } catch(_) {}
         }
         #end
     }

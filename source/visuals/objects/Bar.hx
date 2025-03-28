@@ -6,6 +6,23 @@ class Bar extends FlxTypedGroup<FlxSprite>
 {
     public var percent(default, set):Float = 50;
 
+    public var alpha(default, set):Float = 0;
+
+    function set_alpha(value:Float):Float
+    {
+        if (value > 1)
+            value = 1;
+        
+        if (value < 0)
+            value = 0;
+
+        alpha = value;
+
+        bg.alpha = leftBar.alpha = rightBar.alpha = alpha;
+
+        return value;
+    }
+
     function set_percent(value:Float):Float
     {
         if (value > 100)
