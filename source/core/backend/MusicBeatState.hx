@@ -42,24 +42,27 @@ class MusicBeatState extends FlxState
 
     public inline function debugPrint(text:String, ?color:FlxColor = FlxColor.WHITE) 
     {
-        var newText:DebugText = debugTexts.recycle(DebugText);
-        newText.text = text;
-        newText.color = color;
-        newText.disableTime = 6;
-        newText.alpha = 1;
-        newText.setPosition(10, 8 - newText.height);
-        newText.scrollFactor.set();
-        
-        debugTexts.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-
-        debugTexts.forEachAlive(
-            function (text:DebugText)
-            {
-                text.y += newText.height + 2;
-            }
-        );
-
-        debugTexts.add(newText);
+        if (debugTexts != null)
+        {
+            var newText:DebugText = debugTexts.recycle(DebugText);
+            newText.text = text;
+            newText.color = color;
+            newText.disableTime = 6;
+            newText.alpha = 1;
+            newText.setPosition(10, 8 - newText.height);
+            newText.scrollFactor.set();
+            
+            debugTexts.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+    
+            debugTexts.forEachAlive(
+                function (text:DebugText)
+                {
+                    text.y += newText.height + 2;
+                }
+            );
+    
+            debugTexts.add(newText);
+        }
 
         Sys.println(text);
     }

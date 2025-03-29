@@ -70,7 +70,7 @@ class PlayState extends ScriptState
 		return value;
 	}
 
-	public var botplay(default, set):Bool = false;
+	public var botplay(default, set):Bool;
 
 	function set_botplay(value:Bool):Bool
 	{

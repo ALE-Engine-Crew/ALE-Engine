@@ -40,10 +40,10 @@ class CoolUtil
 	{
 		var hideChars = ~/[\t\n\r]/;
 		var color:String = hideChars.split(color).join('').trim();
-		if(color.startsWith('0x')) color = color.substring(color.length - 6);
+		if (color.startsWith('0x')) color = color.substring(color.length - 6);
 
 		var colorNum:Null<FlxColor> = FlxColor.fromString(color);
-		if(colorNum == null) colorNum = FlxColor.fromString('#$color');
+		if (colorNum == null) colorNum = FlxColor.fromString('#$color');
 		return colorNum != null ? colorNum : FlxColor.WHITE;
 	}
 
@@ -68,10 +68,10 @@ class CoolUtil
 		for(col in 0...sprite.frameWidth) {
 			for(row in 0...sprite.frameHeight) {
 				var colorOfThisPixel:Int = sprite.pixels.getPixel32(col, row);
-				if(colorOfThisPixel != 0) {
-					if(countByColor.exists(colorOfThisPixel))
+				if (colorOfThisPixel != 0) {
+					if (countByColor.exists(colorOfThisPixel))
 						countByColor[colorOfThisPixel] = countByColor[colorOfThisPixel] + 1;
-					else if(countByColor[colorOfThisPixel] != 13520687 - (2*13520687))
+					else if (countByColor[colorOfThisPixel] != 13520687 - (2*13520687))
 						countByColor[colorOfThisPixel] = 1;
 				}
 			}
@@ -81,7 +81,7 @@ class CoolUtil
 		var maxKey:Int = 0;
 		countByColor[FlxColor.BLACK] = 0;
 		for(key in countByColor.keys()) {
-			if(countByColor[key] >= maxCount) {
+			if (countByColor[key] >= maxCount) {
 				maxCount = countByColor[key];
 				maxKey = key;
 			}

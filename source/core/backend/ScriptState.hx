@@ -53,19 +53,6 @@ class ScriptState extends MusicBeatState
                     script.destroy();
                 } else {
                     hScripts.push(script);
-        
-                    script.set('game', FlxG.state);
-            
-                    script.set('add', FlxG.state.add);
-                    script.set('insert', FlxG.state.insert);
-            
-                    script.set('controls', controls);
-        
-                    script.set('debugPrint', function(oso:String)
-                    {
-                        debugPrint(oso);
-                    }
-                    );
                 }
             } catch (error) {
                 debugPrint('Error: ' + error.message, FlxColor.RED);
@@ -84,19 +71,6 @@ class ScriptState extends MusicBeatState
             try
             {
                 luaScripts.push(script);
-
-                script.setFunction('add', FlxG.state.add);
-                script.setFunction('insert', FlxG.state.insert);
-        
-                script.set('FlxSprite', FlxSprite);
-    
-                script.setFunction('debugPrint', function(text:String, ?color:String)
-                    {
-                        debugPrint(text, color == null ? null : CoolUtil.colorFromString(color));
-                    }
-                );
-
-                script.setFunction('getProperty', function(name:String) { return Reflect.getProperty(game.states.PlayState.instance, name); });
             } catch(error) {
                 debugPrint('Error: ' + error, FlxColor.RED);
             }

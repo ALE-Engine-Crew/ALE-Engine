@@ -8,7 +8,11 @@ import tea.SScript.TeaCall;
 class HScript extends SScript
 {
 	override public function new(file:String)
+	{
 		super(file);
+
+		preset();
+	}
 
     override public function preset()
     {
@@ -57,7 +61,17 @@ class HScript extends SScript
         for (theClass in presetClasses)
             setClass(theClass);
 
-		set('FlxColor', FlxColorClass);
+		var presetVariables:StringMap<Dynamic> = [
+			'FlxColor' => FlxColorClass,
+			'game' => FlxG.state,
+			'add' => FlxG.state.add,
+			'insert' => FlxG.state.insert,
+			'controls' => MusicBeatState.instance.controls,
+			'debugPrint' => MusicBeatState.instance.debugPrint
+		];
+
+		for (preVar in presetVariables.keys())
+			set(preVar, presetVariables.get(preVar));
     }
 
 	override public function call(func:String, ?args:Array<Dynamic>):TeaCall
