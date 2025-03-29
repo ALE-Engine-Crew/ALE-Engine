@@ -9,5 +9,7 @@ class LuaPreset
         new LuaSprite(lua);
         new LuaText(lua);
         new LuaReflect(lua);
+        new LuaFileSystem(lua);
+        new LuaSound(lua);
     }
 }

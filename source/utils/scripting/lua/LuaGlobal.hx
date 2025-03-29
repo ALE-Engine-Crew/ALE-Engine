@@ -1,6 +1,7 @@
 package utils.scripting.lua;
 
 import flixel.FlxBasic;
+import flixel.FlxObject;
 
 class LuaGlobal extends LuaPresetBase
 {
@@ -30,9 +31,45 @@ class LuaGlobal extends LuaPresetBase
             }
         );
 
+        set('setObjectCameras', function(tag:String, cameras:Array<String>)
+            {
+                var theCameras:Array<FlxCamera> = [];
+
+                for (cam in cameras)
+                    theCameras.push(cameraFromString(cam));
+
+                if (tagIs(tag, FlxObject))
+                {
+                    var object:FlxObject = cast(getTag(tag), FlxObject);
+
+                    object.cameras = theCameras;
+                }
+            }
+        );
+
         set('debugPrint', function(text:String, ?color:String)
         {
             game.debugPrint(text, color == null ? null : CoolUtil.colorFromString(color));
         });
+    }
+
+    private function cameraFromString(name:String):FlxCamera
+    {
+        var result:FlxCamera = switch(name.toUpperCase())
+        {
+            case 'CAMERA', 'CAMGAME', 'CAMERAGAME':
+                game.camGame;
+            case 'HUD', 'CAMHUD', 'CAMERAHUD':
+                game.camHUD;
+            case 'OTHER', 'CAMOTHER', 'CAMERAOTHER':
+                game.camOther;
+            default:
+                null;
+        };
+
+        if (result == null)
+            errorPrint(name + ' is Not a Camera');
+
+        return result;
     }
 }

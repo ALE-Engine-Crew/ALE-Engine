@@ -86,10 +86,6 @@ class PlayState extends ScriptState
 
 	var stageJson:ALEStage;
 
-	public var camHUD:FlxCamera;
-	public var camGame:FlxCamera;
-	public var camOther:FlxCamera;
-
 	var camPos:FlxObject;
 
 	var opponentIcon:HealthIcon;
@@ -175,26 +171,15 @@ class PlayState extends ScriptState
 
 	private function createCameras():Void
 	{
-		defaultCamZoom = stage.cameraZoom;
-
 		camPos = new FlxObject(0, 0, 1, 1);
 		add(camPos);
-
-		camGame = CoolUtil.initALECamera();
+		
 		camGame.target = camPos;
 		camGame.zoom = defaultCamZoom;
 		camGame.followLerp = 2.4;
 		camGame.followLerp = 2.4;
 
-		camHUD = new FlxCamera();
-		camHUD.bgColor = FlxColor.TRANSPARENT;
-		
-		FlxG.cameras.add(camHUD, false);
-
-		camOther = new FlxCamera();
-		camOther.bgColor = FlxColor.TRANSPARENT;
-		
-		FlxG.cameras.add(camOther, false);
+		defaultCamZoom = stage.cameraZoom;
 	}
 
 	private function moveCamera()

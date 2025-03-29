@@ -16,26 +16,12 @@ class CustomState extends ScriptState
 
         scriptName = script;
     }
-    
-	public var camGame:FlxCamera;
-	public var camHUD:FlxCamera;
-	public var camOther:FlxCamera;
 
     override public function create()
     {        
         super.create();
 
         instance = this;
-
-		camGame = CoolUtil.initALECamera();
-
-		camHUD = new FlxCamera();
-		camHUD.bgColor.alpha = 0;
-		FlxG.cameras.add(camHUD, false);
-
-		camOther = new FlxCamera();
-		camOther.bgColor.alpha = 0;
-		FlxG.cameras.add(camOther, false);
 
         loadScript('scripts/states/' + scriptName);
         loadScript('scripts/states/global');

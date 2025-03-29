@@ -182,7 +182,7 @@ class Paths
     {
         #if MODS_ALLOWED
         if (fileExists(file, MODS))
-            return 'mods/' + Mods.folder + '/' + file;
+            return modFolder() + '/' + file;
         #end
 
         if (fileExists(file, ASSETS))
@@ -202,7 +202,7 @@ class Paths
     public static inline function fileExists(path:String, ?pathMode:PathFolder = BOTH):Bool
     {
         #if MODS_ALLOWED
-        if (FileSystem.exists('mods/' + Mods.folder + '/' + path) && (pathMode == MODS || pathMode == BOTH))
+        if (FileSystem.exists(modFolder() + '/' + path) && (pathMode == MODS || pathMode == BOTH))
             return true;
         #end
 
@@ -211,4 +211,7 @@ class Paths
         
         return false;
     }
+
+    public static inline function modFolder():String
+        return 'mods/' + Mods.folder;
 }

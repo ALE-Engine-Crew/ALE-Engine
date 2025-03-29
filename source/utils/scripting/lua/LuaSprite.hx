@@ -53,5 +53,12 @@ class LuaSprite extends LuaPresetBase
                     getTag(tag).animation.play(name, force, reversed, frame);
             }
         );
+
+        set('updateHitbox', function(tag:String)
+            {
+                if (tagIs(tag, FlxSprite))
+                    getTag(tag).updateHitbox();
+            }
+        );
     }
 }
