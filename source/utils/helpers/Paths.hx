@@ -146,9 +146,17 @@ class Paths
     {
         song = CoolUtil.formatSongPath(song);
 
-        for (folder in FileSystem.readDirectory(getPath('songs')))
-            if (song == CoolUtil.formatSongPath(folder) && fileExists('songs/' + folder + '/Inst.ogg'))
-                return FlxG.sound.load(getPath('songs/' + folder + '/Inst.ogg'));
+        #if (MODS_ALLOWED && ALEJO_FIXED_SOUND)
+        if (fileExists('songs', MODS))
+            for (folder in FileSystem.readDirectory(modFolder() + '/songs'))
+                if (song == CoolUtil.formatSongPath(folder) && fileExists('songs/' + folder + '/Inst.ogg', MODS))
+                    return new FlxSound().load(modFolder() + '/songs/' + folder + 'Inst.ogg');
+        #end
+
+        if (fileExists('songs', ASSETS))
+            for (folder in FileSystem.readDirectory('assets/songs'))
+                if (song == CoolUtil.formatSongPath(folder) && fileExists('songs/' + folder + '/Inst.ogg', ASSETS))
+                    return FlxG.sound.load('assets/songs/' + folder + '/Inst.ogg');
         
         trace('Missing File: ' + 'songs/' + song + 'Inst.ogg');
 
@@ -164,9 +172,17 @@ class Paths
     {
         song = CoolUtil.formatSongPath(song);
 
-        for (folder in FileSystem.readDirectory(getPath('songs')))
-            if (song == CoolUtil.formatSongPath(folder) && fileExists('songs/' + folder + '/Voices.ogg'))
-                return FlxG.sound.load(getPath('songs/' + folder + '/Voices.ogg'));
+        #if (MODS_ALLOWED && ALEJO_FIXED_SOUND)
+        if (fileExists('songs', MODS))
+            for (folder in FileSystem.readDirectory(modFolder() + '/songs'))
+                if (song == CoolUtil.formatSongPath(folder) && fileExists('songs/' + folder + '/Voices.ogg', MODS))
+                    return FlxG.sound.load(modFolder() + '/songs/' + folder + '/Voices.ogg');
+        #end
+
+        if (fileExists('songs', ASSETS))
+            for (folder in FileSystem.readDirectory('assets/songs'))
+                if (song == CoolUtil.formatSongPath(folder) && fileExists('songs/' + folder + '/Voices.ogg', ASSETS))
+                    return FlxG.sound.load('assets/songs/' + folder + '/Voices.ogg');
 
         trace('Missing File: ' + 'songs/' + song + '/Voices.ogg');
 

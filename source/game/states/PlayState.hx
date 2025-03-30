@@ -326,6 +326,9 @@ class PlayState extends ScriptState
 				}
 
 				theNote.hitCallback = (note:Note) -> {
+					if (voices.volume != 1)
+						voices.volume = 1;
+
 					note.strum.animation.play('hit');
 
 					if (note.type == PLAYER)
@@ -382,6 +385,54 @@ class PlayState extends ScriptState
 				
 				theNote.loseCallback = (note:Note) -> {
 					health -= 2;
+
+					if (voices.volume != 0)
+						voices.volume = 0;
+
+					var character:Null<Character> = null;
+
+					for (char in switch (type)
+							{
+								case OPPONENT:
+									opponentCharacters;
+								case PLAYER:
+									playerCharacters;
+								case EXTRA:
+									extraCharacters;
+							}
+						)
+					{
+						if (char.name == characterName)
+						{
+							character = char;
+
+							break;
+						}
+					}
+
+					if (character != null)
+					{
+						character.idleTimer = 0;
+
+						if (character.animation.curAnim != null)
+							character.animation.curAnim.finish();
+
+						character.animation.play(
+							switch (note.noteData)
+							{
+								case 0:
+									'singLEFTmiss';
+								case 1:
+									'singDOWNmiss';
+								case 2:
+									'singUPmiss';
+								case 3:
+									'singRIGHTmiss';
+								default:
+									'';
+							}
+						);
+					}
 				}
 			}
 		}
@@ -545,9 +596,11 @@ class PlayState extends ScriptState
 		FlxG.sound.music.time = voices.time = startPosition;
 	}
 
+	var keyPressed:Array<Int> = [];
+
 	function onKeyPress(event:KeyboardEvent)
 	{
-		if (botplay)
+		if (botplay || keyPressed.contains(event.keyCode))
 			return;
 
 		switch (event.keyCode)
@@ -561,11 +614,13 @@ class PlayState extends ScriptState
 			case 75:
 				hitNote(3);
 		}
+
+		keyPressed.push(event.keyCode);
 	}
 
 	function onKeyRelease(event:KeyboardEvent)
 	{
-		if (botplay)
+		if (botplay || !keyPressed.contains(event.keyCode))
 			return;
 
 		var allowedKeys:Array<Int> = [68, 70, 74, 75];
@@ -590,6 +645,8 @@ class PlayState extends ScriptState
 				}
 			)
 				strum.animation.play('released');
+
+		keyPressed.remove(event.keyCode);
 	}
 
 	function hitNote(id:Int)
@@ -598,7 +655,7 @@ class PlayState extends ScriptState
 
 		for (note in playerNotes)
 		{
-			if (id % 4 == note.noteData && note.type == ALECharacterType.PLAYER && note.alive && note.y >= note.strum.y - 100 * scrollSpeed && note.y <= note.strum.y + 100 * scrollSpeed)
+			if (id % 4 == note.noteData && note.ableToHit)
 			{
 				note.hitFunction();
 

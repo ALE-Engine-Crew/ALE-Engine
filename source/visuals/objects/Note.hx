@@ -27,6 +27,21 @@ class Note extends FlxSprite
 
     public var hitCallback:Note -> Void;
     public var loseCallback:Note -> Void;
+
+    public var yDestinity(get, never):Float;
+
+    public var ableToHit(get, never):Bool;
+
+    public var hitOffset = 125;
+
+    function get_ableToHit():Bool
+        return alive && yDestinity >= strum.y - hitOffset * scrollSpeed && yDestinity <= strum.y + hitOffset * scrollSpeed;
+
+
+    function get_yDestinity():Float
+    {
+        return strum == null ? 0 : CoolUtil.fpsLerp(y, strum.y + (strumTime * scrollSpeed) - (Conductor.songPosition * scrollSpeed), 1);
+    }
     
     public function new(id:Int, strumTime:Float, length:Int, type:ALECharacterType, strum:StrumNote)
     {
@@ -65,8 +80,6 @@ class Note extends FlxSprite
 
         y = FlxG.height;
 
-        //makeGraphic(100, 100 + length);
-
         antialiasing = ClientPrefs.data.antialiasing;
 
         var rgbPalette = new RGBPalette();
@@ -84,17 +97,27 @@ class Note extends FlxSprite
         if (!active || strum == null)
             return;
 
-        y = CoolUtil.fpsLerp(y, strum.y + (strumTime * scrollSpeed) - (Conductor.songPosition * scrollSpeed), 1);
-        
-        x = strum.x + strum.width / 2 - this.width / 2;
+        updatePosition();
 
-        visible = y < FlxG.height || y >= -height;
+        updateVisibility();
 
-        if (y <= strum.y && (type != PLAYER || PlayState.instance.botplay))
+        if (yDestinity <= strum.y && (type != PLAYER || PlayState.instance.botplay))
             hitFunction();
         
-        if (y + height < strum.y - 150 * scrollSpeed && type == PLAYER && !PlayState.instance.botplay)
+        if (yDestinity < strum.y - hitOffset * scrollSpeed && type == PLAYER && !PlayState.instance.botplay)
             loseFunction();
+    }
+
+    private function updateVisibility()
+    {
+        visible = yDestinity < FlxG.height || yDestinity >= -height;
+    }
+
+    private function updatePosition()
+    {
+        y = yDestinity;
+
+        x = strum.x + strum.width / 2 - this.width / 2;
     }
 
     public function hitFunction()
