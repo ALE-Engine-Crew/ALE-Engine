@@ -11,7 +11,7 @@ import cpp.vm.Gc;
 import hl.Gc;
 #end
 
-import visuals.objects.DebugText;
+import funkin.visuals.objects.DebugText;
 
 /**
  * It is a FlxState extension that calculates the Beats, Steps and Sections of the game music (FlxG.sound.music)

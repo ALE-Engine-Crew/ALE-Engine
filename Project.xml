@@ -39,9 +39,6 @@
 
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
-	<haxelib name="flixel-ui" />
-
-	<haxelib name="away3d"/>
 
 	<haxelib name="SScript" />
 

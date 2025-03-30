@@ -1,8 +1,8 @@
 package core.backend;
 
-import utils.scripting.haxe.HScript;
+import scripting.haxe.HScript;
 
-import utils.scripting.lua.LuaScript;
+import scripting.lua.LuaScript;
 
 class ScriptState extends MusicBeatState
 {

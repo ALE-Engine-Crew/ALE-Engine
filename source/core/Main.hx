@@ -31,7 +31,7 @@ class Main extends Sprite
 		height: 720,
 		initialState: #if android CopyState #else MainState #end,
 		zoom: -1.0,
-		framerate: #if android 60 #else 240 #end,
+		framerate: 60,
 		skipSplash: true,
 		startFullscreen: false
 	};
@@ -83,7 +83,7 @@ class Main extends Sprite
 		}
 
 		#if LUA_ALLOWED
-		llua.Lua.set_callbacks_function(cpp.Callable.fromStaticFunction(utils.scripting.lua.LuaCallbackHandler.call));
+		llua.Lua.set_callbacks_function(cpp.Callable.fromStaticFunction(scripting.lua.LuaCallbackHandler.call));
 		#end
 
 		addChild(new FlxGame(game.width, game.height, game.initialState, game.framerate, game.framerate, game.skipSplash, game.startFullscreen));

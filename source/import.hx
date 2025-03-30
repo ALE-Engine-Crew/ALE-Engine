@@ -1,3 +1,4 @@
+#if !macro
 import flixel.sound.FlxSound;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -13,8 +14,8 @@ import flixel.tweens.FlxTween;
 import flixel.group.FlxSpriteGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
-import game.states.PlayState;
-import game.states.CustomState;
+import funkin.states.PlayState;
+import funkin.states.CustomState;
 
 import core.backend.MusicBeatState;
 import core.backend.MusicBeatSubState;
@@ -23,12 +24,15 @@ import core.backend.Conductor;
 
 import core.config.ClientPrefs;
 
-import utils.helpers.CoolUtil;
-import utils.helpers.CoolVars;
-import utils.helpers.Paths;
+import utils.CoolUtil;
+import utils.CoolVars;
+import utils.Paths;
 
 import sys.io.File;
-
 import sys.FileSystem;
 
+import utils.ALEJson as Json;
+import utils.CoolUtil;
+
 using StringTools;
+#end
