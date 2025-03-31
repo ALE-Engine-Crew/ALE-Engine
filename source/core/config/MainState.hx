@@ -8,6 +8,8 @@ class MainState extends MusicBeatState
     override function create()
     {
         super.create();
+
+        FlxG.updateFramerate = FlxG.drawFramerate = 240;
     
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 

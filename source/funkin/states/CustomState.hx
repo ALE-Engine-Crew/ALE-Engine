@@ -81,6 +81,20 @@ class CustomState extends ScriptState
         super.sectionHit();
     }
 
+    override public function onFocus()
+    {
+        super.onFocus();
+
+        callOnScripts('onFocus');
+    }
+
+    override public function onFocusLost()
+    {
+        super.onFocusLost();
+
+        callOnScripts('onFocusLost');
+    }
+
     public function resetCustomState()
         MusicBeatState.switchState(new CustomState(scriptName));
 }

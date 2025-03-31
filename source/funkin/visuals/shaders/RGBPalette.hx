@@ -1,7 +1,6 @@
-package visuals.shaders;
+package funkin.visuals.shaders;
 
 import flixel.system.FlxAssets.FlxShader;
-import visuals.objects.Note;
 
 class RGBPalette {
 	public var shader(default, null):RGBPaletteShader = new RGBPaletteShader();

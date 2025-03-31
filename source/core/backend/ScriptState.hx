@@ -45,6 +45,24 @@ class ScriptState extends MusicBeatState
     public inline function loadScript(path:String)
     {
         #if HSCRIPT_ALLOWED
+        if (path.endsWith('.hx'))
+        {
+            loadHScript(path.substring(0, path.length - 3));
+
+            return;
+        }
+        #end
+
+        #if LUA_ALLOWED
+        if (path.endsWith('.lua'))
+        {
+            loadLuaScript(path.substring(0, path.length - 4));
+
+            return;
+        }
+        #end
+
+        #if HSCRIPT_ALLOWED
         loadHScript(path);
         #end
 
@@ -69,6 +87,8 @@ class ScriptState extends MusicBeatState
                     script.destroy();
                 } else {
                     hScripts.push(script);
+
+                    trace('Haxe Script "' + path + '" has been successfully loaded');
                 }
             } catch (error) {
                 debugPrint('Error: ' + error.message, FlxColor.RED);
@@ -87,6 +107,8 @@ class ScriptState extends MusicBeatState
             try
             {
                 luaScripts.push(script);
+
+                trace('Lua Script "' + path + '" has been successfully loaded');
             } catch(error) {
                 debugPrint('Error: ' + error, FlxColor.RED);
             }

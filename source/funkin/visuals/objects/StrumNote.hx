@@ -1,17 +1,22 @@
-package visuals.objects;
+package funkin.visuals.objects;
 
-import visuals.shaders.RGBPalette;
+import core.enums.ALECharacterType;
 
-import visuals.shaders.RGBPalette.RGBShaderReference;
+import funkin.visuals.shaders.RGBPalette;
+import funkin.visuals.shaders.RGBPalette.RGBShaderReference;
 
-/**
- * It is an extension of FlxSprite that handles Strum Notes
- */
-class StrumNote extends FlxSprite
+class StrumNote extends FlxSpriteGroup
 {
+    public var sprite:FlxSprite;
+    public var splash:FlxSprite;
+
     public var noteData:Int;
 
-    public var texture(default, set):String = 'notes';
+    public var type:ALECharacterType;
+
+    public var texture(default, set):String = 'note';
+
+    public var direction:Float = 90;
 
     var shaderRef:RGBShaderReference;
 
@@ -24,24 +29,51 @@ class StrumNote extends FlxSprite
         return texture;
     }
 
-    public var splash:Splash;
+    public var splashTexture(default, set):String = 'splash';
 
-	override public function new(noteData:Int, splash:Splash)
+    function set_splashTexture(value:String):String
+    {
+        splashTexture = value;
+
+        loadSplashTexture(splashTexture);
+
+        return splashTexture;
+    }
+
+	override public function new(noteData:Int, type:ALECharacterType, ?texture:String = 'note', ?splashTexture:String = 'splash')
 	{
 		super();
 
         this.noteData = noteData;
 
-        this.splash = splash;
-
-        y = 50;
-
-        texture = texture;
+        this.type = type;
 
         antialiasing = ClientPrefs.data.antialiasing;
 
+        sprite = new FlxSprite();
+        add(sprite);
+
+        this.texture = texture;
+
+        splash = new FlxSprite();
+        add(splash);
+
+        splash.visible = false;
+
+        this.splashTexture = splashTexture;
+
+        x = 160 * 0.7 * noteData;
+
+        if (type == OPPONENT)
+            x += 50;
+        else
+            x += FlxG.width - (160 * 0.7 * 5) + 50;
+
+        y = 50;
+
         var rgbPalette = new RGBPalette();
-        shaderRef = new RGBShaderReference(this, rgbPalette);
+        shaderRef = new RGBShaderReference(sprite, rgbPalette);
+        shaderRef = new RGBShaderReference(splash, rgbPalette);
 
         var shaderArray:Array<FlxColor> = ClientPrefs.data.arrowRGB[noteData % 4];
         shaderRef.r = shaderArray[0];
@@ -51,61 +83,79 @@ class StrumNote extends FlxSprite
 
     public function loadTexture(image:String)
     {
-        frames = Paths.getSparrowAtlas('notes/' + image);
+        sprite.frames = Paths.getSparrowAtlas('notes/' + image);
 
-        switch (noteData % 4)
+        var animToPlay:String = switch (noteData % 4)
         {
-            case 0:
-                animation.addByPrefix('idle', 'arrowLEFT');
-                animation.addByIndices('pressed', 'left press', [0, 1], '', 24, true);
-                animation.addByIndices('released', 'left press', [3], '', 24, false);
-                animation.addByIndices('hit', 'left confirm', [0, 1], '', 24, false);
-            case 1:
-                animation.addByPrefix('idle', 'arrowDOWN');
-                animation.addByIndices('pressed', 'down press', [0, 1], '', 24, true);
-                animation.addByIndices('released', 'down press', [3], '', 24, false);
-                animation.addByIndices('hit', 'down confirm', [0, 1], '', 24, false);
-            case 2:
-                animation.addByPrefix('idle', 'arrowUP');
-                animation.addByIndices('pressed', 'up press', [0, 1], '', 24, true);
-                animation.addByIndices('released', 'up press', [3], '', 24, false);
-                animation.addByIndices('hit', 'up confirm', [0, 1], '', 24, false);
-            case 3:
-                animation.addByPrefix('idle', 'arrowRIGHT');
-                animation.addByIndices('pressed', 'right press', [0, 1], '', 24, true);
-                animation.addByIndices('released', 'right press', [3], '', 24, false);
-                animation.addByIndices('hit', 'right confirm', [0, 1], '', 24, false);
-        }
+            case 0: 'left';
+            case 1: 'down';
+            case 2: 'up';
+            case 3: 'right';
+            default: null;
+        };
 
-        animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
-            centerOffsets();
-            centerOrigin();
+        sprite.animation.addByPrefix('idle', 'arrow' + animToPlay.toUpperCase());
+        sprite.animation.addByIndices('pressed', animToPlay + ' press', [0, 1], '', 24, true);
+        sprite.animation.addByIndices('released', animToPlay + ' press', [3], '', 24, false);
+        sprite.animation.addByIndices('hit', animToPlay + ' confirm', [0, 1], '', 24, false);
+
+        sprite.animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
+            sprite.centerOffsets();
+            sprite.centerOrigin();
 
             if (shaderRef != null)
                 shaderRef.enabled = name != 'idle';
         }
 
-        animation.finishCallback = (name:String) -> {
-            animation.play('idle');
+        sprite.animation.finishCallback = (name:String) -> {
+            sprite.animation.play('idle');
         }
         
-        animation.play('idle');
+        sprite.animation.play('idle');
 
-        centerOffsets();
-        centerOrigin();
+        sprite.centerOffsets();
+        sprite.centerOrigin();
 
-        scale.set(0.7, 0.7);
+        sprite.scale.set(0.7, 0.7);
 
-        x = 160 * 0.7 * noteData;
+        sprite.updateHitbox();
+    }
 
-        switch (Math.floor(noteData / 4) % 2)
+    function loadSplashTexture(image:String)
+    {
+        splash.frames = Paths.getSparrowAtlas('splashes/' + image);
+
+        switch (noteData % 4)
         {
             case 0:
-                x += 50;
+                splash.animation.addByPrefix('splash', 'note splash purple 1', 24, false);
             case 1:
-                x += FlxG.width - (160 * 0.7 * 8) - 50;
+                splash.animation.addByPrefix('splash', 'note splash blue 1', 24, false);
+            case 2:
+                splash.animation.addByPrefix('splash', 'note splash green 1', 24, false);
+            case 3:
+                splash.animation.addByPrefix('splash', 'note splash red 1', 24, false);
         }
 
-        updateHitbox();
+        splash.animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
+            centerOffsets();
+            centerOrigin();
+            
+            splash.visible = true;
+        }
+
+        splash.animation.finishCallback = (name:String) -> {
+            splash.visible = false;
+        }
+
+        splash.centerOffsets();
+        splash.centerOrigin();
+
+        splash.scale.set(0.75, 0.75);
+
+        splash.updateHitbox();
+
+        splash.x = sprite.width / 2 - width / 2;
+        splash.y = sprite.height / 2 - height / 2;
     }
 }

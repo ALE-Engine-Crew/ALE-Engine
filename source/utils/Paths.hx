@@ -142,16 +142,12 @@ class Paths
      * @param song Song Name
      * @return FlxSound
      */
-    public static function inst(song:String):FlxSound
+    public static function inst():FlxSound
     {
-        song = CoolUtil.formatSongPath(song);
-
-        if (fileExists('songs', ASSETS))
-            for (folder in FileSystem.readDirectory('assets/songs'))
-                if (song == CoolUtil.formatSongPath(folder) && fileExists('songs/' + folder + '/Inst.ogg', ASSETS))
-                    return FlxG.sound.load('assets/songs/' + folder + '/song/Inst.ogg');
+        if (fileExists(PlayState.songRoute + '/song/Inst.ogg'))
+            return FlxG.sound.load(getPath(PlayState.songRoute + '/song/Inst.ogg'));
         
-        trace('Missing File: ' + 'songs/' + song + '/song/Inst.ogg');
+        trace('Missing File: ' + PlayState.songRoute + '/song/Inst.ogg');
 
         return null;
     }
@@ -161,16 +157,12 @@ class Paths
      * @param song Song Name
      * @return FlxSound
      */
-    public static function voices(song:String):FlxSound
+    public static function voices():FlxSound
     {
-        song = CoolUtil.formatSongPath(song);
+        if (fileExists(PlayState.songRoute + '/song/Voices.ogg'))
+            return FlxG.sound.load(getPath(PlayState.songRoute + '/song/Voices.ogg'));
 
-        if (fileExists('songs', ASSETS))
-            for (folder in FileSystem.readDirectory('assets/songs'))
-                if (song == CoolUtil.formatSongPath(folder) && fileExists('songs/' + folder + '/song/Voices.ogg', ASSETS))
-                    return FlxG.sound.load('assets/songs/' + folder + '/song/Voices.ogg');
-
-        trace('Missing File: ' + 'songs/' + song + '/song/Voices.ogg');
+        trace('Missing File: ' + PlayState.songRoute + '/song/Voices.ogg');
 
         return null;
     }

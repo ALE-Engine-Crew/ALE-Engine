@@ -1,147 +1,132 @@
-package visuals.objects;
+package funkin.visuals.objects;
 
 import core.enums.ALECharacterType;
 
-import visuals.objects.StrumNote;
+import funkin.visuals.objects.StrumNote;
+import funkin.visuals.objects.Character;
 
-import visuals.shaders.RGBPalette;
-
-import visuals.shaders.RGBPalette.RGBShaderReference;
+import funkin.visuals.shaders.RGBPalette;
+import funkin.visuals.shaders.RGBPalette.RGBShaderReference;
 
 /**
  * It is an extension of FlxSprite that handles Notes
  */
-class Note extends FlxSprite
-{
-    public var strumTime:Float = 0;
-
+class Note extends FlxSpriteGroup
+{   
     public var scrollSpeed:Float = 1;
 
-    public var noteData:Int = 0;
+    public var sprite:FlxSprite;
 
-    public var length:Int = 0;
+    public var noteData:Int;
 
     public var type:ALECharacterType;
 
+    public var strumTime:Float;
+
+    public var noteLength:Float;
+
     public var strum:StrumNote;
 
-    public var hitCallback:Note -> Void;
-    public var loseCallback:Note -> Void;
+    public var character:Character;
 
-    public var yDestinity(get, never):Float;
+    public var hitOffset:Float = 125;
 
-    public var ableToHit(get, never):Bool;
-
-    public var hitOffset = 125;
-
-    function get_ableToHit():Bool
-        return alive && yDestinity >= strum.y - hitOffset * scrollSpeed && yDestinity <= strum.y + hitOffset * scrollSpeed;
-
-
-    function get_yDestinity():Float
-    {
-        return strum == null ? 0 : CoolUtil.fpsLerp(y, strum.y + (strumTime * scrollSpeed) - (Conductor.songPosition * scrollSpeed), 1);
-    }
-    
-    public function new(id:Int, strumTime:Float, length:Int, type:ALECharacterType, strum:StrumNote)
+    override public function new(type:ALECharacterType, noteData:Int, strumTime:Float, noteLength:Float, character:Character, strum:StrumNote)
     {
         super();
 
-        this.strumTime = strumTime;
-
-        noteData = id;
-
-        this.length = length;
+        this.noteData = noteData;
 
         this.type = type;
 
+        this.strumTime = strumTime;
+
+        this.noteLength = noteLength;
+
         this.strum = strum;
 
-        frames = Paths.getSparrowAtlas('notes/' + 'notes');
-
-        switch (noteData % 4)
-        {
-            case 0:
-                animation.addByPrefix('idle', 'purple0', 24, false);
-            case 1:
-                animation.addByPrefix('idle', 'blue0', 24, false);
-            case 2:
-                animation.addByPrefix('idle', 'green0', 24, false);
-            case 3:
-                animation.addByPrefix('idle', 'red0', 24, false);
-        }
+        this.character = character;
         
-        animation.play('idle');
+        sprite = new FlxSprite();
+        sprite.frames = Paths.getSparrowAtlas('notes/' + strum.texture);
 
-        centerOffsets();
-        centerOrigin();
+        sprite.animation.addByPrefix('idle', switch(noteData % 4)
+            {
+                case 0: 'purple0';
+                case 1: 'blue0';
+                case 2: 'green0';
+                case 3: 'red0';
+                default: null;
+            },
+        24, false);
+        
+        sprite.animation.play('idle');
 
-        scale.set(0.7, 0.7);
+        sprite.centerOffsets();
+        sprite.centerOrigin();
 
-        y = FlxG.height;
+        sprite.scale.set(0.7, 0.7);
 
-        antialiasing = ClientPrefs.data.antialiasing;
+        sprite.antialiasing = ClientPrefs.data.antialiasing;
+
+        sprite.updateHitbox();
+
+        add(sprite);
 
         var rgbPalette = new RGBPalette();
-        var shaderRef = new RGBShaderReference(this, rgbPalette);
+        var shaderRef = new RGBShaderReference(sprite, rgbPalette);
         var shaderArray:Array<FlxColor> = ClientPrefs.data.arrowRGB[noteData];
         shaderRef.r = shaderArray[0];
         shaderRef.g = shaderArray[1];
         shaderRef.b = shaderArray[2];
+
+        y = FlxG.height;
+    }   
+
+    public var direction(get, never):Float;
+
+    function get_direction():Float
+    {
+        return strum == null ? 90 : strum.direction * Math.PI / 180;
     }
 
-    override public function update(elapsed:Float)
+    public var distance(get, never):Float;
+    
+    function get_distance():Float
+    {
+        return (Conductor.songPosition - strumTime) * -scrollSpeed;
+    }
+
+    public var distanceX(get, never):Float;
+
+    function get_distanceX():Float
+    {
+        return strum == null ? 0 : strum.x + strum.sprite.width / 2 - sprite.width / 2 + Math.cos(direction) * distance;
+    }
+
+    public var distanceY(get, never):Float;
+
+    function get_distanceY():Float
+    {
+        return strum == null ? 0 : strum.y + Math.sin(direction) * distance;
+    }
+
+    override function update(elapsed:Float)
     {
         super.update(elapsed);
 
-        if (!active || strum == null)
-            return;
+        if (strum != null && sprite != null && sprite.alive)
+        {
+            if ((x < FlxG.width && x > -sprite.width) || (distanceX < FlxG.width && distanceX > -sprite.width))
+                x = distanceX;
+            
+            if ((y < FlxG.height && y > -sprite.height) || (distanceY < FlxG.height && distanceY > -sprite.height))
+                y = distanceY;
 
-        if (yDestinity >= -height && yDestinity < FlxG.height)
-            updatePosition();
+            visible = y < FlxG.height && y > -sprite.height && x < FlxG.width && x > -sprite.width;
 
-        updateVisibility();
-
-        if (yDestinity <= strum.y && (type != PLAYER || PlayState.instance.botplay))
-            hitFunction();
-        
-        if (yDestinity < strum.y - hitOffset * scrollSpeed && type == PLAYER && !PlayState.instance.botplay)
-            loseFunction();
-    }
-
-    private function updateVisibility()
-    {
-        visible = yDestinity < FlxG.height || yDestinity >= -height;
-    }
-
-    private function updatePosition()
-    {
-        y = yDestinity;
-
-        x = strum.x + strum.width / 2 - this.width / 2;
-    }
-
-    public function hitFunction()
-    {
-        if (hitCallback != null)
-            hitCallback(this);
-
-        kill();
-        
-        active = false;
-
-        destroy();
-    }
-
-    public function loseFunction()
-    {
-        if (loseCallback != null)
-            loseCallback(this);
-
-        kill();
-        
-        active = false;
-
-        destroy();
+            if (y < strum.y)
+                kill();
+        }
     }
 }

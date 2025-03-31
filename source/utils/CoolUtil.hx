@@ -200,6 +200,8 @@ class CoolUtil
 				if (Paths.fileExists('songs/' + folder + '/charts/' + difficulty + '.json'))
 				{
 					jsonData = Json.parse(sys.io.File.getContent(Paths.getPath('songs/' + folder + '/charts/' + difficulty + '.json')));
+
+					PlayState.songRoute = 'songs/' + folder;
 				} else {
 					MusicBeatState.instance.debugPrint('Missing File: songs/' + folder + '/charts/' + difficulty + '.json', FlxColor.RED);
 
