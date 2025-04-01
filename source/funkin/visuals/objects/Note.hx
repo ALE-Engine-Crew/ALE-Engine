@@ -13,8 +13,6 @@ import funkin.visuals.shaders.RGBPalette.RGBShaderReference;
  */
 class Note extends FlxSpriteGroup
 {   
-    public var scrollSpeed:Float = 1;
-
     public var sprite:FlxSprite;
 
     public var noteData:Int;
@@ -29,7 +27,19 @@ class Note extends FlxSpriteGroup
 
     public var character:Character;
 
-    public var hitOffset:Float = 125;
+    @:isVar public var hitOffset(get, never):Float;
+    
+    function get_hitOffset():Float
+    {
+        return 75 * strum.scrollSpeed;
+    }
+
+    public var ableToHit(get, never):Bool;
+
+    function get_ableToHit():Bool
+    {
+        return sprite.active && alive && strumTime < Conductor.songPosition + 150 && strumTime > Conductor.songPosition - 150;
+    }
 
     override public function new(type:ALECharacterType, noteData:Int, strumTime:Float, noteLength:Float, character:Character, strum:StrumNote)
     {
@@ -81,6 +91,8 @@ class Note extends FlxSpriteGroup
         shaderRef.b = shaderArray[2];
 
         y = FlxG.height;
+
+        sprite.antialiasing = ClientPrefs.data.antialiasing;
     }   
 
     public var direction(get, never):Float;
@@ -94,7 +106,7 @@ class Note extends FlxSpriteGroup
     
     function get_distance():Float
     {
-        return (Conductor.songPosition - strumTime) * -scrollSpeed;
+        return 0.45 * (Conductor.songPosition - strumTime) * -strum.scrollSpeed;
     }
 
     public var distanceX(get, never):Float;
@@ -115,18 +127,57 @@ class Note extends FlxSpriteGroup
     {
         super.update(elapsed);
 
-        if (strum != null && sprite != null && sprite.alive)
+        if (strum != null && sprite != null && alive)
         {
+            sprite.angle = strum.angle;
+            
+            sprite.scale = strum.scale;
+
             if ((x < FlxG.width && x > -sprite.width) || (distanceX < FlxG.width && distanceX > -sprite.width))
                 x = distanceX;
             
             if ((y < FlxG.height && y > -sprite.height) || (distanceY < FlxG.height && distanceY > -sprite.height))
                 y = distanceY;
 
-            visible = y < FlxG.height && y > -sprite.height && x < FlxG.width && x > -sprite.width;
+            sprite.active = visible = y < FlxG.height && y > -sprite.height && x < FlxG.width && x > -sprite.width;
 
-            if (y < strum.y)
-                kill();
+            if (Conductor.songPosition > strumTime && sprite.active && (type != PLAYER || strum.botplay))
+                hitFunction();
         }
+    }
+
+    var charAnimName(get, never):String;
+
+    function get_charAnimName():String
+    {    
+        return switch (noteData)
+        {
+            case 0: 'LEFT';
+            case 1: 'DOWN';
+            case 2: 'UP';
+            case 3: 'RIGHT';
+            default: 'NULL';
+        }
+    }
+
+    public function hitFunction()
+    {
+        strum.sprite.animation.play('hit', true);
+
+        if (type == PLAYER)
+            strum.splash.animation.play('splash', true);
+
+        character.animation.play('sing' + charAnimName, true);
+        character.idleTimer = 0;
+
+        kill();
+    }
+
+    public function loseFunction()
+    {
+        character.animation.play('sing' + charAnimName + 'miss', true);
+        character.idleTimer = 0;
+
+        sprite.active = false;
     }
 }

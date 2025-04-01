@@ -1,0 +1,23 @@
+package core.structures;
+
+typedef ALECharacter = {
+    var animations:Array<ALECharacterJSONAnimation>;
+
+    var antialiasing:Bool;
+
+    var image:String;
+
+    var position:Array<Int>;
+
+    var icon:String;
+
+    var flipX:Bool;
+
+    var barColor:Array<Int>;
+
+    var cameraPosition:Array<Int>;
+
+    var scale:Float;
+
+    var format:String;
+}

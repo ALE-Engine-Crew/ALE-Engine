@@ -1,14 +1,10 @@
 package funkin.states;
 
-import scripting.haxe.HScript;
-
 class CustomState extends ScriptState
 {
     public static var instance:ScriptState;
 
     public var scriptName:String = '';
-
-    var haxeScripts:Array<HScript> = [];
 
     override public function new(script:String)
     {

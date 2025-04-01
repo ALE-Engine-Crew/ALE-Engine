@@ -8,9 +8,13 @@ class ScriptState extends MusicBeatState
 {
     public static var instance:ScriptState;
 
+    #if HSCRIPT_ALLOWED
     public var hScripts:Array<HScript> = [];
+    #end
 
+    #if LUA_ALLOWED
     public var luaScripts:Array<LuaScript> = [];
+    #end
 
 	public var camHUD:FlxCamera;
 	public var camGame:FlxCamera;

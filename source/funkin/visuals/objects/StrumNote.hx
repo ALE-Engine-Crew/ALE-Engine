@@ -10,6 +10,34 @@ class StrumNote extends FlxSpriteGroup
     public var sprite:FlxSprite;
     public var splash:FlxSprite;
 
+    public var botplay(default, set):Bool = false;
+
+    function set_botplay(value:Bool):Bool
+    {
+        botplay = value;
+
+        if (type == PLAYER)
+        {
+            if (sprite != null)
+            {
+                if (botplay)
+                {
+                    sprite.animation.finishCallback = (name:String) -> {
+                        sprite.animation.play('idle');
+                    }
+                } else {
+                    sprite.animation.play('idle', true);
+
+                    sprite.animation.finishCallback = (name:String) -> {}
+                }
+            }
+        }
+
+        return botplay;
+    }
+
+    public var scrollSpeed:Float = 1;
+
     public var noteData:Int;
 
     public var type:ALECharacterType;
@@ -19,6 +47,8 @@ class StrumNote extends FlxSpriteGroup
     public var direction:Float = 90;
 
     var shaderRef:RGBShaderReference;
+
+    var splashShaderRef:RGBShaderReference;
 
     function set_texture(value:String):String
     {
@@ -60,6 +90,8 @@ class StrumNote extends FlxSpriteGroup
 
         splash.visible = false;
 
+        splash.scale.x = splash.scale.y = 1 / 0.7;
+
         this.splashTexture = splashTexture;
 
         x = 160 * 0.7 * noteData;
@@ -72,13 +104,22 @@ class StrumNote extends FlxSpriteGroup
         y = 50;
 
         var rgbPalette = new RGBPalette();
+
         shaderRef = new RGBShaderReference(sprite, rgbPalette);
-        shaderRef = new RGBShaderReference(splash, rgbPalette);
+
+        splashShaderRef = new RGBShaderReference(splash, rgbPalette);
 
         var shaderArray:Array<FlxColor> = ClientPrefs.data.arrowRGB[noteData % 4];
-        shaderRef.r = shaderArray[0];
-        shaderRef.g = shaderArray[1];
-        shaderRef.b = shaderArray[2];
+        
+        shaderRef.r = splashShaderRef.r = shaderArray[0];
+        shaderRef.g = splashShaderRef.g = shaderArray[1];
+        shaderRef.b = splashShaderRef.b = shaderArray[2];
+
+        sprite.antialiasing = splash.antialiasing = ClientPrefs.data.antialiasing;
+
+        scale.x = scale.y = 0.7;
+
+        updateHitbox();
 	}
 
     public function loadTexture(image:String)
@@ -94,10 +135,9 @@ class StrumNote extends FlxSpriteGroup
             default: null;
         };
 
-        sprite.animation.addByPrefix('idle', 'arrow' + animToPlay.toUpperCase());
-        sprite.animation.addByIndices('pressed', animToPlay + ' press', [0, 1], '', 24, true);
-        sprite.animation.addByIndices('released', animToPlay + ' press', [3], '', 24, false);
-        sprite.animation.addByIndices('hit', animToPlay + ' confirm', [0, 1], '', 24, false);
+        sprite.animation.addByPrefix('idle', 'arrow' + animToPlay.toUpperCase(), 24, false);
+        sprite.animation.addByPrefix('pressed', animToPlay + ' press', 24, false);
+        sprite.animation.addByPrefix('hit', animToPlay + ' confirm', 24, false);
 
         sprite.animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
             sprite.centerOffsets();
@@ -108,15 +148,14 @@ class StrumNote extends FlxSpriteGroup
         }
 
         sprite.animation.finishCallback = (name:String) -> {
-            sprite.animation.play('idle');
+            if (name == 'hit' && type != PLAYER)
+                sprite.animation.play('idle');
         }
         
         sprite.animation.play('idle');
 
         sprite.centerOffsets();
         sprite.centerOrigin();
-
-        sprite.scale.set(0.7, 0.7);
 
         sprite.updateHitbox();
     }
@@ -138,8 +177,8 @@ class StrumNote extends FlxSpriteGroup
         }
 
         splash.animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
-            centerOffsets();
-            centerOrigin();
+            splash.centerOffsets();
+            splash.centerOrigin();
             
             splash.visible = true;
         }
@@ -150,8 +189,6 @@ class StrumNote extends FlxSpriteGroup
 
         splash.centerOffsets();
         splash.centerOrigin();
-
-        splash.scale.set(0.75, 0.75);
 
         splash.updateHitbox();
 

@@ -2,15 +2,18 @@ package funkin.states;
 
 import core.structures.*;
 
-import funkin.visuals.objects.StrumNote;
-import funkin.visuals.objects.Note;
+import funkin.visuals.objects.StrumLine;
 import funkin.visuals.objects.Character;
+
+import openfl.events.KeyboardEvent;
 
 class PlayState extends ScriptState
 {
     public static var instance:PlayState;
 
     public static var SONG:ALESong;
+
+    public var stage:ALEStage;
 
     public static var startPosition:Float = 0;
 
@@ -20,34 +23,33 @@ class PlayState extends ScriptState
     {
         scrollSpeed = value;
 
-        if (playerNotes != null)
-            for (note in playerNotes)
-                note.scrollSpeed = scrollSpeed;
+        if (strumLines != null)
+            for (strumLine in strumLines)
+                for (strum in strumLine.strums)
+                    strum.scrollSpeed = scrollSpeed;
 
-        if (opponentNotes != null)
-            for (note in opponentNotes)
-                note.scrollSpeed = scrollSpeed;
+        return scrollSpeed;
+    }
 
-        if (extraNotes != null)
-            for (note in extraNotes)
-                note.scrollSpeed = scrollSpeed;
+    public var botplay(default, set):Bool = false;
 
-        return value;
+    function set_botplay(value:Bool):Bool
+    {
+        botplay = value;
+
+        if (strumLines != null)
+            for (strumLine in strumLines)
+                for (strum in strumLine.strums)
+                    strum.botplay = botplay;
+
+        return botplay;
     }
 
     public var voices:FlxSound;
 
-    public var playerStrums:FlxTypedGroup<StrumNote>;
-    public var opponentStrums:FlxTypedGroup<StrumNote>;
-    public var extraStrums:FlxTypedGroup<StrumNote>;
+    public var strumLines:FlxTypedGroup<StrumLine>;
 
-    public var playerNotes:FlxTypedGroup<Note>;
-    public var opponentNotes:FlxTypedGroup<Note>;
-    public var extraNotes:FlxTypedGroup<Note>;
-
-    public var extraCharacters:FlxTypedGroup<Character>;
-    public var opponentCharacters:FlxTypedGroup<Character>;
-    public var playerCharacters:FlxTypedGroup<Character>;
+    public var characters:FlxTypedGroup<Character>;
 
     public static var songRoute:String = '';
 
@@ -63,6 +65,10 @@ class PlayState extends ScriptState
             for (file in FileSystem.readDirectory(Paths.getPath(songRoute + '/scripts')))
                 loadScript(songRoute + '/scripts/' + file);
 
+        stage = returnALEStage(SONG.stage);
+
+        loadScript('stages/' + SONG.stage);
+
         instance = this;
         
         callOnScripts('onCreate');
@@ -70,6 +76,8 @@ class PlayState extends ScriptState
         Conductor.bpm = SONG.bpm;
 
         spawnGrids();
+
+        scrollSpeed = SONG.speed;
 
 		FlxG.sound.music = Paths.inst();
 		FlxG.sound.music.play();
@@ -82,107 +90,148 @@ class PlayState extends ScriptState
 		FlxG.sound.list.add(voices);
 
 		FlxG.sound.music.time = voices.time = startPosition;
+		
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 
-        callOnScripts('postCreate');
+        callOnScripts('onCreatePost');
     }
+
+	var keyPressed:Array<Int> = [];
+
+	function onKeyPress(event:KeyboardEvent)
+	{
+		if (botplay || keyPressed.contains(event.keyCode))
+			return;
+
+		switch (event.keyCode)
+		{
+			case 68:
+				hitNote(0);
+			case 70:
+				hitNote(1);
+			case 74:
+				hitNote(2);
+			case 75:
+				hitNote(3);
+		}
+
+		keyPressed.push(event.keyCode);
+	}
+
+	function onKeyRelease(event:KeyboardEvent)
+	{
+		if (botplay || !keyPressed.contains(event.keyCode))
+			return;
+
+		var allowedKeys:Array<Int> = [68, 70, 74, 75];
+
+		if (!allowedKeys.contains(event.keyCode))
+			return;
+        
+		for (strumLine in strumLines)
+            if (strumLine.type == PLAYER)
+                strumLine.strums.members[allowedKeys.indexOf(event.keyCode)].sprite.animation.play('idle', true);
+
+		keyPressed.remove(event.keyCode);
+	}
+
+	function hitNote(id:Int)
+	{
+		for (strumLine in strumLines)
+		{
+            if (strumLine.type == PLAYER)
+            {
+                for (note in strumLine.notes)
+                {
+                    if (id == note.noteData && note.ableToHit)
+                    {
+                        note.hitFunction();
+        
+                        return;
+                    }
+                }
+
+                strumLine.strums.members[id].sprite.animation.play('pressed', true);
+            }
+		}
+	}
 
     private function spawnGrids()
     {
-        extraCharacters = new FlxTypedGroup<Character>();
-        add(extraCharacters);
+        characters = new FlxTypedGroup<Character>();
+        add(characters);
 
-        opponentCharacters = new FlxTypedGroup<Character>();
-        add(opponentCharacters);
+        strumLines = new FlxTypedGroup<StrumLine>();
+        add(strumLines);
+        strumLines.cameras = [camHUD];
 
-        playerCharacters = new FlxTypedGroup<Character>();
-        add(playerCharacters);
+        var extras:Array<Character> = [];
+        var opponents:Array<Character> = [];
+        var players:Array<Character> = [];
 
-        extraStrums = new FlxTypedGroup<StrumNote>();
-        add(extraStrums);
-        extraStrums.cameras = [camHUD];
-
-        extraNotes = new FlxTypedGroup<Note>();
-        add(extraNotes);
-        extraNotes.cameras = [camHUD];
-
-        opponentStrums = new FlxTypedGroup<StrumNote>();
-        add(opponentStrums);
-        opponentStrums.cameras = [camHUD];
-
-        opponentNotes = new FlxTypedGroup<Note>();
-        add(opponentNotes);
-        opponentNotes.cameras = [camHUD];
-
-        playerStrums = new FlxTypedGroup<StrumNote>();
-        add(playerStrums);
-        playerStrums.cameras = [camHUD];
-        
-        playerNotes = new FlxTypedGroup<Note>();
-        add(playerNotes);
-        playerNotes.cameras = [camHUD];
+        var extraStrums:Array<StrumLine> = [];
+        var opponentStrums:Array<StrumLine> = [];
+        var playerStrums:Array<StrumLine> = [];
 
         for (num => grid in SONG.grids)
         {
-            var character = new Character(grid.character, grid.type != OPPONENT);
+            var character = new Character(grid.character, grid.type);
+
+            var strumLine:StrumLine = new StrumLine(grid.sections, grid.type, character);
 
             switch (grid.type)
             {
                 case EXTRA:
-                    extraCharacters.add(character);
+                    character.setPosition(stage.extrasPosition[extras.length][0], stage.extrasPosition[extras.length][1]);
+
+                    extras.push(character);
+
+                    extraStrums.push(strumLine);
                 case OPPONENT:
-                    opponentCharacters.add(character);
+                    character.setPosition(stage.opponentsPosition[opponents.length][0], stage.opponentsPosition[opponents.length][1]);
+
+                    opponents.push(character);
+                    
+                    opponentStrums.push(strumLine);
                 case PLAYER:
-                    playerCharacters.add(character);
-            }
+                    character.setPosition(stage.playersPosition[players.length][0], stage.playersPosition[players.length][1]);
 
-            for (i in 0...4)
-            {
-                var strum:StrumNote = new StrumNote(i, grid.type);
-                
-                switch (grid.type)
-                {
-                    case EXTRA:
-                        extraStrums.add(strum);
-                    case OPPONENT:
-                        opponentStrums.add(strum);
-                    case PLAYER:
-                        playerStrums.add(strum);
-                }
-            }
-
-            spawnNotes(grid, character);
-        }
-    }
-
-    private function spawnNotes(grid:ALEGrid, character:Character)
-    {
-        for (section in grid.sections)
-        {
-            for (noteArray in section.notes)
-            {
-                var note:Note = new Note(grid.type, noteArray[1], noteArray[0], noteArray[2], character,
-					switch (grid.type)
-					{
-						case OPPONENT:
-							opponentStrums.members[noteArray[1] + Math.floor((opponentStrums.members.length - 1) / 4) * 4];
-						case PLAYER:
-							playerStrums.members[noteArray[1] + Math.floor((playerStrums.members.length - 1) / 4) * 4];
-						case EXTRA:
-                            extraStrums.members[noteArray[1] + Math.floor((extraStrums.members.length - 1) / 4) * 4];
-					}
-                );
-                
-                switch (grid.type)
-                {
-                    case EXTRA:
-                        extraNotes.add(note);
-                    case OPPONENT:
-                        opponentNotes.add(note);
-                    case PLAYER:
-                        playerNotes.add(note);
-                }
+                    players.push(character);
+                    
+                    playerStrums.push(strumLine);
             }
         }
+
+        for (character in extras)
+            characters.add(character);
+
+        extras = [];
+
+        for (character in opponents)
+            characters.add(character);
+
+        opponents = [];
+
+        for (character in players)
+            characters.add(character);
+
+        players = [];
+
+        for (strum in extraStrums)
+            strumLines.add(strum);
+
+        extraStrums = [];
+
+        for (strum in opponentStrums)
+            strumLines.add(strum);
+
+        opponentStrums = [];
+
+        for (strum in playerStrums)
+            strumLines.add(strum);
+
+        playerStrums = [];
     }
 
     override function beatHit()
@@ -194,17 +243,20 @@ class PlayState extends ScriptState
 
         if (curBeat % 2 == 0)
         {
-            for (character in opponentCharacters)
-                character.animation.play('idle', true);
-
-            for (character in playerCharacters)
-                character.animation.play('idle', true);
-
-            for (character in extraCharacters)
-                character.animation.play('danceLeft');
+            for (character in characters)
+            {
+                if (character.idleTimer >= 60 / Conductor.bpm)
+                {
+                    if (character.animation.exists('idle'))
+                        character.animation.play('idle', true);
+                    else if (character.animation.exists('danceLeft'))
+                        character.animation.play('danceLeft', true);
+                }
+            }
         } else if (curBeat % 2 == 1) {
-            for (character in extraCharacters)
-                character.animation.play('danceRight');
+            for (character in characters)
+                if (character.animation.exists('danceRight') && character.idleTimer >= 60 / Conductor.bpm)
+                    character.animation.play('danceRight');
         }
     }
 
@@ -231,7 +283,15 @@ class PlayState extends ScriptState
         if (FlxG.keys.justPressed.R)
             FlxG.resetState();
 
-        callOnScripts('postUpdate');
+        if (FlxG.keys.justPressed.B)
+            botplay = !botplay;
+
+        if (characters != null)
+            for (character in characters)
+                if (character.idleTimer < 60 / Conductor.bpm)
+                    character.idleTimer += elapsed;
+
+        callOnScripts('onUpdatePost', [elapsed]);
     }
 
     override public function onFocus()
@@ -253,4 +313,59 @@ class PlayState extends ScriptState
         FlxG.sound.music.pause();
         voices.pause();
     }
+
+    override public function destroy()
+    {
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
+		
+        destroyScripts();
+
+        super.destroy();
+    }
+
+	function returnALEStage(path:Dynamic):ALEStage
+	{
+        if (Paths.fileExists('stages/' + path + '.json'))
+        {
+            var data:Dynamic = Json.parse(File.getContent(Paths.getPath('stages/' + path + '.json')));
+
+            if (data.format == 'ale-format-v0.1')
+            {
+                return cast data;
+            } else {
+                var formattedStage:Dynamic = {
+                    opponentsPosition: data.opponent == null ? [[0, 0]] : [data.opponent],
+                    playersPosition: data.boyfriend == null ? [[0, 0]] : [data.boyfriend],
+                    extrasPosition: data.girlfriend == null ? [[0, 0]] : [data.girlfriend],
+    
+                    opponentsCamera: data.camera_opponent == null ? [[0, 0]] : [data.camera_opponent],
+                    playersCamera: data.camera_boyfriend == null ? [[0, 0]] : [data.camera_boyfriend],
+                    extrasCamera: data.camera_girlfriend == null ? [[0, 0]] : [data.camera_girlfriend],
+    
+                    format: 'ale-format-v0.1',
+    
+                    cameraZoom: data.defaultCamZoom == null ? 1 : data.defaultZoom,
+                    cameraSpeed: data.camera_speed == null ? 1 : data.camera_speed
+                };
+    
+                return cast formattedStage;
+            }
+        } else {
+            return cast {
+                opponentsPosition: [[0, 0]],
+                playersPosition: [[0, 0]],
+                extrasPosition: [[0, 0]],
+
+                opponentsCamera: [[0, 0]],
+                playersCamera: [[0, 0]],
+                extrasCamera: [[0, 0]],
+
+                format: 'ale-format-v0.1',
+
+                cameraZoom: 1,
+                cameraSpeed: 1
+            }
+        }
+	}
 }

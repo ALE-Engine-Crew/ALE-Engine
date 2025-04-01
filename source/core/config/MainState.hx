@@ -9,7 +9,7 @@ class MainState extends MusicBeatState
     {
         super.create();
 
-        FlxG.updateFramerate = FlxG.drawFramerate = 240;
+        FlxG.updateFramerate = FlxG.drawFramerate = 500;
     
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 

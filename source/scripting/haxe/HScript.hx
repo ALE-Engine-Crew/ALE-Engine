@@ -1,5 +1,6 @@
 package scripting.haxe;
 
+#if HSCRIPT_ALLOWED
 import haxe.ds.StringMap;
 
 import tea.SScript;
@@ -142,3 +143,4 @@ class FlxColorClass
 		return cast FlxColor.fromString(str);
 	}
 }
+#end

@@ -390,7 +390,7 @@ class CoolUtil
 				{
 					sections: new Array<Dynamic>(),
 
-					character: 'gf',
+					character: json.song.gfVersion,
 					type: 'extra'
 				}
 			);
@@ -424,5 +424,11 @@ class CoolUtil
 
 		Lib.application.window.x = Std.int(Capabilities.screenResolutionX / 2 - Lib.application.window.width / 2);
 		Lib.application.window.y = Std.int(Capabilities.screenResolutionY / 2 - Lib.application.window.height / 2);
+
+		for (camera in FlxG.cameras.list)
+		{
+			camera.width = width;
+			camera.height = height;
+		}
 	}
 }

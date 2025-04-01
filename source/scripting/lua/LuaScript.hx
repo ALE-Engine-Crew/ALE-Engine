@@ -1,5 +1,6 @@
 package scripting.lua;
 
+#if LUA_ALLOWED
 import llua.*;
 import llua.Lua.Lua_helper;
 
@@ -163,3 +164,4 @@ class LuaScript
         return null;
     }
 }
+#end

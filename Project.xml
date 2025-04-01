@@ -42,7 +42,7 @@
 
 	<haxelib name="SScript" />
 
-	<haxelib name="linc_luajit" />
+	<haxelib name="linc_luajit" if="cpp" />
 
 	<haxelib name="tjson" />
 
