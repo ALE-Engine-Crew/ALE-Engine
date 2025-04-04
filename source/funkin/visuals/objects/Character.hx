@@ -28,7 +28,11 @@ class Character extends FlxSprite
 
     public var type:ALECharacterType;
 
-    override public function new(char:String, type:ALECharacterType)
+    public var typeIndex:Int = 0;
+
+    public var offsetsMap:StringMap<Dynamic> = new StringMap<Dynamic>();
+
+    override public function new(char:String, type:ALECharacterType, typeIndex:Int)
     {
         super();
 
@@ -36,11 +40,11 @@ class Character extends FlxSprite
 
         this.type = type;
 
+        this.typeIndex = typeIndex;
+
         data = returnALEJson(char);
 
         frames = Paths.getSparrowAtlas(data.image);
-
-        var animsMap:StringMap<Dynamic> = new StringMap<Dynamic>();
 
         for (animation in data.animations)
         {
@@ -53,13 +57,13 @@ class Character extends FlxSprite
             offsets[0] -= data.position[0];
             offsets[1] -= data.position[1];
 
-            animsMap.set(animation.animation, offsets);
+            offsetsMap.set(animation.animation, offsets);
         }
 
         animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
-            if (animsMap.exists(name))
+            if (offsetsMap.exists(name))
             {
-                var offsets:Array<Float> = animsMap.get(name);
+                var offsets:Array<Float> = offsetsMap.get(name);
 
                 offset.set(offsets[0], offsets[1]);
             }

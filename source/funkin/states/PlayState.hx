@@ -1,5 +1,7 @@
 package funkin.states;
 
+import flixel.FlxObject;
+
 import core.structures.*;
 
 import funkin.visuals.objects.StrumLine;
@@ -13,7 +15,7 @@ class PlayState extends ScriptState
 
     public static var SONG:ALESong;
 
-    public var stage:ALEStage;
+    public var STAGE:ALEStage;
 
     public static var startPosition:Float = 0;
 
@@ -53,7 +55,9 @@ class PlayState extends ScriptState
 
     public static var songRoute:String = '';
 
-    private var cameraSections:Array<Character>;
+	var camPos:FlxObject;
+
+    private var cameraSections:Array<Character> = [];
 
     public var cameraZoom:Float = 1;
 
@@ -65,9 +69,20 @@ class PlayState extends ScriptState
             for (file in FileSystem.readDirectory(Paths.getPath(songRoute + '/scripts')))
                 loadScript(songRoute + '/scripts/' + file);
 
-        stage = returnALEStage(SONG.stage);
+        if (Paths.fileExists('scripts/songs'))
+            for (file in FileSystem.readDirectory(Paths.getPath('scripts/songs')))
+                loadScript('scripts/songs/' + file);
+
+        STAGE = returnALEStage(SONG.stage);
 
         loadScript('stages/' + SONG.stage);
+
+		camPos = new FlxObject(0, 0, 1, 1);
+		add(camPos);
+		
+		camGame.target = camPos;
+		camGame.followLerp = 2.4 * STAGE.cameraSpeed;
+        cameraZoom = STAGE.cameraZoom;
 
         instance = this;
         
@@ -78,6 +93,8 @@ class PlayState extends ScriptState
         spawnGrids();
 
         scrollSpeed = SONG.speed;
+
+        moveCamera();
 
 		FlxG.sound.music = Paths.inst();
 		FlxG.sound.music.play();
@@ -174,34 +191,50 @@ class PlayState extends ScriptState
         var opponentStrums:Array<StrumLine> = [];
         var playerStrums:Array<StrumLine> = [];
 
+        var camMaps:Map<Int, Character> = [];
+
         for (num => grid in SONG.grids)
         {
-            var character = new Character(grid.character, grid.type);
+            var character = new Character(grid.character, grid.type,
+                switch (grid.type)
+                {
+                    case OPPONENT: opponents.length;
+                    case PLAYER: players.length;
+                    case EXTRA: extras.length;
+                }
+            );
 
             var strumLine:StrumLine = new StrumLine(grid.sections, grid.type, character);
+
+            for (index => section in grid.sections)
+                if (section.cameraFocusThis)
+                    camMaps.set(index, character);
 
             switch (grid.type)
             {
                 case EXTRA:
-                    character.setPosition(stage.extrasPosition[extras.length][0], stage.extrasPosition[extras.length][1]);
+                    character.setPosition(STAGE.extrasPosition[extras.length][0], STAGE.extrasPosition[extras.length][1]);
 
                     extras.push(character);
 
                     extraStrums.push(strumLine);
                 case OPPONENT:
-                    character.setPosition(stage.opponentsPosition[opponents.length][0], stage.opponentsPosition[opponents.length][1]);
+                    character.setPosition(STAGE.opponentsPosition[opponents.length][0], STAGE.opponentsPosition[opponents.length][1]);
 
                     opponents.push(character);
                     
                     opponentStrums.push(strumLine);
                 case PLAYER:
-                    character.setPosition(stage.playersPosition[players.length][0], stage.playersPosition[players.length][1]);
+                    character.setPosition(STAGE.playersPosition[players.length][0], STAGE.playersPosition[players.length][1]);
 
                     players.push(character);
                     
                     playerStrums.push(strumLine);
             }
         }
+
+        for (i in 0...[for (k in camMaps.keys()) k].length)
+            cameraSections.push(camMaps.get(i));
 
         for (character in extras)
             characters.add(character);
@@ -264,11 +297,24 @@ class PlayState extends ScriptState
     {
         super.sectionHit();
 
-        setOnScripts('curSection', curSection);
-        callOnScripts('onSectionHit');
-
         camGame.zoom += 0.03;
         camHUD.zoom += 0.015;
+
+        moveCamera();
+
+        setOnScripts('curSection', curSection);
+        callOnScripts('onSectionHit');
+    }
+
+    function moveCamera()
+    {
+        if (cameraSections[curSection] != null)
+        {
+            var curChar:Character = cameraSections[curSection];
+    
+            camPos.x = curChar.getMidpoint().x + curChar.cameraOffset[0];
+            camPos.y = curChar.getMidpoint().y + curChar.cameraOffset[1];
+        }
     }
 
     override function update(elapsed:Float)
@@ -334,7 +380,7 @@ class PlayState extends ScriptState
             {
                 return cast data;
             } else {
-                var formattedStage:Dynamic = {
+                var formattedStage:ALEStage = {
                     opponentsPosition: data.opponent == null ? [[0, 0]] : [data.opponent],
                     playersPosition: data.boyfriend == null ? [[0, 0]] : [data.boyfriend],
                     extrasPosition: data.girlfriend == null ? [[0, 0]] : [data.girlfriend],
@@ -345,7 +391,7 @@ class PlayState extends ScriptState
     
                     format: 'ale-format-v0.1',
     
-                    cameraZoom: data.defaultCamZoom == null ? 1 : data.defaultZoom,
+                    cameraZoom: data.defaultZoom == null ? 1 : data.defaultZoom,
                     cameraSpeed: data.camera_speed == null ? 1 : data.camera_speed
                 };
     

@@ -11,6 +11,6 @@ typedef ALEStage = {
 
     var format:String;
 
-    @:optional var cameraZoom:Float;
-    @:optional var cameraSpeed:Float;
+    var cameraZoom:Float;
+    var cameraSpeed:Float;
 }

@@ -15,6 +15,8 @@ class Note extends FlxSpriteGroup
 {   
     public var sprite:FlxSprite;
 
+    public var sustain:FlxSprite;
+
     public var noteData:Int;
 
     public var type:ALECharacterType;
@@ -75,12 +77,10 @@ class Note extends FlxSpriteGroup
         sprite.centerOffsets();
         sprite.centerOrigin();
 
-        sprite.scale.set(0.7, 0.7);
+        sprite.scale.x = sprite.scale.y = 0.7;
 
         sprite.antialiasing = ClientPrefs.data.antialiasing;
-
-        sprite.updateHitbox();
-
+        
         add(sprite);
 
         var rgbPalette = new RGBPalette();
@@ -129,9 +129,18 @@ class Note extends FlxSpriteGroup
 
         if (strum != null && sprite != null && alive)
         {
-            sprite.angle = strum.angle;
+            if (sustain != null)
+            {
+                sustain.scale.y = strum.scrollSpeed;
+                sustain.angle = sprite.angle;
+                sustain.updateHitbox();
+                sustain.x = sprite.x + sprite.width / 2 - sustain.width / 2;
+                sustain.y = sprite.y + sprite.height / 2;
+            }
             
-            sprite.scale = strum.scale;
+            angle = strum.angle;
+            
+            scale = strum.scale;
 
             if ((x < FlxG.width && x > -sprite.width) || (distanceX < FlxG.width && distanceX > -sprite.width))
                 x = distanceX;

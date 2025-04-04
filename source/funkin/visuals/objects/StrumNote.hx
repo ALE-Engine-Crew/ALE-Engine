@@ -90,8 +90,6 @@ class StrumNote extends FlxSpriteGroup
 
         splash.visible = false;
 
-        splash.scale.x = splash.scale.y = 1 / 0.7;
-
         this.splashTexture = splashTexture;
 
         x = 160 * 0.7 * noteData;
@@ -116,10 +114,6 @@ class StrumNote extends FlxSpriteGroup
         shaderRef.b = splashShaderRef.b = shaderArray[2];
 
         sprite.antialiasing = splash.antialiasing = ClientPrefs.data.antialiasing;
-
-        scale.x = scale.y = 0.7;
-
-        updateHitbox();
 	}
 
     public function loadTexture(image:String)
@@ -151,6 +145,8 @@ class StrumNote extends FlxSpriteGroup
             if (name == 'hit' && type != PLAYER)
                 sprite.animation.play('idle');
         }
+
+        sprite.scale.x = sprite.scale.y = 0.7;
         
         sprite.animation.play('idle');
 

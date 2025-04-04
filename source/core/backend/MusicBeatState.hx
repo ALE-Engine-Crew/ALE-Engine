@@ -40,8 +40,10 @@ class MusicBeatState extends FlxState
         super.create();
     }
 
-    public inline function debugPrint(text:String, ?color:FlxColor = FlxColor.WHITE) 
+    public inline function debugPrint(text:Dynamic, ?color:FlxColor = FlxColor.WHITE) 
     {
+        text = Std.string(text);
+
         if (debugTexts != null)
         {
             var newText:DebugText = debugTexts.recycle(DebugText);
