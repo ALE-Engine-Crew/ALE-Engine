@@ -1,6 +1,7 @@
 package funkin.visuals.objects;
 
 import core.enums.ALECharacterType;
+import core.enums.NoteState;
 
 import funkin.visuals.objects.StrumNote;
 import funkin.visuals.objects.Character;
@@ -13,10 +14,6 @@ import funkin.visuals.shaders.RGBPalette.RGBShaderReference;
  */
 class Note extends FlxSpriteGroup
 {   
-    public var sprite:FlxSprite;
-
-    public var sustain:FlxSprite;
-
     public var noteData:Int;
 
     public var type:ALECharacterType;
@@ -29,6 +26,10 @@ class Note extends FlxSpriteGroup
 
     public var character:Character;
 
+    public var sprite:FlxSprite;
+
+    public var state:NoteState = NEUTRAL;
+
     @:isVar public var hitOffset(get, never):Float;
     
     function get_hitOffset():Float
@@ -40,7 +41,7 @@ class Note extends FlxSpriteGroup
 
     function get_ableToHit():Bool
     {
-        return sprite.active && alive && strumTime < Conductor.songPosition + 150 && strumTime > Conductor.songPosition - 150;
+        return sprite.active && alive && strumTime < Conductor.songPosition + 175 && strumTime > Conductor.songPosition - 175;
     }
 
     override public function new(type:ALECharacterType, noteData:Int, strumTime:Float, noteLength:Float, character:Character, strum:StrumNote)
@@ -127,17 +128,8 @@ class Note extends FlxSpriteGroup
     {
         super.update(elapsed);
 
-        if (strum != null && sprite != null && alive)
+        if (strum != null && sprite != null && state != HIT)
         {
-            if (sustain != null)
-            {
-                sustain.scale.y = strum.scrollSpeed;
-                sustain.angle = sprite.angle;
-                sustain.updateHitbox();
-                sustain.x = sprite.x + sprite.width / 2 - sustain.width / 2;
-                sustain.y = sprite.y + sprite.height / 2;
-            }
-            
             angle = strum.angle;
             
             scale = strum.scale;
@@ -150,8 +142,19 @@ class Note extends FlxSpriteGroup
 
             sprite.active = visible = y < FlxG.height && y > -sprite.height && x < FlxG.width && x > -sprite.width;
 
-            if (Conductor.songPosition > strumTime && sprite.active && (type != PLAYER || strum.botplay))
+            if (Conductor.songPosition > strumTime && state == NEUTRAL && (type != PLAYER || strum.botplay))
+            {
                 hitFunction();
+
+                return;
+            }
+
+            if (Conductor.songPosition > strumTime && !ableToHit && state == NEUTRAL && (!strum.botplay))
+            {
+                loseFunction();
+
+                return;
+            }
         }
     }
 
@@ -171,9 +174,11 @@ class Note extends FlxSpriteGroup
 
     public function hitFunction()
     {
+        state = HIT;
+
         strum.sprite.animation.play('hit', true);
 
-        if (type == PLAYER)
+        if (type == PLAYER && !strum.botplay)
             strum.splash.animation.play('splash', true);
 
         character.animation.play('sing' + charAnimName, true);
@@ -184,6 +189,8 @@ class Note extends FlxSpriteGroup
 
     public function loseFunction()
     {
+        state = LOST;
+
         character.animation.play('sing' + charAnimName + 'miss', true);
         character.idleTimer = 0;
 

@@ -9,12 +9,12 @@ class MainState extends MusicBeatState
     {
         super.create();
 
-        FlxG.updateFramerate = FlxG.drawFramerate = 500;
+        FlxG.updateFramerate = FlxG.drawFramerate = 240;
     
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 
-		//CoolUtil.loadSong('stress', 'hard');
+		CoolUtil.loadSong('bopeebo', 'hard');
 
-        MusicBeatState.switchState(new CustomState('introState'));
+        //MusicBeatState.switchState(new CustomState('introState'));
     }
 }

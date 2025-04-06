@@ -16,7 +16,7 @@ class StrumLine extends FlxGroup
 
     public var strums:FlxTypedGroup<StrumNote>;
 
-    public var notes:FlxTypedGroup<Note>;
+    public var notes:NoteGroup;
 
     override public function new(sections:Null<Array<ALESection>>, type:ALECharacterType, character:Character)
     {
@@ -38,7 +38,7 @@ class StrumLine extends FlxGroup
             strums.add(strum);
         }
 
-        notes = new FlxTypedGroup<Note>();
+        notes = new NoteGroup();
         add(notes);
 
         spawnNotes();
