@@ -24,11 +24,19 @@ class StrumControl extends FlxSprite
         FlxG.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseReleased);
 
         x = FlxG.width / 4 * noteData;
+
+        updateHitbox();
     }
 
     function onMousePressed(_)
     {
-        if (!FlxG.mouse.overlaps(this))
+        var shouldStop:Bool = true;
+
+        for (touch in FlxG.touches.list)
+            if (touch.overlaps(this))
+                shouldStop = false;
+
+        if (shouldStop)
             return;
 
         alpha = 0.5;

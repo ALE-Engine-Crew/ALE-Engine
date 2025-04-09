@@ -7,7 +7,7 @@ import core.structures.*;
 import funkin.visuals.objects.StrumLine;
 import funkin.visuals.objects.Character;
 
-#if (mobile || desktop)
+#if mobile
 import funkin.visuals.objects.StrumControl;
 #end
 
@@ -65,7 +65,9 @@ class PlayState extends ScriptState
 
     public var cameraZoom:Float = 1;
 
-    private var androidControlsCamera:FlxCamera;
+    #if mobile
+    private var mobileControlsCamera:FlxCamera;
+    #end
 
     override function create()
     {
@@ -114,25 +116,22 @@ class PlayState extends ScriptState
 
 		FlxG.sound.music.time = voices.time = startPosition;
 
-        /*
         #if desktop
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
         #elseif mobile
-        */
-
-		androidControlsCamera = new FlxCamera();
-		androidControlsCamera.bgColor = FlxColor.TRANSPARENT;
-		FlxG.cameras.add(androidControlsCamera, false);
+		mobileControlsCamera = new FlxCamera();
+		mobileControlsCamera.bgColor = FlxColor.TRANSPARENT;
+        
+		FlxG.cameras.add(mobileControlsCamera, false);
 
         for (i in 0...4)
         {
             var ctrl:StrumControl = new StrumControl(i, hitNote, releaseNote);
             add(ctrl);
-            ctrl.cameras = [androidControlsCamera];
+            ctrl.cameras = [mobileControlsCamera];
         }
-
-        //#end
+        #end
 
         callOnScripts('onCreatePost');
     }
@@ -182,7 +181,7 @@ class PlayState extends ScriptState
             {
                 for (note in strumLine.notes)
                 {
-                    if (id == note.noteData && note.ableToHit)
+                    if (id == note.noteData && note.ableToHit && !note.isSustainNote)
                     {
                         note.hitFunction();
         

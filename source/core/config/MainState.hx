@@ -1,5 +1,9 @@
 package core.config;
 
+import flixel.addons.display.FlxTiledSprite;
+
+//nosotros somos los calvin'
+
 /**
  * Used to configure and add the necessary elements before starting the game
  */
@@ -15,8 +19,8 @@ class MainState extends MusicBeatState
 
 		CoolUtil.loadSong('bopeebo', 'hard');
 
-        //MusicBeatState.switchState(new CustomState('introState'));
+        MusicBeatState.switchState(new CustomState('introState'));
 
-        //MusicBeatState.switchState(new funkin.editors.CharacterEditorState());
+        MusicBeatState.switchState(new funkin.editors.CharacterEditorState());
     }
 }

@@ -46,11 +46,35 @@ class StrumLine extends FlxGroup
 
     private function spawnNotes()
     {
+        var heightFactor:Float = 75;
+
         for (section in sections)
         {
             for (noteArray in section.notes)
             {
-                var note:Note = new Note(type, noteArray[1], noteArray[0], noteArray[2], character, strums.members[noteArray[1]]);
+                var strumTime:Float = noteArray[0];
+                var noteData:Int = noteArray[1];
+                var sustainLength:Float = noteArray[2];
+                var strum:StrumNote = strums.members[noteData];
+
+                // Crear nota principal
+                var note:Note = new Note(type, noteData, strumTime, 0, character, strum);
+
+                // Crear notas sustain si hay longitud
+                if (sustainLength > 0)
+                {
+                    var prevNote:Note = note;
+                    var steps:Int = Math.floor(sustainLength / heightFactor);
+
+                    for (i in 0...steps)
+                    {
+                        var isEnd:Bool = i == steps - 1;
+                        var sustainNote:Note = new Note(type, noteData, strumTime + (i + 1) * heightFactor, heightFactor, character, strum, true, prevNote, isEnd);
+                        notes.add(sustainNote);
+                        prevNote = sustainNote;
+                    }
+                }
+                
                 notes.add(note);
             }
         }

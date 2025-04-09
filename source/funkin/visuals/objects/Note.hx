@@ -9,6 +9,8 @@ import funkin.visuals.objects.Character;
 import funkin.visuals.shaders.RGBPalette;
 import funkin.visuals.shaders.RGBPalette.RGBShaderReference;
 
+import flixel.math.FlxRect;
+
 /**
  * It is an extension of FlxSprite that handles Notes
  */
@@ -30,6 +32,14 @@ class Note extends FlxSpriteGroup
 
     public var state:NoteState = NEUTRAL;
 
+    public var isSustainNote:Bool = false;
+
+    public var prevNote:Note = null;
+    
+    public var parentNote:Note = null;
+
+    public var isSustainEnd:Bool = false;
+
     @:isVar public var hitOffset(get, never):Float;
     
     function get_hitOffset():Float
@@ -44,12 +54,26 @@ class Note extends FlxSpriteGroup
         return sprite.active && alive && strumTime < Conductor.songPosition + 175 && strumTime > Conductor.songPosition - 175;
     }
 
-    override public function new(type:ALECharacterType, noteData:Int, strumTime:Float, noteLength:Float, character:Character, strum:StrumNote)
+    var noteAnim(get, never):String;
+
+    function get_noteAnim():String
+    {    
+        return switch (noteData)
+        {
+            case 0: 'purple';
+            case 1: 'blue';
+            case 2: 'green';
+            case 3: 'red';
+            default: 'null';
+        }
+    }
+
+    override public function new(type:ALECharacterType, noteData:Int, strumTime:Float, noteLength:Float, character:Character, strum:StrumNote, ?isSustainNote:Bool = false, ?prevNote:Note = null, ?isSustainEnd:Bool = false)
     {
         super();
 
         this.noteData = noteData;
-
+        
         this.type = type;
 
         this.strumTime = strumTime;
@@ -59,26 +83,34 @@ class Note extends FlxSpriteGroup
         this.strum = strum;
 
         this.character = character;
+
+        this.isSustainNote = isSustainNote;
+
+        this.prevNote = prevNote;
+
+        this.isSustainEnd = isSustainEnd;
+
+        if (isSustainNote && prevNote != null)
+            this.parentNote = prevNote.isSustainNote ? prevNote.parentNote : prevNote;
         
         sprite = new FlxSprite();
         sprite.frames = Paths.getSparrowAtlas('notes/' + strum.texture);
 
-        sprite.animation.addByPrefix('idle', switch(noteData % 4)
-            {
-                case 0: 'purple0';
-                case 1: 'blue0';
-                case 2: 'green0';
-                case 3: 'red0';
-                default: null;
-            },
-        24, false);
-        
+        if (isSustainNote)
+        {
+            sprite.animation.addByPrefix('idle', noteAnim + (isSustainEnd ? ' hold end' : ' hold piece'), 24, false);
+            sprite.scale.x = 0.7;
+            sprite.scale.y = 1;
+        } else {
+            sprite.animation.addByPrefix('idle', noteAnim + '0', 24, false);
+            
+            sprite.scale.x = sprite.scale.y = 0.7;
+        }
+
         sprite.animation.play('idle');
 
         sprite.centerOffsets();
         sprite.centerOrigin();
-
-        sprite.scale.x = sprite.scale.y = 0.7;
 
         sprite.antialiasing = ClientPrefs.data.antialiasing;
         
@@ -132,7 +164,10 @@ class Note extends FlxSpriteGroup
         {
             angle = strum.angle;
             
-            scale = strum.scale;
+            if (!isSustainNote)
+                scale = strum.scale;
+
+            alpha = strum.alpha - (state == LOST ? 0.7 : isSustainNote ? 0.15 : 0);
 
             if ((x < FlxG.width && x > -sprite.width) || (distanceX < FlxG.width && distanceX > -sprite.width))
                 x = distanceX;
@@ -142,14 +177,14 @@ class Note extends FlxSpriteGroup
 
             sprite.active = visible = y < FlxG.height && y > -sprite.height && x < FlxG.width && x > -sprite.width;
 
-            if (Conductor.songPosition > strumTime && state == NEUTRAL && (type != PLAYER || strum.botplay))
+            if (Conductor.songPosition >= strumTime && state == NEUTRAL && (type != PLAYER || strum.botplay))
             {
                 hitFunction();
 
                 return;
             }
 
-            if (Conductor.songPosition > strumTime && !ableToHit && state == NEUTRAL && (!strum.botplay))
+            if (Conductor.songPosition >= strumTime && !ableToHit && state == NEUTRAL && !strum.botplay)
             {
                 loseFunction();
 
@@ -176,24 +211,41 @@ class Note extends FlxSpriteGroup
     {
         state = HIT;
 
-        strum.sprite.animation.play('hit', true);
+        if (!isSustainNote)
+        {
+            strum.sprite.animation.play('hit', true);
 
-        if (type == PLAYER && !strum.botplay)
-            strum.splash.animation.play('splash', true);
+            if (type == PLAYER && !strum.botplay)
+                strum.splash.animation.play('splash', true);
+
+            if (type != PLAYER || strum.botplay)
+            {
+                strum.sprite.animation.finishCallback = (name:String) -> {
+                    strum.sprite.animation.play('idle');
+                    strum.sprite.animation.finishCallback = null;
+                }
+            }
+            
+            kill();
+        } else {
+            strum.sprite.animation.play('hit', true);
+        }
 
         character.animation.play('sing' + charAnimName, true);
         character.idleTimer = 0;
-
-        kill();
     }
 
     public function loseFunction()
     {
         state = LOST;
-
+        
         character.animation.play('sing' + charAnimName + 'miss', true);
         character.idleTimer = 0;
 
-        sprite.active = false;
+        if (!isSustainNote)
+            sprite.active = false;
+        
+        if (isSustainNote)
+            kill();
     }
 }
