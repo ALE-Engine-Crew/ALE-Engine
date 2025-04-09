@@ -40,6 +40,8 @@
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
 
+	<haxelib name="ale-ui" />
+
 	<haxelib name="SScript" />
 
 	<haxelib name="linc_luajit" if="cpp" />

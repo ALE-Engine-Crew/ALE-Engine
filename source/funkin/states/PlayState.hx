@@ -7,6 +7,10 @@ import core.structures.*;
 import funkin.visuals.objects.StrumLine;
 import funkin.visuals.objects.Character;
 
+#if (mobile || desktop)
+import funkin.visuals.objects.StrumControl;
+#end
+
 import openfl.events.KeyboardEvent;
 
 class PlayState extends ScriptState
@@ -61,6 +65,8 @@ class PlayState extends ScriptState
 
     public var cameraZoom:Float = 1;
 
+    private var androidControlsCamera:FlxCamera;
+
     override function create()
     {
         super.create();
@@ -107,9 +113,26 @@ class PlayState extends ScriptState
 		FlxG.sound.list.add(voices);
 
 		FlxG.sound.music.time = voices.time = startPosition;
-		
+
+        /*
+        #if desktop
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
+        #elseif mobile
+        */
+
+		androidControlsCamera = new FlxCamera();
+		androidControlsCamera.bgColor = FlxColor.TRANSPARENT;
+		FlxG.cameras.add(androidControlsCamera, false);
+
+        for (i in 0...4)
+        {
+            var ctrl:StrumControl = new StrumControl(i, hitNote, releaseNote);
+            add(ctrl);
+            ctrl.cameras = [androidControlsCamera];
+        }
+
+        //#end
 
         callOnScripts('onCreatePost');
     }
@@ -146,9 +169,7 @@ class PlayState extends ScriptState
 		if (!allowedKeys.contains(event.keyCode))
 			return;
         
-		for (strumLine in strumLines)
-            if (strumLine.type == PLAYER)
-                strumLine.strums.members[allowedKeys.indexOf(event.keyCode)].sprite.animation.play('idle', true);
+        releaseNote(allowedKeys.indexOf(event.keyCode));
 
 		keyPressed.remove(event.keyCode);
 	}
@@ -173,6 +194,13 @@ class PlayState extends ScriptState
             }
 		}
 	}
+
+    function releaseNote(id:Int)
+    {
+		for (strumLine in strumLines)
+            if (strumLine.type == PLAYER)
+                strumLine.strums.members[id].sprite.animation.play('idle', true);
+    }
 
     private function spawnGrids()
     {

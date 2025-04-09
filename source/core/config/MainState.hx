@@ -16,5 +16,7 @@ class MainState extends MusicBeatState
 		CoolUtil.loadSong('bopeebo', 'hard');
 
         //MusicBeatState.switchState(new CustomState('introState'));
+
+        //MusicBeatState.switchState(new funkin.editors.CharacterEditorState());
     }
 }
