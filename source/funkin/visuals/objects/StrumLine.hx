@@ -18,7 +18,10 @@ class StrumLine extends FlxGroup
 
     public var notes:NoteGroup;
 
-    override public function new(sections:Null<Array<ALESection>>, type:ALECharacterType, character:Character)
+    private var defaultHitCallback:Note -> Void;
+    private var defaultLostCallback:Note -> Void;
+
+    override public function new(sections:Null<Array<ALESection>>, type:ALECharacterType, character:Character, defaultHitCallback:Note -> Void, defaultLostCallback:Note -> Void)
     {
         super();
 
@@ -28,6 +31,10 @@ class StrumLine extends FlxGroup
         this.type = type;
 
         this.character = character;
+
+        this.defaultHitCallback = defaultHitCallback;
+
+        this.defaultLostCallback = defaultLostCallback;
 
         strums = new FlxTypedGroup<StrumNote>();
         add(strums);
@@ -59,6 +66,8 @@ class StrumLine extends FlxGroup
 
                 // Crear nota principal
                 var note:Note = new Note(type, noteData, strumTime, 0, character, strum);
+                note.defaultHitCallback = defaultHitCallback;
+                note.defaultLostCallback = defaultLostCallback;
 
                 // Crear notas sustain si hay longitud
                 if (sustainLength > 0)

@@ -1,4 +1,4 @@
-package visuals.objects;
+package funkin.visuals.objects;
 
 import flixel.group.FlxGroup.FlxTypedGroup;
 

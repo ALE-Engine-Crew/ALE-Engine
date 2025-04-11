@@ -17,10 +17,10 @@ class MainState extends MusicBeatState
     
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 
-		CoolUtil.loadSong('bopeebo', 'hard');
+		CoolUtil.loadSong('stress', 'hard');
 
-        MusicBeatState.switchState(new CustomState('introState'));
+        //MusicBeatState.switchState(new CustomState('introState'));
 
-        MusicBeatState.switchState(new funkin.editors.CharacterEditorState());
+        //MusicBeatState.switchState(new funkin.editors.CharacterEditorState());
     }
 }

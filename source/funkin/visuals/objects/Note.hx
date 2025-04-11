@@ -40,6 +40,12 @@ class Note extends FlxSpriteGroup
 
     public var isSustainEnd:Bool = false;
 
+    public var defaultHitCallback:Note -> Void;
+    public var customHitCallback:Note -> Void;
+
+    public var defaultLostCallback:Note -> Void;
+    public var customLostCallback:Note -> Void;
+
     @:isVar public var hitOffset(get, never):Float;
     
     function get_hitOffset():Float
@@ -231,6 +237,12 @@ class Note extends FlxSpriteGroup
             strum.sprite.animation.play('hit', true);
         }
 
+        if (defaultHitCallback != null)
+            defaultHitCallback(this);
+
+        if (customLostCallback != null)
+            customHitCallback(this);
+
         character.animation.play('sing' + charAnimName, true);
         character.idleTimer = 0;
     }
@@ -241,6 +253,12 @@ class Note extends FlxSpriteGroup
         
         character.animation.play('sing' + charAnimName + 'miss', true);
         character.idleTimer = 0;
+
+        if (defaultLostCallback != null)
+            defaultLostCallback(this);
+        
+        if (customLostCallback != null)
+            customLostCallback(this);
 
         if (!isSustainNote)
             sprite.active = false;

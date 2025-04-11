@@ -6,6 +6,8 @@ import core.structures.*;
 
 import funkin.visuals.objects.StrumLine;
 import funkin.visuals.objects.Character;
+import funkin.visuals.objects.Bar;
+import funkin.visuals.objects.HealthIcon;
 
 #if mobile
 import funkin.visuals.objects.StrumControl;
@@ -48,6 +50,11 @@ class PlayState extends ScriptState
                 for (strum in strumLine.strums)
                     strum.botplay = botplay;
 
+		if (botplay)
+			scoreTxt.text = 'BOTPLAY';
+		else
+			scoreTxt.text = 'Disabled BOTPLAY';
+
         return botplay;
     }
 
@@ -68,6 +75,42 @@ class PlayState extends ScriptState
     #if mobile
     private var mobileControlsCamera:FlxCamera;
     #end
+
+	var opponentIcon:HealthIcon;
+	var playerIcon:HealthIcon;
+
+	public var health(default, set):Float = 50;
+
+	public function set_health(value:Float):Float
+	{
+		if (value > 100)
+			value = 100;
+
+		if (value < 0)
+			value = 0;
+
+		health = value;
+
+		if (iconsAnimationFunction != null)
+			iconsAnimationFunction();
+
+		return value;
+	}
+
+	public var iconsZoomingFunction:Void -> Void;
+	public var iconsZoomLerpFunction:Void -> Void;
+	public var iconsPositionFunction:Void -> Void;
+	public var iconsAnimationFunction:Void -> Void;
+
+    private var opponentIconName:String = '';
+    private var playerIconName:String = '';
+
+    private var opponentColor:FlxColor;
+    private var playerColor:FlxColor;
+
+	public var healthBar:Bar;
+
+	public var scoreTxt:FlxText;
 
     override function create()
     {
@@ -132,6 +175,101 @@ class PlayState extends ScriptState
             ctrl.cameras = [mobileControlsCamera];
         }
         #end
+
+		healthBar = new Bar(null, 650);
+		add(healthBar);
+		healthBar.cameras = [camHUD];
+		healthBar.x = FlxG.width / 2 - healthBar.width / 2;
+        healthBar.leftColor = opponentColor;
+        healthBar.rightColor = playerColor;
+
+		playerIcon = new HealthIcon(playerIconName);
+		add(playerIcon);
+		playerIcon.flipX = true;
+		playerIcon.cameras = [camHUD];
+		playerIcon.y = healthBar.y + healthBar.height / 2 - playerIcon.height / 2;
+
+		opponentIcon = new HealthIcon(opponentIconName);
+		add(opponentIcon);
+		opponentIcon.cameras = [camHUD];
+		opponentIcon.y = healthBar.y + healthBar.height / 2 - opponentIcon.height / 2;
+
+		scoreTxt = new FlxText(0, healthBar.y + healthBar.height + 20, FlxG.width, "", 16);
+		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, 'center');
+		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
+		scoreTxt.borderSize = 1;
+		scoreTxt.borderColor = FlxColor.BLACK;
+		scoreTxt.borderSize = 1.25;
+		add(scoreTxt);
+		scoreTxt.cameras = [camHUD];
+		scoreTxt.applyMarkup('Score: 0    Misses: 0    Rating: *[N/A]*', [new FlxTextFormatMarkerPair(new FlxTextFormat(CoolUtil.colorFromString('909090')), '*')]);
+
+        iconsZoomingFunction = () -> {
+            playerIcon.scale.set(1.2, 1.2);
+            playerIcon.updateHitbox();
+    
+            opponentIcon.scale.set(1.2, 1.2);
+            opponentIcon.updateHitbox();
+    
+            iconsPositionFunction();
+        }
+
+        iconsZoomLerpFunction = () -> {
+            playerIcon.scale.x = CoolUtil.fpsLerp(playerIcon.scale.x, 1, 0.33);
+            playerIcon.scale.y = CoolUtil.fpsLerp(playerIcon.scale.y, 1, 0.33);
+            playerIcon.updateHitbox();
+    
+            opponentIcon.scale.x = CoolUtil.fpsLerp(opponentIcon.scale.x, 1, 0.33);
+            opponentIcon.scale.y = CoolUtil.fpsLerp(opponentIcon.scale.y, 1, 0.33);
+            opponentIcon.updateHitbox();
+        }
+
+        iconsPositionFunction = () -> {
+            playerIcon.x = healthBar.x + healthBar.middlePoint - playerIcon.width / 10;
+    
+            opponentIcon.x = healthBar.x + healthBar.middlePoint - opponentIcon.width + opponentIcon.width / 10;
+        }
+
+		iconsAnimationFunction = () -> {
+			if (playerIcon != null && playerIcon.animation != null && playerIcon.animation.curAnim != null)
+			{
+				if (health < 20 && playerIcon.animation.curAnim.curFrame != 1)
+				{
+					playerIcon.animation.curAnim.curFrame = 1;
+
+					playerIcon.updateHitbox();
+				
+					playerIcon.y = healthBar.y + healthBar.height / 2 - playerIcon.height / 2;
+				}
+	
+				if (health >= 20 && playerIcon.animation.curAnim.curFrame != 0)
+				{
+					playerIcon.animation.curAnim.curFrame = 0;
+
+					playerIcon.updateHitbox();
+				
+					playerIcon.y = healthBar.y + healthBar.height / 2 - playerIcon.height / 2;
+				}
+			}
+	
+			if (opponentIcon != null && opponentIcon.animation != null && opponentIcon.animation.curAnim != null)
+			{
+				if (health > 80 && opponentIcon.animation.curAnim.curFrame != 1)
+				{
+					opponentIcon.animation.curAnim.curFrame = 1;
+
+					opponentIcon.y = healthBar.y + healthBar.height / 2 - opponentIcon.height / 2;
+				}
+	
+				if (health <= 80 && opponentIcon.animation.curAnim.curFrame != 0)
+				{
+					opponentIcon.animation.curAnim.curFrame = 0;
+					
+					opponentIcon.y = healthBar.y + healthBar.height / 2 - opponentIcon.height / 2;
+				}
+			}
+		};
+
 
         callOnScripts('onCreatePost');
     }
@@ -231,7 +369,17 @@ class PlayState extends ScriptState
                 }
             );
 
-            var strumLine:StrumLine = new StrumLine(grid.sections, grid.type, character);
+            var strumLine:StrumLine = new StrumLine(grid.sections, grid.type, character, function(_)
+                {
+                    if (grid.type == PLAYER)
+                        health += 2;
+                },
+                function (_)
+                {
+                    if (grid.type == PLAYER)
+                        health -= 2;
+                }
+            );
 
             for (index => section in grid.sections)
                 if (section.cameraFocusThis)
@@ -248,11 +396,25 @@ class PlayState extends ScriptState
                 case OPPONENT:
                     character.setPosition(STAGE.opponentsPosition[opponents.length][0], STAGE.opponentsPosition[opponents.length][1]);
 
+                    if (opponents.length == 0)
+                    {
+                        opponentIconName = character.icon;
+
+                        opponentColor = character.barColor;
+                    }
+
                     opponents.push(character);
                     
                     opponentStrums.push(strumLine);
                 case PLAYER:
                     character.setPosition(STAGE.playersPosition[players.length][0], STAGE.playersPosition[players.length][1]);
+
+                    if (players.length == 0)
+                    {
+                        playerIconName = character.icon;
+
+                        playerColor = character.barColor;
+                    }
 
                     players.push(character);
                     
@@ -300,6 +462,9 @@ class PlayState extends ScriptState
 
         setOnScripts('curBeat', curBeat);
         callOnScripts('onBeatHit');
+
+        if (iconsZoomingFunction != null)
+            iconsZoomingFunction();
 
         if (curBeat % 2 == 0)
         {
@@ -363,6 +528,14 @@ class PlayState extends ScriptState
             for (character in characters)
                 if (character.idleTimer < 60 / Conductor.bpm)
                     character.idleTimer += elapsed;
+
+        if (iconsZoomLerpFunction != null)
+            iconsZoomLerpFunction();
+
+        if (iconsPositionFunction != null)
+            iconsPositionFunction();
+		
+		healthBar.percent = CoolUtil.fpsLerp(healthBar.percent, 100 - health, 0.2);
 
         callOnScripts('onUpdatePost', [elapsed]);
     }
