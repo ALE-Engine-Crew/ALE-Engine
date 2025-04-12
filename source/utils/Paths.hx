@@ -6,6 +6,7 @@ import flixel.sound.FlxSound;
 import flixel.util.FlxColor;
 
 import openfl.display.BitmapData;
+import openfl.display3D.textures.RectangleTexture;
 
 import sys.FileSystem;
 import sys.io.File;
@@ -24,30 +25,78 @@ enum PathFolder
  */
 class Paths
 {
+	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
+    public static var localTrackedAssets:Array<String> = [];
+
     /**
      * Used to load a PNG image
      * @param file File Name
      * @return FlxGraphic
      */
-    public static inline function image(file:String):FlxGraphic
+    public static function image(file:String):FlxGraphic
     {
         var path = 'images/' + file + '.png';
 
-        if (!fileExists(path))
+        var bitmap:BitmapData = null;
+
+        if (currentTrackedAssets.exists(path))
         {
-            trace('Missing Image: ' + path);
-            return null;
+            localTrackedAssets.push(path);
+
+            return currentTrackedAssets.get(path);
+        } else if (fileExists(path)) {
+            bitmap = BitmapData.fromFile(getPath(path));
         }
 
-        var key = 'image:' + path;
+        if (bitmap != null)
+        {
+            var returnValue = cacheBitmap(path, bitmap);
 
-        var cached = FlxG.bitmap.get(key);
+            if (returnValue != null)
+                return returnValue;
+        }
 
-        if (cached != null)
-            return cached;
+        trace('Missing File: ' + path);
 
-        return FlxG.bitmap.add(getPath(path), false, key);
+        return null;
     }
+    
+	/**
+	 * Used to Cache Bitmaps
+     * (Taken from Psych Engine)
+	 * @param file File Name
+	 * @param bitmap Bitmap Data
+	 */
+	static public function cacheBitmap(file:String, ?bitmap:BitmapData = null)
+	{
+		if (bitmap == null)
+		{
+			if (FileSystem.exists(file))
+				bitmap = BitmapData.fromFile(file);
+            
+			if (bitmap == null)
+                return null;
+		}
+
+		if (ClientPrefs.data.cacheOnGPU)
+		{
+			var texture:RectangleTexture = FlxG.stage.context3D.createRectangleTexture(bitmap.width, bitmap.height, BGRA, true);
+			texture.uploadFromBitmapData(bitmap);
+
+			bitmap.image.data = null;
+			bitmap.dispose();
+			bitmap.disposeImage();
+			bitmap = BitmapData.fromTexture(texture);
+		}
+
+		var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, false, file);
+		newGraphic.persist = true;
+		newGraphic.destroyOnNoUse = false;
+        
+		currentTrackedAssets.set(file, newGraphic);
+
+		return newGraphic;
+	}
 
     /**
      * Used to load an .XML File
@@ -208,4 +257,23 @@ class Paths
 
     public static inline function modFolder():String
         return 'mods/' + Mods.folder;
+    
+    public static function clearEngineCache()
+    {
+		@:privateAccess
+		for (key in FlxG.bitmap._cache.keys())
+		{
+			var obj = FlxG.bitmap._cache.get(key);
+
+			if (obj != null && !currentTrackedAssets.exists(key))
+			{
+				FlxG.bitmap._cache.remove(key);
+
+				obj.destroy();
+			}
+		}
+
+        for (key in currentTrackedAssets.keys())
+            currentTrackedAssets.remove(key);
+    }
 }

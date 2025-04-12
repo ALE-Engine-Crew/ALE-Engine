@@ -113,7 +113,8 @@ class Note extends FlxSprite
 
 		flipY = isSustainEnd && ClientPrefs.data.downscroll;
 
-		y = FlxG.height;
+		y -= 2000;
+
 		visible = false;
 
 		antialiasing = ClientPrefs.data.antialiasing;
@@ -152,13 +153,13 @@ class Note extends FlxSprite
 
 			alpha = strum.alpha * (state == LOST ? 0.3 : isSustainNote ? 0.85 : 1);
 
-			if (distanceX < FlxG.width && distanceX > -width)
-				x = distanceX;
+            if ((x < FlxG.width && x > -width) || (distanceX < FlxG.width && distanceX > -width))
+                x = distanceX;
+            
+            if ((y < FlxG.height && y > -height) || (distanceY < FlxG.height && distanceY > -height))
+                y = distanceY;
 
-			if (distanceY < FlxG.height && distanceY > -height)
-				y = distanceY;
-
-			visible = y < FlxG.height && y > -height && x < FlxG.width && x > -width;
+            visible = y < FlxG.height && y > -height && x < FlxG.width && x > -width;
 
 			if (Conductor.songPosition >= strumTime && state == NEUTRAL && (type != PLAYER || strum.botplay))
 			{
@@ -192,10 +193,8 @@ class Note extends FlxSprite
 		{
 			strum.animation.play('hit', true);
 
-			/*
 			if (type == PLAYER && !strum.botplay)
 				strum.splash.animation.play('splash', true);
-			*/
 
 			if (type != PLAYER || strum.botplay)
 			{
@@ -206,9 +205,7 @@ class Note extends FlxSprite
 			}
 
 			kill();
-		}
-		else
-		{
+		} else {
 			strum.animation.play('hit', true);
 		}
 

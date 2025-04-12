@@ -529,7 +529,11 @@ class PlayState extends ScriptState
         camHUD.zoom = CoolUtil.fpsLerp(camHUD.zoom, 1, 0.1);
 
         if (FlxG.keys.justPressed.R)
+        {
+            shouldClearMemory = false;
+            
             FlxG.resetState();
+        }
 
         if (FlxG.keys.justPressed.B)
             botplay = !botplay;

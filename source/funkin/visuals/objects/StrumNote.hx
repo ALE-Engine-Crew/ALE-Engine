@@ -38,6 +38,8 @@ class StrumNote extends FlxSprite
 
 	public var texture(default, set):String = 'note';
 
+	public var splash:Splash;
+
 	public var direction:Float = 90;
 
 	var shaderRef:RGBShaderReference;

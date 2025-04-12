@@ -20,6 +20,8 @@ class StrumLine extends FlxGroup
 
     public var notes:FlxTypedGroup<Note>;
 
+    public var splashes:FlxTypedGroup<Splash>;
+
     private var defaultHitCallback:Note -> Void;
     private var defaultLostCallback:Note -> Void;
 
@@ -43,14 +45,23 @@ class StrumLine extends FlxGroup
         strums = new FlxTypedGroup<StrumNote>();
         add(strums);
 
+        notes = new FlxTypedGroup<Note>();
+        add(notes);
+
+        splashes = new FlxTypedGroup<Splash>();
+        add(splashes);
+
         for (i in 0...4)
         {
             var strum:StrumNote = new StrumNote(i, type);
             strums.add(strum);
-        }
 
-        notes = new FlxTypedGroup<Note>();
-        add(notes);
+            var splash:Splash = new Splash(i);
+            splashes.add(splash);
+            splash.strum = strum;
+
+            strum.splash = splash;
+        }
 
         spawnNotes();
     }

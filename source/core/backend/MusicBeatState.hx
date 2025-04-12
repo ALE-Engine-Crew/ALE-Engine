@@ -69,6 +69,8 @@ class MusicBeatState extends FlxState
         Sys.println(text);
     }
 
+    public var shouldClearMemory:Bool = true;
+
     override public function destroy()
     {
         instance = null;
@@ -77,7 +79,8 @@ class MusicBeatState extends FlxState
 
         debugTexts = null;
 
-        cleanMemory();
+        if (shouldClearMemory)
+            cleanMemory();
         
         super.destroy();
     }
@@ -137,6 +140,8 @@ class MusicBeatState extends FlxState
 
     private function cleanMemory()
     {
+        Paths.clearEngineCache();
+
         #if cpp
         var killZombies:Bool = true;
         

@@ -13,6 +13,8 @@ package core.config;
 	];
 
 	public var downscroll:Bool = false;
+
+	public var cacheOnGPU:Bool = true;
 }
 
 class ClientPrefs

@@ -143,7 +143,7 @@ class Character extends FlxSprite
             return {
                 animations: [],
 
-                image: 'bf',
+                image: 'characters/BOYFRIEND',
                 flipX: false,
                 antialiasing: true,
             
