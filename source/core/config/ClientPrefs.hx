@@ -11,6 +11,8 @@ package core.config;
 		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
 		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]
 	];
+
+	public var downscroll:Bool = false;
 }
 
 class ClientPrefs

@@ -21,6 +21,8 @@ class StrumLine extends FlxGroup
     private var defaultHitCallback:Note -> Void;
     private var defaultLostCallback:Note -> Void;
 
+    public var unspawnNotes:Array<Note> = [];
+
     override public function new(sections:Null<Array<ALESection>>, type:ALECharacterType, character:Character, defaultHitCallback:Note -> Void, defaultLostCallback:Note -> Void)
     {
         super();
@@ -64,12 +66,11 @@ class StrumLine extends FlxGroup
                 var sustainLength:Float = noteArray[2];
                 var strum:StrumNote = strums.members[noteData];
 
-                // Crear nota principal
                 var note:Note = new Note(type, noteData, strumTime, 0, character, strum);
                 note.defaultHitCallback = defaultHitCallback;
                 note.defaultLostCallback = defaultLostCallback;
+                unspawnNotes.push(note);
 
-                // Crear notas sustain si hay longitud
                 if (sustainLength > 0)
                 {
                     var prevNote:Note = note;
@@ -79,12 +80,34 @@ class StrumLine extends FlxGroup
                     {
                         var isEnd:Bool = i == steps - 1;
                         var sustainNote:Note = new Note(type, noteData, strumTime + (i + 1) * heightFactor, heightFactor, character, strum, true, prevNote, isEnd);
-                        notes.add(sustainNote);
+                        unspawnNotes.push(sustainNote);
                         prevNote = sustainNote;
                     }
                 }
-                
+            }
+        }
+    }
+
+    public var spawnTime:Float = 2000;
+
+    override function update(elapsed:Float)
+    {
+        super.update(elapsed);
+
+        if (unspawnNotes[0] != null)
+        {
+            var time:Float = spawnTime * PlayState.instance.scrollSpeed;
+
+            if (PlayState.instance.scrollSpeed < 1)
+                time /= PlayState.instance.scrollSpeed;
+
+            while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
+            {
+                var note:Note = unspawnNotes[0];
                 notes.add(note);
+                note.spawned = true;
+
+                unspawnNotes.splice(unspawnNotes.indexOf(note), 1);
             }
         }
     }

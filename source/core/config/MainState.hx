@@ -2,8 +2,6 @@ package core.config;
 
 import flixel.addons.display.FlxTiledSprite;
 
-//nosotros somos los calvin'
-
 /**
  * Used to configure and add the necessary elements before starting the game
  */
@@ -17,7 +15,7 @@ class MainState extends MusicBeatState
     
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 
-		CoolUtil.loadSong('stress', 'hard');
+		CoolUtil.loadSong('demise', 'normal');
 
         //MusicBeatState.switchState(new CustomState('introState'));
 

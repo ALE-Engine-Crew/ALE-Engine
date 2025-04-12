@@ -176,7 +176,7 @@ class PlayState extends ScriptState
         }
         #end
 
-		healthBar = new Bar(null, 650);
+		healthBar = new Bar(null, ClientPrefs.data.downscroll ? 75 : FlxG.height - 70);
 		add(healthBar);
 		healthBar.cameras = [camHUD];
 		healthBar.x = FlxG.width / 2 - healthBar.width / 2;
@@ -373,11 +373,19 @@ class PlayState extends ScriptState
                 {
                     if (grid.type == PLAYER)
                         health += 2;
+
+                    if (voices.volume != 1)
+                        voices.volume = 1;
                 },
                 function (_)
                 {
                     if (grid.type == PLAYER)
+                    {
                         health -= 2;
+
+                        if (voices.volume != 0)
+                            voices.volume = 0;
+                    }
                 }
             );
 
@@ -512,6 +520,8 @@ class PlayState extends ScriptState
     override function update(elapsed:Float)
     {
         super.update(elapsed);
+
+        scoreTxt.text = 'FPS: ' + (1 / FlxG.elapsed);
 
         callOnScripts('onUpdate', [elapsed]);
 

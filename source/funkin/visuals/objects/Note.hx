@@ -46,6 +46,8 @@ class Note extends FlxSpriteGroup
     public var defaultLostCallback:Note -> Void;
     public var customLostCallback:Note -> Void;
 
+    public var spawned:Bool = false;
+
     @:isVar public var hitOffset(get, never):Float;
     
     function get_hitOffset():Float
@@ -129,7 +131,11 @@ class Note extends FlxSpriteGroup
         shaderRef.g = shaderArray[1];
         shaderRef.b = shaderArray[2];
 
+        flipY = isSustainEnd && ClientPrefs.data.downscroll;
+
         y = FlxG.height;
+
+        visible = false;
 
         sprite.antialiasing = ClientPrefs.data.antialiasing;
     }   
@@ -145,7 +151,7 @@ class Note extends FlxSpriteGroup
     
     function get_distance():Float
     {
-        return 0.45 * (Conductor.songPosition - strumTime) * -strum.scrollSpeed;
+        return 0.45 * (Conductor.songPosition - strumTime) * strum.scrollSpeed * (ClientPrefs.data.downscroll ? 1 : -1);
     }
 
     public var distanceX(get, never):Float;
@@ -166,7 +172,7 @@ class Note extends FlxSpriteGroup
     {
         super.update(elapsed);
 
-        if (strum != null && sprite != null && state != HIT)
+        if (strum != null && sprite != null && state != HIT && spawned)
         {
             angle = strum.angle;
             
