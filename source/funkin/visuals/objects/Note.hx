@@ -14,262 +14,228 @@ import flixel.math.FlxRect;
 /**
  * It is an extension of FlxSprite that handles Notes
  */
-class Note extends FlxSpriteGroup
+class Note extends FlxSprite
 {   
-    public var noteData:Int;
+	public var noteData:Int;
+	public var type:ALECharacterType;
+	public var strumTime:Float;
+	public var strum:StrumNote;
+	public var character:Character;
+	public var state:NoteState = NEUTRAL;
+	public var isSustainNote:Bool = false;
+	public var prevNote:Note = null;
+	public var parentNote:Note = null;
+	public var isSustainEnd:Bool = false;
+	public var defaultHitCallback:Note -> Void;
+	public var customHitCallback:Note -> Void;
+	public var defaultLostCallback:Note -> Void;
+	public var customLostCallback:Note -> Void;
+	public var spawned:Bool = false;
 
-    public var type:ALECharacterType;
+	@:isVar public var hitOffset(get, never):Float;
+	function get_hitOffset():Float return 75 * strum.scrollSpeed;
 
-    public var strumTime:Float;
+	public var ableToHit(get, never):Bool;
+	function get_ableToHit():Bool
+		return alive && strumTime < Conductor.songPosition + 175 && strumTime > Conductor.songPosition - 175;
 
-    public var noteLength:Float;
+	var noteAnim(get, never):String;
+	function get_noteAnim():String
+		return switch (noteData) {
+			case 0: 'purple';
+			case 1: 'blue';
+			case 2: 'green';
+			case 3: 'red';
+			default: 'null';
+		};
 
-    public var strum:StrumNote;
+	public static var SUSTAIN_SIZE:Int = 44;
 
-    public var character:Character;
+	public function resizeByRatio(ratio:Float)
+	{
+		if (isSustainNote && animation.curAnim != null && !isSustainEnd)
+		{
+			scale.y *= ratio;
+			updateHitbox();
+		}
+	}
 
-    public var sprite:FlxSprite;
+	override public function new(type:ALECharacterType, noteData:Int, strumTime:Float, character:Character, strum:StrumNote, ?isSustainNote:Bool = false, ?prevNote:Note = null, ?isSustainEnd:Bool = false)
+	{
+		super();
 
-    public var state:NoteState = NEUTRAL;
+		this.noteData = noteData;
+		this.type = type;
+		this.strumTime = strumTime;
+		this.strum = strum;
+		this.character = character;
+		this.isSustainNote = isSustainNote;
+		this.prevNote = prevNote;
+		this.isSustainEnd = isSustainEnd;
 
-    public var isSustainNote:Bool = false;
+		if (isSustainNote && prevNote != null)
+			this.parentNote = prevNote.isSustainNote ? prevNote.parentNote : prevNote;
 
-    public var prevNote:Note = null;
-    
-    public var parentNote:Note = null;
+		frames = Paths.getSparrowAtlas('notes/' + strum.texture);
 
-    public var isSustainEnd:Bool = false;
+		if (isSustainNote)
+		{
+			animation.addByPrefix('idle', noteAnim + (isSustainEnd ? ' hold end' : ' hold piece'), 24, false);
+		}
+		else
+		{
+			animation.addByPrefix('idle', noteAnim + '0', 24, false);
+		}
 
-    public var defaultHitCallback:Note -> Void;
-    public var customHitCallback:Note -> Void;
+		animation.play('idle');
 
-    public var defaultLostCallback:Note -> Void;
-    public var customLostCallback:Note -> Void;
+		if (!isSustainNote)
+		{
+			centerOffsets();
+			centerOrigin();
+		}
 
-    public var spawned:Bool = false;
+		if (prevNote != null && prevNote.isSustainNote)
+		{
+			prevNote.animation.play('idle');
+			prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
+			prevNote.updateHitbox();
+		}
 
-    @:isVar public var hitOffset(get, never):Float;
-    
-    function get_hitOffset():Float
-    {
-        return 75 * strum.scrollSpeed;
-    }
+		antialiasing = ClientPrefs.data.antialiasing;
 
-    public var ableToHit(get, never):Bool;
+		var rgbPalette = new RGBPalette();
+		var shaderRef = new RGBShaderReference(this, rgbPalette);
+		var shaderArray:Array<FlxColor> = ClientPrefs.data.arrowRGB[noteData];
+		shaderRef.r = shaderArray[0];
+		shaderRef.g = shaderArray[1];
+		shaderRef.b = shaderArray[2];
 
-    function get_ableToHit():Bool
-    {
-        return sprite.active && alive && strumTime < Conductor.songPosition + 175 && strumTime > Conductor.songPosition - 175;
-    }
+		flipY = isSustainEnd && ClientPrefs.data.downscroll;
 
-    var noteAnim(get, never):String;
+		y = FlxG.height;
+		visible = false;
 
-    function get_noteAnim():String
-    {    
-        return switch (noteData)
-        {
-            case 0: 'purple';
-            case 1: 'blue';
-            case 2: 'green';
-            case 3: 'red';
-            default: 'null';
-        }
-    }
-
-    override public function new(type:ALECharacterType, noteData:Int, strumTime:Float, noteLength:Float, character:Character, strum:StrumNote, ?isSustainNote:Bool = false, ?prevNote:Note = null, ?isSustainEnd:Bool = false)
-    {
-        super();
-
-        this.noteData = noteData;
+		antialiasing = ClientPrefs.data.antialiasing;
         
-        this.type = type;
+        scale.x = scale.y = 0.7;
 
-        this.strumTime = strumTime;
+        updateHitbox();
+	}
 
-        this.noteLength = noteLength;
+	public var direction(get, never):Float;
+	function get_direction():Float return strum == null ? 90 : strum.direction * Math.PI / 180;
 
-        this.strum = strum;
+	public var distance(get, never):Float;
+	function get_distance():Float return 0.45 * (Conductor.songPosition - strumTime) * strum.scrollSpeed * (ClientPrefs.data.downscroll ? 1 : -1);
 
-        this.character = character;
+	public var distanceX(get, never):Float;
+	function get_distanceX():Float
+		return strum == null ? 0 : strum.x + strum.width / 2 - width / 2 + Math.cos(direction) * distance;
 
-        this.isSustainNote = isSustainNote;
+	public var distanceY(get, never):Float;
+	function get_distanceY():Float
+		return strum == null ? 0 : strum.y + Math.sin(direction) * distance;
 
-        this.prevNote = prevNote;
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
 
-        this.isSustainEnd = isSustainEnd;
+		if (strum != null && state != HIT && spawned)
+		{
+			angle = strum.angle;
 
-        if (isSustainNote && prevNote != null)
-            this.parentNote = prevNote.isSustainNote ? prevNote.parentNote : prevNote;
-        
-        sprite = new FlxSprite();
-        sprite.frames = Paths.getSparrowAtlas('notes/' + strum.texture);
+            scale.x = strum.scale.x;
 
-        if (isSustainNote)
-        {
-            sprite.animation.addByPrefix('idle', noteAnim + (isSustainEnd ? ' hold end' : ' hold piece'), 24, false);
-            sprite.scale.x = 0.7;
-            sprite.scale.y = 1;
-        } else {
-            sprite.animation.addByPrefix('idle', noteAnim + '0', 24, false);
-            
-            sprite.scale.x = sprite.scale.y = 0.7;
-        }
-
-        sprite.animation.play('idle');
-
-        sprite.centerOffsets();
-        sprite.centerOrigin();
-
-        sprite.antialiasing = ClientPrefs.data.antialiasing;
-        
-        add(sprite);
-
-        var rgbPalette = new RGBPalette();
-        var shaderRef = new RGBShaderReference(sprite, rgbPalette);
-        var shaderArray:Array<FlxColor> = ClientPrefs.data.arrowRGB[noteData];
-        shaderRef.r = shaderArray[0];
-        shaderRef.g = shaderArray[1];
-        shaderRef.b = shaderArray[2];
-
-        flipY = isSustainEnd && ClientPrefs.data.downscroll;
-
-        y = FlxG.height;
-
-        visible = false;
-
-        sprite.antialiasing = ClientPrefs.data.antialiasing;
-    }   
-
-    public var direction(get, never):Float;
-
-    function get_direction():Float
-    {
-        return strum == null ? 90 : strum.direction * Math.PI / 180;
-    }
-
-    public var distance(get, never):Float;
-    
-    function get_distance():Float
-    {
-        return 0.45 * (Conductor.songPosition - strumTime) * strum.scrollSpeed * (ClientPrefs.data.downscroll ? 1 : -1);
-    }
-
-    public var distanceX(get, never):Float;
-
-    function get_distanceX():Float
-    {
-        return strum == null ? 0 : strum.x + strum.sprite.width / 2 - sprite.width / 2 + Math.cos(direction) * distance;
-    }
-
-    public var distanceY(get, never):Float;
-
-    function get_distanceY():Float
-    {
-        return strum == null ? 0 : strum.y + Math.sin(direction) * distance;
-    }
-
-    override function update(elapsed:Float)
-    {
-        super.update(elapsed);
-
-        if (strum != null && sprite != null && state != HIT && spawned)
-        {
-            angle = strum.angle;
-            
             if (!isSustainNote)
-                scale = strum.scale;
+                scale.y = strum.scale.y;
 
-            alpha = strum.alpha - (state == LOST ? 0.7 : isSustainNote ? 0.15 : 0);
+			alpha = strum.alpha * (state == LOST ? 0.3 : isSustainNote ? 0.85 : 1);
 
-            if ((x < FlxG.width && x > -sprite.width) || (distanceX < FlxG.width && distanceX > -sprite.width))
-                x = distanceX;
-            
-            if ((y < FlxG.height && y > -sprite.height) || (distanceY < FlxG.height && distanceY > -sprite.height))
-                y = distanceY;
+			if (distanceX < FlxG.width && distanceX > -width)
+				x = distanceX;
 
-            sprite.active = visible = y < FlxG.height && y > -sprite.height && x < FlxG.width && x > -sprite.width;
+			if (distanceY < FlxG.height && distanceY > -height)
+				y = distanceY;
 
-            if (Conductor.songPosition >= strumTime && state == NEUTRAL && (type != PLAYER || strum.botplay))
-            {
-                hitFunction();
+			visible = y < FlxG.height && y > -height && x < FlxG.width && x > -width;
 
-                return;
-            }
+			if (Conductor.songPosition >= strumTime && state == NEUTRAL && (type != PLAYER || strum.botplay))
+			{
+				hitFunction();
+				return;
+			}
 
-            if (Conductor.songPosition >= strumTime && !ableToHit && state == NEUTRAL && !strum.botplay)
-            {
-                loseFunction();
+			if (Conductor.songPosition >= strumTime && !ableToHit && state == NEUTRAL && !strum.botplay)
+			{
+				loseFunction();
+				return;
+			}
+		}
+	}
 
-                return;
-            }
-        }
-    }
+	var charAnimName(get, never):String;
+	function get_charAnimName():String
+		return switch (noteData) {
+			case 0: 'LEFT';
+			case 1: 'DOWN';
+			case 2: 'UP';
+			case 3: 'RIGHT';
+			default: 'NULL';
+		};
 
-    var charAnimName(get, never):String;
+	public function hitFunction()
+	{
+		state = HIT;
 
-    function get_charAnimName():String
-    {    
-        return switch (noteData)
-        {
-            case 0: 'LEFT';
-            case 1: 'DOWN';
-            case 2: 'UP';
-            case 3: 'RIGHT';
-            default: 'NULL';
-        }
-    }
+		if (!isSustainNote)
+		{
+			strum.animation.play('hit', true);
 
-    public function hitFunction()
-    {
-        state = HIT;
+			/*
+			if (type == PLAYER && !strum.botplay)
+				strum.splash.animation.play('splash', true);
+			*/
 
-        if (!isSustainNote)
-        {
-            strum.sprite.animation.play('hit', true);
+			if (type != PLAYER || strum.botplay)
+			{
+				strum.animation.finishCallback = (name:String) -> {
+					strum.animation.play('idle');
+					strum.animation.finishCallback = null;
+				}
+			}
 
-            if (type == PLAYER && !strum.botplay)
-                strum.splash.animation.play('splash', true);
+			kill();
+		}
+		else
+		{
+			strum.animation.play('hit', true);
+		}
 
-            if (type != PLAYER || strum.botplay)
-            {
-                strum.sprite.animation.finishCallback = (name:String) -> {
-                    strum.sprite.animation.play('idle');
-                    strum.sprite.animation.finishCallback = null;
-                }
-            }
-            
-            kill();
-        } else {
-            strum.sprite.animation.play('hit', true);
-        }
+		if (defaultHitCallback != null)
+			defaultHitCallback(this);
 
-        if (defaultHitCallback != null)
-            defaultHitCallback(this);
+		if (customHitCallback != null)
+			customHitCallback(this);
 
-        if (customLostCallback != null)
-            customHitCallback(this);
+		character.animation.play('sing' + charAnimName, true);
+		character.idleTimer = 0;
+	}
 
-        character.animation.play('sing' + charAnimName, true);
-        character.idleTimer = 0;
-    }
+	public function loseFunction()
+	{
+		state = LOST;
 
-    public function loseFunction()
-    {
-        state = LOST;
-        
-        character.animation.play('sing' + charAnimName + 'miss', true);
-        character.idleTimer = 0;
+		character.animation.play('sing' + charAnimName + 'miss', true);
+		character.idleTimer = 0;
 
-        if (defaultLostCallback != null)
-            defaultLostCallback(this);
-        
-        if (customLostCallback != null)
-            customLostCallback(this);
+		if (defaultLostCallback != null)
+			defaultLostCallback(this);
 
-        if (!isSustainNote)
-            sprite.active = false;
-        
-        if (isSustainNote)
-            kill();
-    }
+		if (customLostCallback != null)
+			customLostCallback(this);
+
+		if (isSustainNote)
+			kill();
+	}
 }

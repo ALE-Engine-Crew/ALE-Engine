@@ -7,6 +7,14 @@ class Conductor
 {
     public static var bpm:Float = 100;
 
+    public static var crochet(get, never):Float;
+    static function get_crochet()
+        return (60 / bpm) * 1000;
+
+    public static var stepCrochet(get, never):Float;
+    static function get_stepCrochet():Float
+        return crochet / 4;
+
     public static var songLength(get, never):Float;
 
     private static function get_songLength():Float

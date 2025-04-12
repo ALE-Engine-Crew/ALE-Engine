@@ -327,7 +327,7 @@ class PlayState extends ScriptState
                     }
                 }
 
-                strumLine.strums.members[id].sprite.animation.play('pressed', true);
+                strumLine.strums.members[id].animation.play('pressed', true);
             }
 		}
 	}
@@ -336,7 +336,7 @@ class PlayState extends ScriptState
     {
 		for (strumLine in strumLines)
             if (strumLine.type == PLAYER)
-                strumLine.strums.members[id].sprite.animation.play('idle', true);
+                strumLine.strums.members[id].animation.play('idle', true);
     }
 
     private function spawnGrids()

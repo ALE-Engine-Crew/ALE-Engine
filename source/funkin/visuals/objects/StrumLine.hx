@@ -6,6 +6,8 @@ import core.enums.ALECharacterType;
 
 import core.structures.ALESection;
 
+import flixel.util.FlxSort;
+
 class StrumLine extends FlxGroup
 {
     public var sections:Array<ALESection> = [];
@@ -16,7 +18,7 @@ class StrumLine extends FlxGroup
 
     public var strums:FlxTypedGroup<StrumNote>;
 
-    public var notes:NoteGroup;
+    public var notes:FlxTypedGroup<Note>;
 
     private var defaultHitCallback:Note -> Void;
     private var defaultLostCallback:Note -> Void;
@@ -47,16 +49,16 @@ class StrumLine extends FlxGroup
             strums.add(strum);
         }
 
-        notes = new NoteGroup();
+        notes = new FlxTypedGroup<Note>();
         add(notes);
 
         spawnNotes();
     }
 
+    var daBpm:Float = PlayState.SONG.bpm;
+
     private function spawnNotes()
     {
-        var heightFactor:Float = 75;
-
         for (section in sections)
         {
             for (noteArray in section.notes)
@@ -66,27 +68,39 @@ class StrumLine extends FlxGroup
                 var sustainLength:Float = noteArray[2];
                 var strum:StrumNote = strums.members[noteData];
 
-                var note:Note = new Note(type, noteData, strumTime, 0, character, strum);
+                var note:Note = new Note(type, noteData, strumTime, character, strum);
                 note.defaultHitCallback = defaultHitCallback;
                 note.defaultLostCallback = defaultLostCallback;
                 unspawnNotes.push(note);
 
-                if (sustainLength > 0)
+                var curStepCrochet:Float = 60 / daBpm * 1000 / 4;
+
+                final roundSustain:Int = Math.round(sustainLength / Conductor.stepCrochet);
+
+                if (roundSustain > 0)
                 {
                     var prevNote:Note = note;
-                    var steps:Int = Math.floor(sustainLength / heightFactor);
-
-                    for (i in 0...steps)
+                    
+                    for (i in 0...roundSustain)
                     {
-                        var isEnd:Bool = i == steps - 1;
-                        var sustainNote:Note = new Note(type, noteData, strumTime + (i + 1) * heightFactor, heightFactor, character, strum, true, prevNote, isEnd);
+                        var isEnd:Bool = i == roundSustain - 1;
+
+                        var sustainNote:Note = new Note(type, noteData, strumTime + (curStepCrochet * i), character, strum, true, prevNote, isEnd);
                         unspawnNotes.push(sustainNote);
                         prevNote = sustainNote;
+
+                        if (prevNote.isSustainNote)
+                            prevNote.resizeByRatio(curStepCrochet / Conductor.stepCrochet);
                     }
                 }
             }
         }
+
+        unspawnNotes.sort(sortByTime);
     }
+    
+	function sortByTime(Obj1:Dynamic, Obj2:Dynamic):Int
+		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.strumTime, Obj2.strumTime);
 
     public var spawnTime:Float = 2000;
 
@@ -96,7 +110,7 @@ class StrumLine extends FlxGroup
 
         if (unspawnNotes[0] != null)
         {
-            var time:Float = spawnTime * PlayState.instance.scrollSpeed;
+            var time:Float = spawnTime;
 
             if (PlayState.instance.scrollSpeed < 1)
                 time /= PlayState.instance.scrollSpeed;
