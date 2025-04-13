@@ -301,7 +301,7 @@ class PlayState extends ScriptState
 
     private function loadVoice(?prefix:String = ''):FlxSound
     {
-        if (Paths.voices(prefix) == null)
+        if (Paths.voices(prefix) == null || !SONG.needsVoices)
             return null;
         
         var sound:FlxSound = new FlxSound();
@@ -497,6 +497,36 @@ class PlayState extends ScriptState
 
         playerStrums = [];
     }
+	
+	override function stepHit()
+	{
+		super.stepHit();
+
+		if (SONG.needsVoices /* && FlxG.sound.music.time >= -ClientPrefs.data.noteOffset*/)
+			resyncVoices();
+
+		callOnScripts('onStepHit');
+		setOnScripts('curStep', curStep);
+	}
+
+	private function resyncVoices():Void
+	{
+		var timeSub:Float = Conductor.songPosition /*- Conductor.offset*/;
+		var syncTime:Float = 10 /* * playbackRate*/;
+
+        for (voice in voices)
+        {
+            if (Math.abs(FlxG.sound.music.time - timeSub) > syncTime || (voice.length > 0 && Math.abs(voice.time - timeSub) > syncTime))
+            {
+                voice.pause();
+        
+                if (Conductor.songPosition <= voice.length)
+                    voice.time = Conductor.songPosition;
+        
+                voice.play();
+            }
+        }
+	}
 
     override function beatHit()
     {
