@@ -149,7 +149,7 @@ class PlayState extends ScriptState
 
 		FlxG.sound.playMusic(Paths.inst());
         FlxG.sound.music.pause();
-
+        FlxG.sound.music.looped = false;
 		FlxG.sound.music.volume = 0.6;
 
 		voices = new FlxTypedGroup<FlxSound>();
@@ -306,6 +306,8 @@ class PlayState extends ScriptState
         
         var sound:FlxSound = new FlxSound();
         sound.loadEmbedded(Paths.voices(prefix));
+        sound.looped = false;
+
         voices.add(sound);
 
 		FlxG.sound.list.add(sound);
