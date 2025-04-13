@@ -122,7 +122,7 @@ class Paths
 
         if (sound != null)
         {
-            var returnValue = cacheSound(file, sound);
+            var returnValue = cacheSound(path, sound);
 
             if (returnValue != null)
                 return returnValue;
@@ -260,5 +260,8 @@ class Paths
 
         for (key in cachedGraphics.keys())
             cachedGraphics.remove(key);
+
+        for (key in cachedSounds.keys())
+            cachedSounds.remove(key);
     }
 }

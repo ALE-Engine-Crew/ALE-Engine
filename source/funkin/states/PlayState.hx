@@ -597,6 +597,11 @@ class PlayState extends ScriptState
         if (FlxG.keys.justPressed.R)
         {
             shouldClearMemory = false;
+
+            FlxG.sound.music.pause();
+
+            for (voice in voices)
+                voice.pause();
             
             FlxG.resetState();
         }
