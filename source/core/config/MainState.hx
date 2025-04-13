@@ -15,9 +15,9 @@ class MainState extends MusicBeatState
     
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 
-        core.backend.Mods.folder = 'REF';
+        core.backend.Mods.folder = 'devMod';
 
-		CoolUtil.loadSong('Refreshed', 'normal');
+		CoolUtil.loadSong('stress', 'hard');
 
         //MusicBeatState.switchState(new CustomState('introState'));
 
