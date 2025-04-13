@@ -1,5 +1,9 @@
 package utils;
 
+import core.enums.PathType;
+
+import haxe.ds.StringMap;
+
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.FlxGraphic;
 import flixel.sound.FlxSound;
@@ -13,20 +17,19 @@ import sys.io.File;
 
 import core.backend.Mods;
 
-enum PathFolder
-{
-    ASSETS;
-    MODS;
-    BOTH;
-}
+import flash.media.Sound;
 
 /**
  * Serves to assist with file loading
  */
 class Paths
 {
-	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
-    public static var localTrackedAssets:Array<String> = [];
+    inline public static var IMAGE_EXT = 'png';
+	inline public static var SOUND_EXT = #if web 'mp3' #else 'ogg' #end;
+	inline public static var VIDEO_EXT = 'mp4';
+
+	public static var cachedGraphics:StringMap<FlxGraphic> = new StringMap<FlxGraphic>();
+    public static var cachedSounds:StringMap<Sound> = new StringMap<Sound>();
 
     /**
      * Used to load a PNG image
@@ -35,18 +38,14 @@ class Paths
      */
     public static function image(file:String):FlxGraphic
     {
-        var path = 'images/' + file + '.png';
+        var path = 'images/' + file + '.' + IMAGE_EXT;
 
         var bitmap:BitmapData = null;
 
-        if (currentTrackedAssets.exists(path))
-        {
-            localTrackedAssets.push(path);
-
-            return currentTrackedAssets.get(path);
-        } else if (fileExists(path)) {
+        if (cachedGraphics.exists(path))
+            return cachedGraphics.get(path);
+        else if (fileExists(path))
             bitmap = BitmapData.fromFile(getPath(path));
-        }
 
         if (bitmap != null)
         {
@@ -67,7 +66,7 @@ class Paths
 	 * @param file File Name
 	 * @param bitmap Bitmap Data
 	 */
-	static public function cacheBitmap(file:String, ?bitmap:BitmapData = null)
+	static public function cacheBitmap(file:String, ?bitmap:BitmapData = null):FlxGraphic
 	{
 		if (bitmap == null)
 		{
@@ -93,10 +92,62 @@ class Paths
 		newGraphic.persist = true;
 		newGraphic.destroyOnNoUse = false;
         
-		currentTrackedAssets.set(file, newGraphic);
+		cachedGraphics.set(file, newGraphic);
 
 		return newGraphic;
 	}
+
+    public static function inst():Sound
+        return returnSound(PlayState.songRoute + '/song/Inst');
+
+    public static function voices(?prefix:String = ''):Sound
+        return returnSound(PlayState.songRoute + '/song/' + prefix + 'Voices');
+
+    public static function music(file:String):Sound
+        return returnSound('music/' + file);
+
+    public static function sound(file:String):Sound
+        return returnSound('sounds/' + file);
+
+    private static function returnSound(file:String):Sound
+    {
+        var path = file + '.' + SOUND_EXT;
+
+        var sound:Sound = null;
+
+        if (cachedSounds.exists(path))
+            return cachedSounds.get(path);
+        else if (fileExists(path))
+            sound = Sound.fromFile(getPath(path));
+
+        if (sound != null)
+        {
+            var returnValue = cacheSound(file, sound);
+
+            if (returnValue != null)
+                return returnValue;
+        }
+
+        trace('Missing File: ' + path);
+
+        return null;
+    }
+
+    public static function cacheSound(file:String, ?sound:Sound = null):Sound
+    {
+        if (sound == null)
+        {
+            if (FileSystem.exists(file))
+                sound = Sound.fromFile(file);
+
+            if (sound == null)
+                return null;
+        }
+
+        cachedSounds.set(file, sound);
+
+        return sound;
+    }
 
     /**
      * Used to load an .XML File
@@ -151,72 +202,6 @@ class Paths
     }
 
     /**
-     * Used to load a sound located in the "music" folder
-     * @param file 
-     * @return FlxSound
-     */
-    public static function music(file:String):FlxSound
-    {
-        var path = 'music/' + file + '.ogg';
-
-        if (!fileExists(path))
-        {
-            trace('Missing Music: ' + path);
-            return null;
-        }
-
-        return FlxG.sound.load(getPath(path));
-    }
-
-    /**
-     * Used to a sound located in the "sounds" folder
-     * @param file 
-     * @return FlxSound
-     */
-    public static function sound(file:String):FlxSound
-    {
-        var path = 'sounds/' + file + '.ogg';
-
-        if (!fileExists(path))
-        {
-            trace('Missing Sound: ' + path);
-            return null;
-        }
-
-        return FlxG.sound.load(getPath(path));
-    }
-
-    /**
-     * Used to load the Instrumental of a song
-     * @param song Song Name
-     * @return FlxSound
-     */
-    public static function inst():FlxSound
-    {
-        if (fileExists(PlayState.songRoute + '/song/Inst.ogg'))
-            return FlxG.sound.load(getPath(PlayState.songRoute + '/song/Inst.ogg'));
-        
-        trace('Missing File: ' + PlayState.songRoute + '/song/Inst.ogg');
-
-        return null;
-    }
-
-    /**
-     * Used to the Vocals of a song
-     * @param song Song Name
-     * @return FlxSound
-     */
-    public static function voices():FlxSound
-    {
-        if (fileExists(PlayState.songRoute + '/song/Voices.ogg'))
-            return FlxG.sound.load(getPath(PlayState.songRoute + '/song/Voices.ogg'));
-
-        trace('Missing File: ' + PlayState.songRoute + '/song/Voices.ogg');
-
-        return null;
-    }
-
-    /**
      * Defines where the files should be searched
      * @param file File Path
      * @return String
@@ -242,7 +227,7 @@ class Paths
      * @param pathMode ASSETS | MODS | BOTH
      * @return Bool
      */
-    public static inline function fileExists(path:String, ?pathMode:PathFolder = BOTH):Bool
+    public static inline function fileExists(path:String, ?pathMode:PathType = BOTH):Bool
     {
         #if MODS_ALLOWED
         if (FileSystem.exists(modFolder() + '/' + path) && (pathMode == MODS || pathMode == BOTH))
@@ -265,7 +250,7 @@ class Paths
 		{
 			var obj = FlxG.bitmap._cache.get(key);
 
-			if (obj != null && !currentTrackedAssets.exists(key))
+			if (obj != null && !cachedGraphics.exists(key))
 			{
 				FlxG.bitmap._cache.remove(key);
 
@@ -273,7 +258,7 @@ class Paths
 			}
 		}
 
-        for (key in currentTrackedAssets.keys())
-            currentTrackedAssets.remove(key);
+        for (key in cachedGraphics.keys())
+            cachedGraphics.remove(key);
     }
 }

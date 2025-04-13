@@ -58,7 +58,7 @@ class PlayState extends ScriptState
         return botplay;
     }
 
-    public var voices:FlxSound;
+    public var voices:FlxTypedGroup<FlxSound>;
 
     public var strumLines:FlxTypedGroup<StrumLine>;
 
@@ -147,17 +147,42 @@ class PlayState extends ScriptState
 
         moveCamera();
 
-		FlxG.sound.music = Paths.inst();
-		FlxG.sound.music.play();
+		FlxG.sound.playMusic(Paths.inst());
+        FlxG.sound.music.pause();
 
 		FlxG.sound.music.volume = 0.6;
 
-		voices = Paths.voices();
-		voices.play();
+		voices = new FlxTypedGroup<FlxSound>();
 
-		FlxG.sound.list.add(voices);
+        loadVoice();
+        
+        var playerVoices:FlxSound = loadVoice('Player');
+        if (playerVoices != null)
+            for (player in characters)
+                if (player.type == PLAYER)
+                    player.voice = playerVoices;
+        
+        var extraVoices:FlxSound = loadVoice('Extra');
+        if (extraVoices != null)
+            for (player in characters)
+                if (player.type == EXTRA)
+                    player.voice = extraVoices;
+        
+        var opponentVoices:FlxSound = loadVoice('Opponent');
+        if (opponentVoices != null)
+            for (player in characters)
+                if (player.type == OPPONENT)
+                    player.voice = opponentVoices;
 
-		FlxG.sound.music.time = voices.time = startPosition;
+		FlxG.sound.music.time = startPosition;
+
+        for (voice in voices)
+            voice.time = startPosition;
+
+        FlxG.sound.music.play();
+        
+        for (voice in voices)
+            voice.play();
 
         #if desktop
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
@@ -274,6 +299,20 @@ class PlayState extends ScriptState
         callOnScripts('onCreatePost');
     }
 
+    private function loadVoice(?prefix:String = ''):FlxSound
+    {
+        if (Paths.voices(prefix) == null)
+            return null;
+        
+        var sound:FlxSound = new FlxSound();
+        sound.loadEmbedded(Paths.voices(prefix));
+        voices.add(sound);
+
+		FlxG.sound.list.add(sound);
+
+        return sound;
+    }
+
 	var keyPressed:Array<Int> = [];
 
 	function onKeyPress(event:KeyboardEvent)
@@ -369,23 +408,18 @@ class PlayState extends ScriptState
                 }
             );
 
+            if (character.voicePrefix != null && character.voicePrefix.split(' ').join('') != '')
+                character.voice = loadVoice(character.voicePrefix);
+
             var strumLine:StrumLine = new StrumLine(grid.sections, grid.type, character, function(_)
                 {
                     if (grid.type == PLAYER)
                         health += 2;
-
-                    if (voices.volume != 1)
-                        voices.volume = 1;
                 },
                 function (_)
                 {
                     if (grid.type == PLAYER)
-                    {
                         health -= 2;
-
-                        if (voices.volume != 0)
-                            voices.volume = 0;
-                    }
                 }
             );
 
@@ -561,7 +595,9 @@ class PlayState extends ScriptState
         callOnScripts('onFocus');
 
         FlxG.sound.music.play();
-        voices.play();
+
+        for (voice in voices)
+            voice.play();
     }
 
     override public function onFocusLost()
@@ -571,7 +607,9 @@ class PlayState extends ScriptState
         callOnScripts('onFocusLost');
 
         FlxG.sound.music.pause();
-        voices.pause();
+
+        for (voice in voices)
+            voice.pause();
     }
 
     override public function destroy()

@@ -193,21 +193,32 @@ class CoolUtil
 		
 		difficulty = formatSongPath(difficulty);
 
-		for (folder in FileSystem.readDirectory('assets/songs'))
+		var parentFolders:Array<String> = [Paths.modFolder(), 'assets'];
+
+		for (parentFolder in parentFolders)
 		{
-			if (name == formatSongPath(folder))
+			if (FileSystem.exists(parentFolder + '/songs') && FileSystem.isDirectory(parentFolder + '/songs'))
 			{
-				if (Paths.fileExists('songs/' + folder + '/charts/' + difficulty + '.json'))
+				for (folder in FileSystem.readDirectory(parentFolder + '/songs'))
 				{
-					jsonData = Json.parse(sys.io.File.getContent(Paths.getPath('songs/' + folder + '/charts/' + difficulty + '.json')));
-
-					PlayState.songRoute = 'songs/' + folder;
-				} else {
-					MusicBeatState.instance.debugPrint('Missing File: songs/' + folder + '/charts/' + difficulty + '.json', FlxColor.RED);
-
-					return;
+					if (name == formatSongPath(folder))
+					{
+						if (FileSystem.exists(parentFolder + '/songs/' + folder + '/charts/' + difficulty + '.json'))
+						{
+							jsonData = Json.parse(sys.io.File.getContent(parentFolder + '/songs/' + folder + '/charts/' + difficulty + '.json'));
+		
+							PlayState.songRoute = 'songs/' + folder;
+						}
+					}
 				}
 			}
+		}
+
+		if (jsonData == null || Reflect.fields(jsonData).length <= 0)
+		{
+			trace('Missing File: songs/' + name + '/charts/' + difficulty + '.json');
+
+			return;
 		}
 
 		PlayState.SONG = returnALEJson(jsonData);

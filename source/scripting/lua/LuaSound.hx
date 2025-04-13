@@ -8,7 +8,8 @@ class LuaSound extends LuaPresetBase
 
         set('newSound', function(tag:String, sound:String)
             {
-                var soundObj:FlxSound = Paths.sound(sound);
+                var soundObj:FlxSound = new FlxSound();
+                soundObj.loadEmbedded(Paths.sound(sound));
                 FlxG.sound.list.add(soundObj);
 
                 setTag(tag, soundObj);
@@ -38,7 +39,7 @@ class LuaSound extends LuaPresetBase
         
         set('playMusic', function(sound:String)
             {
-                FlxG.sound.music = Paths.music(sound);
+                FlxG.sound.playMusic(Paths.music(sound));
             }
         );
 

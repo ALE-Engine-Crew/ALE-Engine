@@ -217,6 +217,9 @@ class Note extends FlxSprite
 
 		character.animation.play('sing' + charAnimName, true);
 		character.idleTimer = 0;
+
+		if (character.voice != null && character.voice.volume != 1)
+			character.voice.volume = 1;
 	}
 
 	public function loseFunction()
@@ -234,5 +237,8 @@ class Note extends FlxSprite
 
 		if (isSustainNote)
 			kill();
+
+		if (character.voice != null && character.voice.volume != 0)
+			character.voice.volume = 0;
 	}
 }

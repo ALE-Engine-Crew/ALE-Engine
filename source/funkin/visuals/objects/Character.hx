@@ -32,6 +32,10 @@ class Character extends FlxSprite
 
     public var offsetsMap:StringMap<Dynamic> = new StringMap<Dynamic>();
 
+    public var voicePrefix:String = '';
+
+    public var voice:FlxSound;
+
     override public function new(char:String, type:ALECharacterType, typeIndex:Int)
     {
         super();
