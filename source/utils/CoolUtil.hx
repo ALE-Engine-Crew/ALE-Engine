@@ -1,6 +1,7 @@
 package utils;
 
 import lime.utils.Assets as LimeAssets;
+import lime.app.Application;
 
 import flixel.FlxSprite;
 import flixel.system.scaleModes.RatioScaleMode;
@@ -13,7 +14,6 @@ import core.structures.*;
 import openfl.system.Capabilities;
 import openfl.filters.ShaderFilter;
 import openfl.utils.Assets;
-import openfl.Lib;
 
 /**
  * It contains functions that can be quite useful
@@ -426,6 +426,8 @@ class CoolUtil
 
 	public static function resizeGame(width:Int, height:Int)
 	{
+		FlxG.fullscreen = false;
+
 		FlxG.initialWidth = width;
 		FlxG.initialHeight = height;
 
@@ -433,8 +435,8 @@ class CoolUtil
 
 		FlxG.resizeWindow(width, height);
 
-		Lib.application.window.x = Std.int(Capabilities.screenResolutionX / 2 - Lib.application.window.width / 2);
-		Lib.application.window.y = Std.int(Capabilities.screenResolutionY / 2 - Lib.application.window.height / 2);
+		Application.current.window.x = Std.int((Application.current.window.display.bounds.width - Application.current.window.width) / 2);
+		Application.current.window.y = Std.int((Application.current.window.display.bounds.height - Application.current.window.height) / 2);
 
 		for (camera in FlxG.cameras.list)
 		{
@@ -463,5 +465,43 @@ class CoolUtil
 		}
 	
 		return FlxColor.fromRGB(r, g, b);
+	}
+
+	public static function reloadGameMetadata()
+	{
+		CoolVars.data = {
+			developerMode: false,
+
+			initialState: 'IntroState',
+			freeplayState: 'FreeplayState',
+			storyMenuState: 'StoryMenuState',
+			masterEditorMenu: 'MasterEditorMenu',
+			optionsState: 'OptionsState',
+
+			pauseSubState: 'PauseSubState',
+			gameOverScreen: 'GameOverScreen',
+			transition: 'FadeTransition',
+
+			title: 'Friday Night Funkin\': ALE Engine',
+			icon: 'appIcon',
+
+			bpm: 102.0,
+
+			discordID: '1309982575368077416',
+		};
+
+		try
+		{
+			if (Paths.fileExists('data.json'))
+			{
+				var json:Dynamic = Json.parse(File.getContent(Paths.getPath('data.json')));
+
+				for (field in Reflect.fields(json))
+					if (Reflect.hasField(CoolVars.data, field))
+						Reflect.setField(CoolVars.data, field, Reflect.field(json, field));
+			}
+		} catch (error:Dynamic) {
+			trace('Error While Loading Game Data (data.json): ' + error);
+		}
 	}
 }

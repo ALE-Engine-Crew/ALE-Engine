@@ -1,5 +1,7 @@
 package scripting.haxe;
 
+import cpp.*;
+
 #if HSCRIPT_ALLOWED
 import haxe.ds.StringMap;
 
@@ -34,11 +36,13 @@ class HScript extends SScript
             flixel.addons.display.FlxBackdrop,
             flixel.addons.editors.ogmo.FlxOgmo3Loader,
             flixel.tile.FlxTilemap,
+			flixel.group.FlxGroup,
+			flixel.group.FlxGroup.FlxTypedGroup,
 
             // Haxe
             StringTools,
-            haxe.Json,
             sys.io.Process,
+			haxe.ds.StringMap,
 
             // OpenFL
             openfl.Lib,
@@ -52,7 +56,7 @@ class HScript extends SScript
 			ClientPrefs,
             Conductor,
             core.backend.MusicBeatState,
-            ScriptState
+            CustomState
         ];
 
         for (theClass in presetClasses)
@@ -60,15 +64,29 @@ class HScript extends SScript
 
 		var presetVariables:StringMap<Dynamic> = [
 			'FlxColor' => FlxColorClass,
+			'Json' => utils.ALEJson,
 			'game' => FlxG.state,
 			'add' => FlxG.state.add,
 			'insert' => FlxG.state.insert,
 			'controls' => MusicBeatState.instance.controls,
-			'debugPrint' => MusicBeatState.instance.debugPrint
+			'debugPrint' => MusicBeatState.instance.debugPrint,
 		];
 
 		for (preVar in presetVariables.keys())
 			set(preVar, presetVariables.get(preVar));
+
+		var presetFunctions:StringMap<Dynamic> = [
+			'setWindowBorderColor' => function(r:Int, g:Int, b:Int)
+			{
+				#if (windows && cpp)
+				WindowsCPP.reDefineMainWindowTitle(lime.app.Application.current.window.title);
+				WindowsCPP.setWindowBorderColor(r, g, b);
+				#end
+			}
+		];
+
+		for (preFunc in presetFunctions.keys())
+			set(preFunc, presetFunctions.get(preFunc));
     }
 
 	override public function call(func:String, ?args:Array<Dynamic>):TeaCall

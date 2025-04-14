@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="ALE Engine" file="ALEEngine" main="core.Main" packageName="com.alejogdofficial.aleengine" package="com.alejogdofficial.aleengine" version="Alpha 2" company="AlejoGDOfficial" />
+	<app title="Friday Night Funkin': ALE Engine" file="ALEEngine" main="core.Main" packageName="com.alejogdofficial.aleengine" package="com.alejogdofficial.aleengine" version="Alpha 2" company="AlejoGDOfficial" />
 
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB" />
 
@@ -73,4 +73,11 @@
 	<haxeflag name="--macro" value="include('my.pack')" />
 
 	<haxedef name="DISABLED_MACRO_SUPERLATIVE" if="android" />
+	
+	<assets path='art/iconOG.png' rename='icon.png' if="linux" />
+	
+	<icon path="art/icon16.png" size='16' />
+	<icon path="art/icon32.png" size='32' />
+	<icon path="art/icon64.png" size='64' />
+	<icon path="art/iconOG.png" />
 </project>

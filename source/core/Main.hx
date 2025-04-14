@@ -1,5 +1,7 @@
 package core;
 
+import lime.app.Application;
+
 #if android
 import android.content.Context;
 #end
@@ -15,6 +17,22 @@ import core.config.CopyState;
 import openfl.Lib;
 import openfl.events.Event;
 
+#if windows
+@:buildXml('
+<target id="haxe">
+	<lib name="wininet.lib" if="windows" />
+	<lib name="dwmapi.lib" if="windows" />
+</target>
+')
+
+@:cppFileCode('
+#include <windows.h>
+#include <winuser.h>
+#pragma comment(lib, "Shell32.lib")
+extern "C" HRESULT WINAPI SetCurrentProcessExplicitAppUserModelID(PCWSTR AppID);
+')
+#end
+
 #if linux
 import lime.graphics.Image;
 
@@ -26,7 +44,7 @@ import lime.graphics.Image;
 
 class Main extends Sprite
 {
-	private var game = {
+	private static var game = {
 		width: 1280,
 		height: 720,
 		initialState: #if android CopyState #else MainState #end,
@@ -42,6 +60,13 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+
+		#if windows
+		untyped __cpp__("SetProcessDPIAware();");
+
+		Application.current.window.x = Std.int((Application.current.window.display.bounds.width - Application.current.window.width) / 2);
+		Application.current.window.y = Std.int((Application.current.window.display.bounds.height - Application.current.window.height) / 2);
+		#end
 
 		#if android
 		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
@@ -89,8 +114,7 @@ class Main extends Sprite
 		addChild(new FlxGame(game.width, game.height, game.initialState, game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 		
 		#if linux
-		var icon = Image.fromFile("icon.png");
-		Lib.current.stage.window.setIcon(icon);
+		Lib.current.stage.window.setIcon(Image.fromFile('icon.png'));
 		#end
 
 		#if html5
@@ -98,8 +122,7 @@ class Main extends Sprite
 		FlxG.mouse.visible = false;
 		#end
 
-		FlxG.signals.gameResized.add(
-			function (width:Float, height:Float)
+		FlxG.signals.gameResized.add(function (width:Float, height:Float)
 			{
 				if (FlxG.cameras != null)
 				{

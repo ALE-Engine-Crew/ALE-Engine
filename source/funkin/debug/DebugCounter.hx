@@ -51,6 +51,7 @@ class DebugCounter extends Sprite
 
         addField(new ConductorField());
         addField(new FlixelField());
+        addField(new DataField());
         addField(new SystemField());
 
         keysEnabled = true;

@@ -13,7 +13,7 @@ class SystemField extends DebugField
 
     override function updateField()
     {
-        theText = 'OS: ' + Capabilities.os;
+        theText = 'Operating System: ' + Capabilities.os;
         theText += '\nScreen Resolution: ' + Capabilities.screenResolutionX + ' x ' + Capabilities.screenResolutionY;
         theText += '\nCPU Architecture: ' + Capabilities.cpuArchitecture;
         theText += '\nLanguage: ' + Capabilities.language;

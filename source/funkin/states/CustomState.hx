@@ -55,24 +55,24 @@ class CustomState extends ScriptState
 
     override public function stepHit()
     {
-        callOnScripts('onStepHit');
         setOnScripts('curStep', curStep);
+        callOnScripts('onStepHit');
 
         super.stepHit();
     }
 
     override public function beatHit()
     {
-        callOnScripts('onBeatHit');
         setOnScripts('curBeat', curBeat);
+        callOnScripts('onBeatHit');
 
         super.beatHit();
     }
 
     override public function sectionHit()
     {
-        callOnScripts('onSectionHit');
         setOnScripts('curSection', curSection);
+        callOnScripts('onSectionHit');
 
         super.sectionHit();
     }
@@ -92,5 +92,9 @@ class CustomState extends ScriptState
     }
 
     public function resetCustomState()
+    {
+        shouldClearMemory = false;
+
         MusicBeatState.switchState(new CustomState(scriptName));
+    }
 }
