@@ -7,7 +7,9 @@ import openfl.display.Sprite;
 import openfl.text.TextFormat;
 import openfl.text.TextField;
 
-class DebugField extends Sprite
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
+
+class DebugField extends Sprite implements IFlxDestroyable
 {
     public var title:TextField;
     public var text:TextField;
@@ -69,4 +71,27 @@ class DebugField extends Sprite
     }
 
     public function updateField():Void {};
+
+    public function destroy()
+    {
+        if (parent != null)
+            parent.removeChild(this);
+
+        for (field in [title, text])
+        {
+            removeChild(field);
+
+            field.text = '';
+        }
+
+        if (bg != null)
+        {
+            removeChild(bg);
+            bg.bitmapData.dispose();
+            bg = null;
+        }
+
+        title = null;
+        text = null;
+    }
 }

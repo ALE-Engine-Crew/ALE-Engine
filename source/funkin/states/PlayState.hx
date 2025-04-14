@@ -607,11 +607,6 @@ class PlayState extends ScriptState
         if (FlxG.keys.justPressed.B)
             botplay = !botplay;
 
-        if (characters != null)
-            for (character in characters)
-                if (character.idleTimer < 60 / Conductor.bpm)
-                    character.idleTimer += elapsed;
-
         if (iconsZoomLerpFunction != null)
             iconsZoomLerpFunction();
 

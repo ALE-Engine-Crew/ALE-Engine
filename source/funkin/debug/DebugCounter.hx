@@ -4,11 +4,13 @@ import openfl.display.Sprite;
 import openfl.events.KeyboardEvent;
 import openfl.ui.Keyboard;
 
-class DebugCounter extends Sprite
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
+
+class DebugCounter extends Sprite implements IFlxDestroyable
 {
     public static var instance:DebugCounter;
 
-    public static var categories:Array<DebugField> = [];
+    public var categories:Array<DebugField> = [];
 
     public var debugMode:Int = 1;
 
@@ -51,7 +53,6 @@ class DebugCounter extends Sprite
 
         addField(new ConductorField());
         addField(new FlixelField());
-        addField(new DataField());
         addField(new SystemField());
 
         keysEnabled = true;
@@ -95,4 +96,21 @@ class DebugCounter extends Sprite
 
         spriteOffset += sprite.text.height + sprite.text.y - sprite.title.y + y * 2;
 	}
+
+    public function destroy()
+    {
+        categories = [];
+
+        for (category in categories)
+        {
+            categories.splice(categories.indexOf(category), 1);
+
+            category = null;
+        }
+    
+        if (parent != null)
+            parent.removeChild(this);
+        
+        instance = null;
+    }
 }

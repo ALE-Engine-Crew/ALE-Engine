@@ -167,4 +167,12 @@ class Character extends FlxSprite
             };
         }
     }
+
+    override public function update(elapsed:Float)
+    {
+        super.update(elapsed);
+
+        if (idleTimer <= 60 / Conductor.bpm)
+            idleTimer += elapsed;
+    }
 }
