@@ -1,7 +1,6 @@
 package funkin.states;
 
 import flixel.FlxObject;
-import flixel.util.FlxStringUtil;
 
 import core.structures.*;
 
@@ -9,8 +8,6 @@ import funkin.visuals.objects.StrumLine;
 import funkin.visuals.objects.Character;
 import funkin.visuals.objects.Bar;
 import funkin.visuals.objects.HealthIcon;
-
-#if cpp import cpp.vm.Gc; #end
 
 #if mobile
 import funkin.visuals.objects.StrumControl;
@@ -589,9 +586,7 @@ class PlayState extends ScriptState
     override function update(elapsed:Float)
     {
         super.update(elapsed);
-
-        scoreTxt.text = 'FPS: ' + (1 / FlxG.elapsed) + ' | MEM: ' + FlxStringUtil.formatBytes(Gc.memInfo64(Gc.MEM_INFO_USAGE));
-
+        
         callOnScripts('onUpdate', [elapsed]);
 
         camGame.zoom = CoolUtil.fpsLerp(camGame.zoom, cameraZoom, 0.1);

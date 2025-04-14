@@ -91,6 +91,8 @@ class Character extends FlxSprite
         cameraOffset = [data.cameraPosition[0] - offset.x, data.cameraPosition[0] - offset.y];
 
         updateHitbox();
+
+        antialiasing = ClientPrefs.data.antialiasing;
     }
 
     function returnALEJson(path:String):ALECharacter

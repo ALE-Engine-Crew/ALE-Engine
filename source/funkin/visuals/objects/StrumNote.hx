@@ -80,7 +80,7 @@ class StrumNote extends FlxSprite
 		shaderRef.g = shaderArray[1];
 		shaderRef.b = shaderArray[2];
 
-		antialiasing = this.antialiasing = ClientPrefs.data.antialiasing;
+		antialiasing = ClientPrefs.data.antialiasing;
 	}
 
 	public function loadTexture(image:String)
