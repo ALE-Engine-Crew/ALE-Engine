@@ -29,6 +29,8 @@ class MainState extends MusicBeatState
     
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 
+        core.backend.Mods.folder = 'devMod';
+
         CoolUtil.reloadGameMetadata();
 
         if (iconImage != CoolVars.data.icon)
@@ -43,11 +45,9 @@ class MainState extends MusicBeatState
 
         FlxG.stage.window.title = CoolVars.data.title;
 
-        core.backend.Mods.folder = 'REF';
+		//CoolUtil.loadSong('Refreshed', 'normal');
 
-		CoolUtil.loadSong('Refreshed', 'normal');
-
-        //MusicBeatState.switchState(new CustomState(CoolVars.data.initialState));
+        MusicBeatState.switchState(new CustomState(CoolVars.data.initialState));
 
         //MusicBeatState.switchState(new funkin.editors.CharacterEditorState());
     }
