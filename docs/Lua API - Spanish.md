@@ -518,3 +518,30 @@ Sirve para Despausar la Música del Juego
 
 # Color
 
+## colorFromString
+
+Uso: `colorFromString(color:String)`
+
+Sirve para Obtener un Color por medio de un String que Contenga su Código Hexadecimal
+
+Ejemplo: `colorFromString('5DE2E7')`
+
+---
+
+## colorFromRGB
+
+Uso: `colorFromRGB(r:Int, g:Int, b:Int)`
+
+Sirve para Obtener un Color por medio de su RGB
+
+Ejemplo: `colorFromRGB(93, 226, 231)`
+
+---
+
+## colorFromName
+
+Uso: `colorFromName(name:String)`
+
+Sirve para Obtener un Color por medio de su Nombre
+
+Ejemplo: `colorFromName('red')`
