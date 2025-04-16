@@ -60,7 +60,7 @@ class CopyState extends MusicBeatState
 		checkExistingFiles();
 		if (maxLoopTimes <= 0)
 		{
-			MusicBeatState.switchState(new MainState());
+			CoolUtil.switchState(new MainState());
 			return;
 		}
 
@@ -110,7 +110,7 @@ class CopyState extends MusicBeatState
 				}
 				canUpdate = false;
                 
-			    MusicBeatState.switchState(new MainState());
+			    CoolUtil.switchState(new MainState());
 			}
 
 			if (loopTimes == maxLoopTimes)

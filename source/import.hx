@@ -17,9 +17,12 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import funkin.states.PlayState;
 import funkin.states.CustomState;
 
+import funkin.substates.CustomSubState;
+
 import core.backend.MusicBeatState;
 import core.backend.MusicBeatSubState;
 import core.backend.ScriptState;
+import core.backend.ScriptSubState;
 import core.backend.Conductor;
 
 import core.config.ClientPrefs;

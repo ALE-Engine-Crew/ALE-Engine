@@ -2,17 +2,19 @@ package scripting.lua;
 
 import haxe.ds.StringMap;
 
+import core.enums.ScriptType;
+
 class LuaPresetBase
 {
-    public final game:ScriptState;
     public var variables:StringMap<Dynamic>;
     public var lua:LuaScript;
+    public var type:ScriptType;
 
     public function new(lua:LuaScript)
     {
         this.lua = lua;
-
-        game = lua.game;
+        
+        this.type = lua.type;
 
         variables = lua.variables;
     }
@@ -27,7 +29,10 @@ class LuaPresetBase
 
     public inline function errorPrint(text:String)
     {
-        game.debugPrint(text, FlxColor.RED);
+        if (type == STATE)
+            ScriptState.instance.debugPrint(text, FlxColor.RED);
+        else
+            ScriptSubState.instance.debugPrint(text, FlxColor.RED);
     }
 
     public inline function tagExists(name:String):Bool

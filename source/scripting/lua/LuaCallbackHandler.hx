@@ -9,9 +9,13 @@ import llua.Lua.Lua_helper;
 
 import llua.Convert;
 
+import core.enums.ScriptType;
+
 class LuaCallbackHandler
 {
-    public static inline function call(lua:State, functionName:String):Int
+    public static var type:ScriptType;
+
+    public static function call(lua:State, functionName:String):Int
     {
         try
         {
@@ -23,13 +27,26 @@ class LuaCallbackHandler
 
                 if (last == null || last.lua != lua)
                 {
-                    for (script in ScriptState.instance.luaScripts)
+                    if (type == STATE)
                     {
-                        if (script != LuaScript.lastCalledScript && script != null && script.lua == lua)
+                        for (script in ScriptState.instance.luaScripts)
                         {
-                            callFunc = script.callbacks.get(functionName);
-
-                            break;
+                            if (script != LuaScript.lastCalledScript && script != null && script.lua == lua)
+                            {
+                                callFunc = script.callbacks.get(functionName);
+    
+                                break;
+                            }
+                        }
+                    } else {
+                        for (script in ScriptSubState.instance.luaScripts)
+                        {
+                            if (script != LuaScript.lastCalledScript && script != null && script.lua == lua)
+                            {
+                                callFunc = script.callbacks.get(functionName);
+    
+                                break;
+                            }
                         }
                     }
                 } else {

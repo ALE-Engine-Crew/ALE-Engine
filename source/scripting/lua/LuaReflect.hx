@@ -20,7 +20,7 @@ class LuaReflect extends LuaPresetBase
                 if (split.length > 1)
                     return getVarInArray(getPropertyLoop(split, true, allowMaps), split[split.length-1], allowMaps);
 
-                return getVarInArray(game, variable, allowMaps);
+                return getVarInArray(type == STATE ? ScriptState.instance : ScriptSubState.instance, variable, allowMaps);
             }
         );
 
@@ -35,7 +35,7 @@ class LuaReflect extends LuaPresetBase
                     return true;
                 }
 
-                setVarInArray(game, variable, value, allowMaps);
+                setVarInArray(type == STATE ? ScriptState.instance : ScriptSubState.instance, variable, value, allowMaps);
 
                 return true;
             }
@@ -108,7 +108,7 @@ class LuaReflect extends LuaPresetBase
                 if (split.length > 1)
                     realObject = getPropertyLoop(split, false, allowMaps);
                 else
-                    realObject = Reflect.getProperty(game, obj);
+                    realObject = Reflect.getProperty(type == STATE ? ScriptState.instance : ScriptSubState.instance, obj);
     
                 if (Std.isOfType(realObject, FlxTypedGroup))
                 {
@@ -146,7 +146,7 @@ class LuaReflect extends LuaPresetBase
                 if (split.length > 1)
                     realObject = getPropertyLoop(split, false, allowMaps);
                 else
-                    realObject = Reflect.getProperty(game, obj);
+                    realObject = Reflect.getProperty(type == STATE ? ScriptState.instance : ScriptSubState.instance, obj);
     
                 if (Std.isOfType(realObject, FlxTypedGroup))
                 {
@@ -175,7 +175,7 @@ class LuaReflect extends LuaPresetBase
 
         set("removeFromGroup", function(obj:String, index:Int, dontDestroy:Bool = false)
             {
-                var groupOrArray:Dynamic = Reflect.getProperty(game, obj);
+                var groupOrArray:Dynamic = Reflect.getProperty(type == STATE ? ScriptState.instance : ScriptSubState.instance, obj);
 
                 if (Std.isOfType(groupOrArray, FlxTypedGroup))
                 {
@@ -467,13 +467,13 @@ class LuaReflect extends LuaPresetBase
 		switch(objectName)
 		{
 			case 'this' | 'instance' | 'game':
-				return PlayState.instance;
+				return type == STATE ? ScriptState.instance : ScriptSubState.instance;
 			
 			default:
 				var obj:Dynamic = variables.get(objectName);
 
 				if (obj == null)
-                    obj = getVarInArray(game, objectName, allowMaps);
+                    obj = getVarInArray(type == STATE ? ScriptState.instance : ScriptSubState.instance, objectName, allowMaps);
 
 				return obj;
 		}

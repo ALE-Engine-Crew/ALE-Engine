@@ -4,9 +4,9 @@ import scripting.haxe.HScript;
 
 import scripting.lua.LuaScript;
 
-class ScriptState extends MusicBeatState
+class ScriptSubState extends MusicBeatSubState
 {
-    public static var instance:ScriptState;
+    public static var instance:ScriptSubState;
 
     #if HSCRIPT_ALLOWED
     public var hScripts:Array<HScript> = [];
@@ -16,25 +16,13 @@ class ScriptState extends MusicBeatState
     public var luaScripts:Array<LuaScript> = [];
     #end
 
-	public var camHUD:FlxCamera;
-	public var camGame:FlxCamera;
-	public var camOther:FlxCamera;
+    public var camGame:FlxCamera;
 
     override public function create()
     {
         instance = this;
 
-		camGame = CoolUtil.initALECamera();
-
-		camHUD = new FlxCamera();
-		camHUD.bgColor = FlxColor.TRANSPARENT;
-		
-		FlxG.cameras.add(camHUD, false);
-
-		camOther = new FlxCamera();
-		camOther.bgColor = FlxColor.TRANSPARENT;
-		
-		FlxG.cameras.add(camOther, false);
+        camGame = FlxG.camera;
 
         super.create();
     }
@@ -82,7 +70,7 @@ class ScriptState extends MusicBeatState
         {
             try
             {
-                var script:HScript = new HScript(Paths.getPath(path + '.hx'), STATE);
+                var script:HScript = new HScript(Paths.getPath(path + '.hx'), SUBSTATE);
     
                 if (script.parsingException != null)
                 {
@@ -106,7 +94,7 @@ class ScriptState extends MusicBeatState
         #if LUA_ALLOWED
         if (Paths.fileExists(path + '.lua'))
         {
-            var script:LuaScript = new LuaScript(Paths.getPath(path + '.lua'), STATE);
+            var script:LuaScript = new LuaScript(Paths.getPath(path + '.lua'), SUBSTATE);
 
             try
             {

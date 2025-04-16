@@ -12,22 +12,41 @@ class LuaGlobal extends LuaPresetBase
         set('add', function(tag:String)
         {
             if (tagIs(tag, FlxBasic))
-                game.add(getTag(tag));
+            {
+                if (type == STATE)
+                    ScriptState.instance.add(getTag(tag));
+                else
+                    ScriptSubState.instance.add(getTag(tag));
+            }
         });
 
         set('remove', function(tag:String)
             {
-                if (game.members.indexOf(getTag(tag)) != -1)
-                    game.remove(getTag(tag));
-                else
-                    errorPrint('Object ' + tag + ' Has Not Been Added Yet');
+                if (type == STATE)
+                {
+                    if (ScriptState.instance.members.indexOf(getTag(tag)) != -1)
+                        ScriptState.instance.remove(getTag(tag));
+                    else
+                        errorPrint('Object ' + tag + ' Has Not Been Added Yet');
+                } else {
+                    if (ScriptSubState.instance.members.indexOf(getTag(tag)) != -1)
+                        ScriptSubState.instance.remove(getTag(tag));
+                    else
+                        errorPrint('Object ' + tag + ' Has Not Been Added Yet');
+                }
             }
         );
 
         set('insert', function(position:Int, tag:String)
             {
-                if (tagIs(tag, FlxBasic))
-                    game.insert(position, getTag(tag));
+                if (type == STATE)
+                {
+                    if (tagIs(tag, FlxBasic))
+                        ScriptState.instance.insert(position, getTag(tag));
+                } else {
+                    if (tagIs(tag, FlxBasic))
+                        ScriptSubState.instance.insert(position, getTag(tag));
+                }
             }
         );
 
@@ -49,23 +68,39 @@ class LuaGlobal extends LuaPresetBase
 
         set('debugPrint', function(text:String, ?color:String)
         {
-            game.debugPrint(text, color == null ? null : CoolUtil.colorFromString(color));
+            if (type == STATE)
+                ScriptState.instance.debugPrint(text, color == null ? null : CoolUtil.colorFromString(color));
+            else
+                ScriptSubState.instance.debugPrint(text, color == null ? null : CoolUtil.colorFromString(color));
         });
     }
 
     private function cameraFromString(name:String):FlxCamera
     {
-        var result:FlxCamera = switch(name.toUpperCase())
+        var result:FlxCamera = null;
+        
+        if (type == STATE)
         {
-            case 'CAMERA', 'CAMGAME', 'CAMERAGAME':
-                game.camGame;
-            case 'HUD', 'CAMHUD', 'CAMERAHUD':
-                game.camHUD;
-            case 'OTHER', 'CAMOTHER', 'CAMERAOTHER':
-                game.camOther;
-            default:
-                null;
-        };
+            result = switch(name.toUpperCase())
+            {
+                case 'CAMERA', 'CAMGAME', 'CAMERAGAME':
+                    ScriptState.instance.camGame;
+                case 'HUD', 'CAMHUD', 'CAMERAHUD':
+                    ScriptState.instance.camHUD;
+                case 'OTHER', 'CAMOTHER', 'CAMERAOTHER':
+                    ScriptState.instance.camOther;
+                default:
+                    null;
+            };
+        } else {
+            result = switch(name.toUpperCase())
+            {
+                case 'CAMERA', 'CAMGAME', 'CAMERAGAME':
+                    ScriptSubState.instance.camGame;
+                default:
+                    null;
+            };
+        }
 
         if (result == null)
             errorPrint(name + ' is Not a Camera');

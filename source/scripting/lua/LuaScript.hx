@@ -6,24 +6,26 @@ import llua.Lua.Lua_helper;
 
 import haxe.ds.StringMap;
 
+import core.enums.ScriptType;
+
 class LuaScript
 {   
     public var lua:State = null;
+
+    public var type:ScriptType;
 
     public var name:String;
 
     public var closed:Bool = false;
 
-    public var game:ScriptState;
-
     public var callbacks:StringMap<Dynamic> = new StringMap<Dynamic>();
     public var variables:StringMap<Dynamic> = new StringMap<Dynamic>();
 
-    public function new(name:String)
+    public function new(name:String, type:ScriptType)
     {
         this.name = name;
 
-        game = ScriptState.instance;
+        this.type = type;
 
         config();
     }
@@ -67,6 +69,8 @@ class LuaScript
         {
             if (lua == null)
                 return null;
+
+            LuaCallbackHandler.type = type;
 
             Lua.getglobal(lua, name);
 

@@ -15,6 +15,8 @@ import openfl.system.Capabilities;
 import openfl.filters.ShaderFilter;
 import openfl.utils.Assets;
 
+import utils.ALEParserHelper;
+
 /**
  * It contains functions that can be quite useful
  */
@@ -221,208 +223,10 @@ class CoolUtil
 			return;
 		}
 
-		PlayState.SONG = returnALEJson(jsonData);
+		PlayState.SONG = ALEParserHelper.getALESong(jsonData);
 
-		MusicBeatState.switchState(new PlayState());
+		switchState(new PlayState());
 	}
-
-	private static function returnALEJson(json:Dynamic):ALESong
-	{
-		var formattedJson:Dynamic = {};
-
-		if (json.format == 'ale-format-v0.1')
-		{
-			return cast json;
-		} else if (json.format == 'psych_v1') {
-			var newJson:PsychSong = getPsychSong(json);
-
-			formattedJson = {
-				song: newJson.song,
-				needsVoices: true,
-				stage: newJson.stage,
-				
-				grids: new Array<Dynamic>(),
-				events: new Array<Dynamic>(),
-				metadata: {},
-
-				bpm: newJson.bpm,
-				beats: 4,
-				steps: 4,
-
-				format: 'ale-format-v0.1',
-			}
-
-			var sectionsOpponent:Array<Dynamic> = [];
-			var sectionsPlayer:Array<Dynamic> = [];
-
-			for (section in newJson.notes)
-			{
-				var notesPlayer:Array<Dynamic> = [];
-				var notesOpponent:Array<Dynamic> = [];
-
-				for (noteArray in section.sectionNotes)
-				{
-					if ((section.mustHitSection && noteArray[1] <= 3) || (!section.mustHitSection && noteArray[1] >= 4))
-						notesPlayer.push(noteArray);
-					else
-						notesOpponent.push(noteArray);
-				}
-
-				sectionsOpponent.push(
-					{
-						notes: notesOpponent,
-
-						cameraFocusThis: !section.mustHitSection
-					}
-				);
-
-				sectionsPlayer.push(
-					{
-						notes: notesPlayer,
-
-						cameraFocusThis: section.mustHitSection
-					}
-				);
-			}
-
-			formattedJson.grids.push(
-				{
-					sections: sectionsOpponent,
-					
-					character: json.player2,
-					type: 'opponent'
-				}
-			);
-
-			formattedJson.grids.push(
-				{
-					sections: sectionsPlayer,
-					
-					character: json.player1,
-					type: 'player'
-				}
-			);
-
-			formattedJson.grids.push(
-				{
-					sections: new Array<Dynamic>(),
-
-					character: 'gf',
-					type: 'extra'
-				}
-			);
-
-			for (_ in 0...sectionsOpponent.length - 1)
-			{
-				formattedJson.grids[2].sections.push(
-					{
-						notes: new Array<Int>(),
-		
-						cameraFocusThis: false
-					}
-				);
-			}
-		} else {
-			var newJson:PsychSong = getPsychSong(json.song);
-
-			formattedJson = {
-				song: newJson.song,
-				needsVoices: true,
-				speed: newJson.speed,
-				stage: newJson.stage,
-				
-				grids: new Array<Dynamic>(),
-				events: new Array<Dynamic>(),
-				metadata: {},
-
-				bpm: newJson.bpm,
-				beats: 4,
-				steps: 4,
-
-				format: 'ale-format-v0.1',
-			}
-
-			var sectionsOpponent:Array<Dynamic> = [];
-			var sectionsPlayer:Array<Dynamic> = [];
-
-			for (section in newJson.notes)
-			{
-				var notesPlayer:Array<Dynamic> = [];
-				var notesOpponent:Array<Dynamic> = [];
-
-				for (noteArray in section.sectionNotes)
-				{
-					if ((section.mustHitSection && noteArray[1] <= 3) || (!section.mustHitSection && noteArray[1] >= 4))
-					{
-						noteArray[1] = noteArray[1] % 4;
-						notesPlayer.push(noteArray);
-					} else {
-						noteArray[1] = noteArray[1] % 4;
-						notesOpponent.push(noteArray);
-					}
-				}
-
-				sectionsOpponent.push(
-					{
-						notes: notesOpponent,
-
-						cameraFocusThis: !section.mustHitSection
-					}
-				);
-
-				sectionsPlayer.push(
-					{
-						notes: notesPlayer,
-
-						cameraFocusThis: section.mustHitSection
-					}
-				);
-			}
-
-			formattedJson.grids.push(
-				{
-					sections: sectionsOpponent,
-					
-					character: json.song.player2,
-					type: 'opponent'
-				}
-			);
-
-			formattedJson.grids.push(
-				{
-					sections: sectionsPlayer,
-					
-					character: json.song.player1,
-					type: 'player'
-				}
-			);
-
-			formattedJson.grids.push(
-				{
-					sections: new Array<Dynamic>(),
-
-					character: json.song.gfVersion,
-					type: 'extra'
-				}
-			);
-
-			for (_ in 0...sectionsOpponent.length - 1)
-			{
-				formattedJson.grids[2].sections.push(
-					{
-						notes: new Array<Int>(),
-		
-						cameraFocusThis: false
-					}
-				);
-			}
-		}
-
-		return formattedJson;
-	}
-
-	private static function getPsychSong(data:Dynamic):PsychSong
-		return cast data;
 
 	public static function resizeGame(width:Int, height:Int)
 	{
@@ -503,5 +307,45 @@ class CoolUtil
 		} catch (error:Dynamic) {
 			trace('Error While Loading Game Data (data.json): ' + error);
 		}
+	}
+
+    public static inline function switchState(state:flixel.FlxState = null)
+    {
+        if (state == null)
+            FlxG.resetState();
+
+        if (state is CustomState)
+        {
+            var custom:CustomState = Std.downcast(state, CustomState);
+            
+            if (Paths.fileExists('scripts/states/' + custom.scriptName + '.hx') || Paths.fileExists('scripts/states/' + custom.scriptName + '.lua'))
+                FlxG.switchState(state);
+            else
+                MusicBeatState.instance.debugPrint('Custom State called "' + custom.scriptName + '" doesn\'t Exist');
+
+            return;
+        }
+
+        FlxG.switchState(state);
+    }
+
+	public static function openSubState(subState:flixel.FlxSubState = null)
+	{
+		if (subState == null)
+			return;
+
+        if (subState is CustomSubState)
+        {
+            var custom:CustomSubState = Std.downcast(subState, CustomSubState);
+            
+            if (Paths.fileExists('scripts/substates/' + custom.scriptName + '.hx') || Paths.fileExists('scripts/substates/' + custom.scriptName + '.lua'))
+                FlxG.state.openSubState(subState);
+            else
+                MusicBeatState.instance.debugPrint('Custom SubState called "' + custom.scriptName + '" doesn\'t Exist');
+
+            return;
+        }
+
+		FlxG.state.openSubState(subState);
 	}
 }

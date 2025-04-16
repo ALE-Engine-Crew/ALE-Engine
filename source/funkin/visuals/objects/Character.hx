@@ -9,6 +9,8 @@ import core.enums.ALECharacterType;
 
 import haxe.ds.StringMap;
 
+import utils.ALEParserHelper;
+
 /**
  * It is an extension of FlxSprite that handles Characters.
  */
@@ -46,7 +48,7 @@ class Character extends FlxSprite
 
         this.typeIndex = typeIndex;
 
-        data = returnALEJson(char);
+        data = ALEParserHelper.getALECharacter(char);
 
         frames = Paths.getSparrowAtlas(data.image);
 
@@ -93,79 +95,6 @@ class Character extends FlxSprite
         updateHitbox();
 
         antialiasing = ClientPrefs.data.antialiasing;
-    }
-
-    function returnALEJson(path:String):ALECharacter
-    {
-        if (Paths.fileExists('characters/' + path + '.json'))
-        {
-            var theJson:Dynamic = Json.parse(File.getContent(Paths.getPath('characters/' + path + '.json')));
-
-            if (theJson.format == 'ale-format-v0.1')
-            {
-                return theJson;
-            } else {
-                var newAnims:Array<ALECharacterJSONAnimation> = [];
-
-                var psychAnims:Array<PsychCharacterJSONAnimation> = cast theJson.animations;
-
-                for (anim in psychAnims)
-                {
-                    newAnims.push(
-                        {
-                            offset: anim.offsets,
-                            looped: anim.loop,
-                            framerate: anim.fps,
-                            animation: anim.anim,
-                            indices: anim.indices,
-                            prefix: anim.name
-                        }
-                    );
-                }
-
-                var formattedJson:ALECharacter = {
-                    animations: newAnims,
-
-                    image: theJson.image,
-                    flipX: theJson.flip_x,
-                    antialiasing: !theJson.no_antialiasing,
-
-                    position: theJson.position,
-                
-                    icon: theJson.healthicon,
-                
-                    barColor: theJson.healthbar_colors,
-                
-                    cameraPosition: theJson.camera_position,
-                
-                    scale: theJson.scale,
-                
-                    format: 'ale-format-v0.1'
-                };
-
-                return cast formattedJson;
-            }
-        } else {
-            return {
-                animations: [],
-
-                image: 'characters/BOYFRIEND',
-                flipX: false,
-                antialiasing: true,
-            
-                position: [0, 0],
-            
-                icon: 'bf',
-            
-                barColor: [255, 255, 255],
-            
-                cameraPosition: [0, 0],
-            
-                scale: 1,
-            
-                format: 'ale-format-v0.1',
-            };
-        }
     }
 
     override public function update(elapsed:Float)

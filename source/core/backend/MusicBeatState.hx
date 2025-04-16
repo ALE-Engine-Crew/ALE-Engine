@@ -3,8 +3,6 @@ package core.backend;
 import flixel.FlxState;
 import flixel.FlxG;
 
-import core.backend.Controls;
-
 #if cpp
 import cpp.vm.Gc;
 #elseif hl
@@ -90,14 +88,6 @@ class MusicBeatState extends FlxState
         super.update(elapsed);
 
         updateMusic();
-    }
-
-    public static inline function switchState(state:flixel.FlxState = null)
-    {
-        if (state == null)
-            FlxG.resetState();
-        else
-            FlxG.switchState(state);
     }
 
     private function updateMusic()

@@ -15,6 +15,8 @@ import funkin.visuals.objects.StrumControl;
 
 import openfl.events.KeyboardEvent;
 
+import utils.ALEParserHelper;
+
 class PlayState extends ScriptState
 {
     public static var instance:PlayState;
@@ -124,7 +126,7 @@ class PlayState extends ScriptState
             for (file in FileSystem.readDirectory(Paths.getPath('scripts/songs')))
                 loadScript('scripts/songs/' + file);
 
-        STAGE = returnALEStage(SONG.stage);
+        STAGE = ALEParserHelper.getALEStage(SONG.stage);
 
         loadScript('stages/' + SONG.stage);
 
@@ -651,49 +653,4 @@ class PlayState extends ScriptState
 
         super.destroy();
     }
-
-	function returnALEStage(path:Dynamic):ALEStage
-	{
-        if (Paths.fileExists('stages/' + path + '.json'))
-        {
-            var data:Dynamic = Json.parse(File.getContent(Paths.getPath('stages/' + path + '.json')));
-
-            if (data.format == 'ale-format-v0.1')
-            {
-                return cast data;
-            } else {
-                var formattedStage:ALEStage = {
-                    opponentsPosition: data.opponent == null ? [[0, 0]] : [data.opponent],
-                    playersPosition: data.boyfriend == null ? [[0, 0]] : [data.boyfriend],
-                    extrasPosition: data.girlfriend == null ? [[0, 0]] : [data.girlfriend],
-    
-                    opponentsCamera: data.camera_opponent == null ? [[0, 0]] : [data.camera_opponent],
-                    playersCamera: data.camera_boyfriend == null ? [[0, 0]] : [data.camera_boyfriend],
-                    extrasCamera: data.camera_girlfriend == null ? [[0, 0]] : [data.camera_girlfriend],
-    
-                    format: 'ale-format-v0.1',
-    
-                    cameraZoom: data.defaultZoom == null ? 1 : data.defaultZoom,
-                    cameraSpeed: data.camera_speed == null ? 1 : data.camera_speed
-                };
-    
-                return cast formattedStage;
-            }
-        } else {
-            return cast {
-                opponentsPosition: [[0, 0]],
-                playersPosition: [[0, 0]],
-                extrasPosition: [[0, 0]],
-
-                opponentsCamera: [[0, 0]],
-                playersCamera: [[0, 0]],
-                extrasCamera: [[0, 0]],
-
-                format: 'ale-format-v0.1',
-
-                cameraZoom: 1,
-                cameraSpeed: 1
-            }
-        }
-	}
 }

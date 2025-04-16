@@ -8,11 +8,17 @@ import haxe.ds.StringMap;
 import tea.SScript;
 import tea.SScript.TeaCall;
 
+import core.enums.ScriptType;
+
 class HScript extends SScript
 {
-	override public function new(file:String)
+	public var type:ScriptType;
+
+	override public function new(file:String, type:ScriptType)
 	{
 		super(file);
+
+		this.type = type;
 
 		preset();
 	}
@@ -56,20 +62,42 @@ class HScript extends SScript
 			ClientPrefs,
             Conductor,
             core.backend.MusicBeatState,
-            CustomState
+            CustomState,
+			CustomSubState
         ];
 
         for (theClass in presetClasses)
             setClass(theClass);
 
+		var instanceVariables:StringMap<Dynamic> = new StringMap<Dynamic>();
+		
+		if (type == STATE)
+		{
+			instanceVariables = [
+				'game' => ScriptState.instance,
+				'add' => ScriptState.instance.add,
+				'insert' => ScriptState.instance.insert,
+				'controls' => ScriptState.instance.controls,
+				'openSubState' => ScriptState.instance.openSubState,
+				'debugPrint' => ScriptState.instance.debugPrint
+			];
+		} else if (type == SUBSTATE) {
+			instanceVariables = [
+				'game' => ScriptSubState.instance,
+				'add' => ScriptSubState.instance.add,
+				'insert' => ScriptSubState.instance.insert,
+				'controls' => ScriptSubState.instance.controls,
+				'close' => ScriptSubState.instance.close,
+				'debugPrint' => ScriptSubState.instance.debugPrint
+			];
+		}
+
+		for (insVar in instanceVariables.keys())
+			set(insVar, instanceVariables.get(insVar));
+
 		var presetVariables:StringMap<Dynamic> = [
 			'FlxColor' => FlxColorClass,
 			'Json' => utils.ALEJson,
-			'game' => FlxG.state,
-			'add' => FlxG.state.add,
-			'insert' => FlxG.state.insert,
-			'controls' => MusicBeatState.instance.controls,
-			'debugPrint' => MusicBeatState.instance.debugPrint,
 		];
 
 		for (preVar in presetVariables.keys())
@@ -100,7 +128,10 @@ class HScript extends SScript
 		{
 			var errorString:String = 'Error: ' + callValue.calledFunction + ' - ' + callValue.exceptions[0].message;
 			
-			MusicBeatState.instance.debugPrint(errorString, FlxColor.RED);
+			if (type == STATE)
+				ScriptState.instance.debugPrint(errorString, FlxColor.RED);
+			else if (type == SUBSTATE)
+				ScriptSubState.instance.debugPrint(errorString, FlxColor.RED);
 		}
 
 		if (callValue != null)

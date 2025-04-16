@@ -1,8 +1,8 @@
-package funkin.states;
+package funkin.substates;
 
-class CustomState extends ScriptState
+class CustomSubState extends ScriptSubState
 {
-    public static var instance:CustomState;
+    public static var instance:CustomSubState;
 
     public var scriptName:String = '';
 
@@ -19,14 +19,10 @@ class CustomState extends ScriptState
 
         instance = this;
 
-        loadScript('scripts/states/' + scriptName);
-        loadScript('scripts/states/global');
-
-        setOnScripts('resetCustomState', resetCustomState);
+        loadScript('scripts/substates/' + scriptName);
+        loadScript('scripts/substates/global');
         
-        setOnScripts('camGame', camGame);
-        setOnScripts('camHUD', camHUD);
-        setOnScripts('camOther', camOther);
+        setOnScripts('camGame', FlxG.camera);
 
         callOnScripts('onCreate');
 
@@ -89,12 +85,5 @@ class CustomState extends ScriptState
         super.onFocusLost();
 
         callOnScripts('onFocusLost');
-    }
-
-    public function resetCustomState()
-    {
-        shouldClearMemory = false;
-
-        CoolUtil.switchState(new CustomState(scriptName));
     }
 }
