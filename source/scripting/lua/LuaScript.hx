@@ -127,8 +127,6 @@ class LuaScript
         Lua.close(lua);
     }
 
-    private var debugPrint = MusicBeatState.instance.debugPrint;
-
     private function typeToString(type:Int):String
     {
         return switch (type)

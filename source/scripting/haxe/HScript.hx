@@ -79,7 +79,7 @@ class HScript extends SScript
 				'insert' => ScriptState.instance.insert,
 				'controls' => ScriptState.instance.controls,
 				'openSubState' => ScriptState.instance.openSubState,
-				'debugPrint' => ScriptState.instance.debugPrint
+				'debugPrint' => debugPrint
 			];
 		} else if (type == SUBSTATE) {
 			instanceVariables = [
@@ -88,7 +88,7 @@ class HScript extends SScript
 				'insert' => ScriptSubState.instance.insert,
 				'controls' => ScriptSubState.instance.controls,
 				'close' => ScriptSubState.instance.close,
-				'debugPrint' => ScriptSubState.instance.debugPrint
+				'debugPrint' => debugPrint
 			];
 		}
 

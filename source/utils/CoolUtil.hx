@@ -321,7 +321,7 @@ class CoolUtil
             if (Paths.fileExists('scripts/states/' + custom.scriptName + '.hx') || Paths.fileExists('scripts/states/' + custom.scriptName + '.lua'))
                 FlxG.switchState(state);
             else
-                MusicBeatState.instance.debugPrint('Custom State called "' + custom.scriptName + '" doesn\'t Exist', FlxColor.RED);
+                debugPrint('Custom State called "' + custom.scriptName + '" doesn\'t Exist', FlxColor.RED);
 
             return;
         }
@@ -341,11 +341,23 @@ class CoolUtil
             if (Paths.fileExists('scripts/substates/' + custom.scriptName + '.hx') || Paths.fileExists('scripts/substates/' + custom.scriptName + '.lua'))
                 FlxG.state.openSubState(subState);
             else
-                MusicBeatState.instance.debugPrint('Custom SubState called "' + custom.scriptName + '" doesn\'t Exist', FlxColor.RED);
+                debugPrint('Custom SubState called "' + custom.scriptName + '" doesn\'t Exist', FlxColor.RED);
 
             return;
         }
 
 		FlxG.state.openSubState(subState);
+	}
+
+	public static function debugPrint(text:Dynamic, ?color:FlxColor)
+	{
+		if (MusicBeatSubState.instance != null)
+			MusicBeatSubState.instance.debugPrint(text, color);
+		else if (MusicBeatState.instance != null)
+			MusicBeatState.instance.debugPrint(text, color);
+		else
+			Sys.println(text);
+
+
 	}
 }
