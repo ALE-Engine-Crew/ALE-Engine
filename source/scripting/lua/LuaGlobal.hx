@@ -50,6 +50,14 @@ class LuaGlobal extends LuaPresetBase
             }
         );
 
+        set('debugPrint', function(text:Dynamic, ?color:FlxColor)
+        {
+            if (type == STATE)
+                ScriptState.instance.debugPrint(text, color);
+            else
+                ScriptSubState.instance.debugPrint(text, color);
+        });
+
         set('setObjectCameras', function(tag:String, cameras:Array<String>)
             {
                 var theCameras:Array<FlxCamera> = [];
@@ -65,14 +73,6 @@ class LuaGlobal extends LuaPresetBase
                 }
             }
         );
-
-        set('debugPrint', function(text:String, ?color:String)
-        {
-            if (type == STATE)
-                ScriptState.instance.debugPrint(text, color == null ? null : CoolUtil.colorFromString(color));
-            else
-                ScriptSubState.instance.debugPrint(text, color == null ? null : CoolUtil.colorFromString(color));
-        });
 
         set('switchState', function(fullClassPath:String, params:Array<Dynamic>)
 		{
