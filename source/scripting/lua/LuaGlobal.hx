@@ -73,6 +73,34 @@ class LuaGlobal extends LuaPresetBase
             else
                 ScriptSubState.instance.debugPrint(text, color == null ? null : CoolUtil.colorFromString(color));
         });
+
+        set('switchState', function(fullClassPath:String, params:Array<Dynamic>)
+		{
+			CoolUtil.switchState(Type.createInstance(Type.resolveClass(fullClassPath), params));
+		});
+
+        set('switchToCustomState', function(name:String)
+		{
+			CoolUtil.switchState(new CustomState(name));
+		});
+
+        if (type == STATE)
+        {
+            set('openSubState', function(fullClassPath:String, params:Array<Dynamic>)
+            {
+                CoolUtil.openSubState(Type.createInstance(Type.resolveClass(fullClassPath), params));
+            });
+
+            set('openCustomSubState', function(name:String)
+            {
+                CoolUtil.openSubState(new CustomSubState(name));
+            });
+        }
+
+        if (type == SUBSTATE)
+        {
+            set('close', ScriptSubState.instance.close);
+        }
     }
 
     private function cameraFromString(name:String):FlxCamera
