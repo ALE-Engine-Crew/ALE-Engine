@@ -40,10 +40,10 @@ class LuaSprite extends LuaPresetBase
             }
         );
 
-        set('addAnimationByIndices', function(tag:String, name:String, prefix:String, indices:Array<Int>, ?postfix:String, ?frameRate:Float, ?looped:Bool, flipX:Bool, flipY:Bool)
+        set('addAnimationByIndices', function(tag:String, name:String, prefix:String, indices:Array<Int>, ?frameRate:Float, ?looped:Bool, flipX:Bool, flipY:Bool)
             {
                 if(tagIs(tag, FlxSprite))
-                    getTag(tag).animation.addByIndices(name, prefix, indices, postfix, frameRate, looped, flipX, flipY);
+                    getTag(tag).animation.addByIndices(name, prefix, indices, null, frameRate, looped, flipX, flipY);
             }
         );
 

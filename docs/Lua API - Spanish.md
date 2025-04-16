@@ -311,7 +311,92 @@ Uso: `pathIsFolder(path:String)`
 
 Sirve para Saber la Ruta Indicada es o no una Carpeta
 
-Ejemplo: `pathIsFolder('data)`
+Ejemplo: `pathIsFolder('data')`
+
+---
+
+# FlxSprite
+
+## newSprite
+
+Uso: `newSprite(tag:String, ?x:Float, ?y:Float, ?sprite:String)`
+
+Crea una Instancia de FlxSprite
+
+Ejemplo: `newSprite('mySprite', 10, 10, 'menuBG')`
+
+---
+
+## loadGraphic
+
+Uso: `loadGraphic(tag:String, name:String, ?animated:Bool = false, ?frameWidth:Int = 0, frameHeight:Int = 0)`
+
+Sirve para Cargar una Imágen a un Sprite
+
+Ejemplo: `loadGraphic('mySprite', 'menuBGMagenta')`
+
+---
+
+## getSparrowAtlas
+
+Uso: `getSparrowAtlas(tag:String, path:String)`
+
+Sirve para Cargar un Sprite Animado que Hace uso de XML
+
+Ejemplo: `getSparrowAtlas('mySprite', 'characters/BOYFRIEND')`
+
+---
+
+## makeGraphic
+
+Uso: `makeGraphic(tag:String, width:Int, height:Int, ?color:FlxColor = FlxColor.WHITE)`
+
+Sirve para Crear un Gráfico y Asignárselo a un Sprite
+
+Ejemplo: `makeGraphic('mySprite', 100, 100, colorFromName('blue'))` </br>
+<sub>Se Hace Uso de las Funciones de [Color](#color)</sub>
+
+---
+
+## addAnimationByPrefix
+
+Uso: `addAnimationByPrefix(tag:String, name:String, prefix:String, ?frameRate:Float, ?looped:Bool, ?flipX:Bool, ?flipY:Bool)`
+
+Sirve para Añadir una Animación a un Sprite Animado
+
+Ejemplo: `addAnimationByPrefix('mySprite', 'epicAnim', 'epicAnim', 24, true, true, false)`
+
+---
+
+## addAnimationByIndices
+
+Uso: `addAnimationByIndices(tag:String, name:String, prefix:String, indices:Array<Int>, ?frameRate:Float, ?looped:Bool, flipX:Bool, flipY:Bool)`
+
+Sirve para Añadir una Animación a un Sprite Animado basándose en Índices
+
+Ejemplo: `addAnimationByIndices('mySprite', 'epicAnim', 'epicAnim', {0, 12, 20}, 24, true, true, false)`
+
+---
+
+## playAnimation
+
+Uso: `playAnimation(tag:String, name:String, ?force:Bool, ?reversed:Bool, ?frame:Int)`
+
+Sirve para Reproducir una Animación que ya fue Añadida al Sprite
+
+Ejemplo: `playAnimation('mySprite', 'epicAnim', true, false)`
+
+## updateHitbox
+
+Uso: `updateHitbox(tag:String)`
+
+Sirve para Actualizar la Hitbox de un Sprite
+
+Ejemplo; `updateHitbox('mySprite')`
+
+---
+
+
 
 ---
 
