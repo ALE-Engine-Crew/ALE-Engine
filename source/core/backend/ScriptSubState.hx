@@ -20,11 +20,11 @@ class ScriptSubState extends MusicBeatSubState
 
     override public function create()
     {
-        instance = this;
-
-        camGame = FlxG.camera;
-
         super.create();
+
+        instance = this;
+        
+        camGame = FlxG.camera;
     }
 
     override public function destroy()

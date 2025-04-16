@@ -20,7 +20,7 @@ import utils.ALEParserHelper;
 class PlayState extends ScriptState
 {
     public static var instance:PlayState;
-
+    
     public static var SONG:ALESong;
 
     public var STAGE:ALEStage;
@@ -118,6 +118,8 @@ class PlayState extends ScriptState
     {
         super.create();
 
+        instance = this;
+
         if (Paths.fileExists(songRoute + '/scripts'))
             for (file in FileSystem.readDirectory(Paths.getPath(songRoute + '/scripts')))
                 loadScript(songRoute + '/scripts/' + file);
@@ -136,8 +138,6 @@ class PlayState extends ScriptState
 		camGame.target = camPos;
 		camGame.followLerp = 2.4 * STAGE.cameraSpeed;
         cameraZoom = STAGE.cameraZoom;
-
-        instance = this;
         
         callOnScripts('onCreate');
 

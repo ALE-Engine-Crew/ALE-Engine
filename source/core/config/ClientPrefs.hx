@@ -15,6 +15,8 @@ package core.config;
 	public var downscroll:Bool = false;
 
 	public var cacheOnGPU:Bool = true;
+
+	public var framerate:Int = 240;
 }
 
 class ClientPrefs

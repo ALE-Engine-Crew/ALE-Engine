@@ -50,14 +50,10 @@ class LuaScript
     
     public function setFunction(name:String, theFunction:Dynamic)
     {
-        if (closed)
-            return;
-
         callbacks.set(name, theFunction);
         Lua_helper.add_callback(lua, name, null);
     }
 
-    public var lastCalledFunction:String = '';
     public static var lastCalledScript:LuaScript = null;
 
     public function call(name:String, ?args:Array<Dynamic>):Dynamic
@@ -65,21 +61,23 @@ class LuaScript
         if (closed)
             return null;
 
+        LuaCallbackHandler.type = type;
+
+        lastCalledScript = this;
+
         try
         {
             if (lua == null)
                 return null;
 
-            LuaCallbackHandler.type = type;
-
             Lua.getglobal(lua, name);
 
-            var type:Int = Lua.type(lua, -1);
+            var theType:Int = Lua.type(lua, -1);
 
-            if (type != Lua.LUA_TFUNCTION)
+            if (theType != Lua.LUA_TFUNCTION)
             {
-                if (type > Lua.LUA_TFUNCTION)
-                    debugPrint('Error: (' + name + '): Attempt to Call a ' + typeToString(type) + ' value', FlxColor.RED);
+                if (theType > Lua.LUA_TNIL)
+                    debugPrint('Error: (' + name + '): Attempt to Call a ' + typeToString(theType) + ' value', FlxColor.RED);
 
                 Lua.pop(lua, 1);
                 
@@ -98,20 +96,22 @@ class LuaScript
 
                 return null;
             }
+            
+            var result:Dynamic = null;
 
-            var result:Dynamic = cast Convert.fromLua(lua, -1);
-
-            if (result == null)
-                return null;
-
-            Lua.pop(lua, -1);
+            if (Lua.gettop(lua) > 0)
+            {
+                result = cast Convert.fromLua(lua, -1);
+                
+                Lua.pop(lua, 1);
+            }
 
             if (closed)
                 close();
 
             return result;
         } catch (error:Dynamic) {
-            debugPrint(error);
+            debugPrint(error, FlxColor.RED);
         }
 
         return null;

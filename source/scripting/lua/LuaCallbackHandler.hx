@@ -19,39 +19,40 @@ class LuaCallbackHandler
     {
         try
         {
-            var callFunc:Dynamic = Lua_helper.callbacks.get(functionName);
+            var callFunc:Dynamic = null;
 
-            if (callFunc == null)
+            var last:LuaScript = LuaScript.lastCalledScript;
+
+            if (last == null || last.lua != lua)
             {
-                var last:LuaScript = LuaScript.lastCalledScript;
-
-                if (last == null || last.lua != lua)
+                if (type == STATE)
                 {
-                    if (type == STATE)
+                    for (script in ScriptState.instance.luaScripts)
                     {
-                        for (script in ScriptState.instance.luaScripts)
+                        trace(script);
+
+                        if (script != LuaScript.lastCalledScript && script != null && script.lua == lua)
                         {
-                            if (script != LuaScript.lastCalledScript && script != null && script.lua == lua)
-                            {
-                                callFunc = script.callbacks.get(functionName);
+                            callFunc = script.callbacks.get(functionName);
     
-                                break;
-                            }
+                            break;
                         }
-                    } else {
-                        for (script in ScriptSubState.instance.luaScripts)
+                    }
+                } else if (type == SUBSTATE) {
+                    for (script in ScriptSubState.instance.luaScripts)
+                    {
+                        if (script != LuaScript.lastCalledScript && script != null && script.lua == lua)
                         {
-                            if (script != LuaScript.lastCalledScript && script != null && script.lua == lua)
-                            {
-                                callFunc = script.callbacks.get(functionName);
+                            callFunc = script.callbacks.get(functionName);
     
-                                break;
-                            }
+                            break;
                         }
                     }
                 } else {
-                    callFunc = last.callbacks.get(functionName);
+                    trace('Type es Retrasado: ' + type);
                 }
+            } else {
+                callFunc = last.callbacks.get(functionName);
             }
 
             if (callFunc == null)
@@ -81,9 +82,7 @@ class LuaCallbackHandler
                 return 0;
             }
 
-            trace(error);
-
-            throw(error);
+            throw error;
         }
 
         return 0;

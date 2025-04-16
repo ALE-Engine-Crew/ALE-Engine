@@ -8,6 +8,11 @@ class ScriptState extends MusicBeatState
 {
     public static var instance:ScriptState;
 
+    override public function new()
+    {
+        super();
+    }
+
     #if HSCRIPT_ALLOWED
     public var hScripts:Array<HScript> = [];
     #end
@@ -22,8 +27,10 @@ class ScriptState extends MusicBeatState
 
     override public function create()
     {
+        super.create();
+        
         instance = this;
-
+        
 		camGame = CoolUtil.initALECamera();
 
 		camHUD = new FlxCamera();
@@ -35,8 +42,6 @@ class ScriptState extends MusicBeatState
 		camOther.bgColor = FlxColor.TRANSPARENT;
 		
 		FlxG.cameras.add(camOther, false);
-
-        super.create();
     }
 
     override public function destroy()

@@ -25,7 +25,14 @@ class MainState extends MusicBeatState
 
         FlxG.stage.addChild(debugCounter);
 
-        FlxG.updateFramerate = FlxG.drawFramerate = 240;
+		if (ClientPrefs.data.framerate > FlxG.drawFramerate)
+		{
+			FlxG.updateFramerate = ClientPrefs.data.framerate;
+			FlxG.drawFramerate = ClientPrefs.data.framerate;
+		} else {
+			FlxG.drawFramerate = ClientPrefs.data.framerate;
+			FlxG.updateFramerate = ClientPrefs.data.framerate;
+		}
     
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 
@@ -46,8 +53,8 @@ class MainState extends MusicBeatState
         FlxG.stage.window.title = CoolVars.data.title;
 
         CoolUtil.switchState(new CustomState(CoolVars.data.initialState));
-
-		//CoolUtil.loadSong('stress', 'hard');
+    
+        //CoolUtil.loadSong('stress', 'hard');
 
         //CoolUtil.switchState(new funkin.editors.CharacterEditorState());
     }

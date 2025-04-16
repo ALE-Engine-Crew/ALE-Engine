@@ -110,6 +110,12 @@ class HScript extends SScript
 				WindowsCPP.reDefineMainWindowTitle(lime.app.Application.current.window.title);
 				WindowsCPP.setWindowBorderColor(r, g, b);
 				#end
+			},
+			'showConsole' => function()
+			{
+				#if (windows && cpp)
+				WindowsTerminalCPP.allocConsole();
+				#end
 			}
 		];
 
