@@ -30,6 +30,12 @@ class LuaSound extends LuaPresetBase
             }
         );
 
+        set('resumeSound', function(tag:String)
+        {
+            if (tagIs(tag, FlxSound))
+                getTag(tag).resume();
+        });
+
         set('stopSound', function(tag:String)
             {
                 if (tagIs(tag, FlxSound))
@@ -50,10 +56,10 @@ class LuaSound extends LuaPresetBase
             }
         );
 
-        set('playMusic', function()
+        set('resumeMusic', function()
             {
                 if (FlxG.sound.music != null)
-                    FlxG.sound.music.play();
+                    FlxG.sound.music.resume();
             }
         );
 

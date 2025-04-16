@@ -396,7 +396,7 @@ Ejemplo: `updateHitbox('mySprite')`
 
 ---
 
-# Text
+# FlxText
 
 ## newText
 
@@ -430,4 +430,91 @@ Ejemplo: `setTextFormat('myText', 'vcr.ttf', 24, colorFromName('white'), 'center
 
 ---
 
+# FlxSound
+
+## newSound
+
+Uso: `newSound(tag:String, sound:String)`
+
+Sirve para Crear una Instancia de FlxSound
+
+Ejemplo: `newSound('mySound', 'scrollMenu')`
+
+---
+
+## playSound
+
+Uso: `playSound(tag:String)`
+
+Sirve para Reproducir un Sonido
+
+Ejemplo: `playSound('mySound')`
+
+---
+
+## pauseSound
+
+Uso: `pauseSound(tag:String)`
+
+Sirve para Pausar un Sonido
+
+Ejemplo: `pauseSound('mySound')`
+
+---
+
+## resumeSound
+
+Uso: `resumeSound(tag:String)`
+
+Sirve para Despausar un Sonido
+
+Ejemplo: `resumeSound('mySound')`
+
+---
+
+## stopSound
+
+Uso: `stopSound(tag:String)`
+
+Sirve para Parar un Sonido
+
+Ejemplo: `stopSound('mySound')`
+
+---
+
+## playMusic
+
+Uso: `playMusic(sound:String)`
+
+Sirve para Reproducir Música en el Juego
+
+Ejemplo: `playMusic('freakyMenu')`
+
+---
+
+## pauseMusic
+
+Uso / Ejemplo: `pauseMusic()`
+
+Sirve para Pausar la Música del Juego
+
+---
+
+## stopMusic
+
+Uso / Ejemplo: `stopMusic()`
+
+Sirve para Parar la Música del Juego
+
+---
+
+## resumeMusic
+
+Uso / Ejemplo: `resumeMusic()`
+
+Sirve para Despausar la Música del Juego
+
+---
+
 # Color
+
