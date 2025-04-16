@@ -17,7 +17,7 @@ class LuaText extends LuaPresetBase
                 var newRules:Array<FlxTextFormatMarkerPair> = [];
 
                 for (rule in rules)
-                    if (rule[0] is Int && rule[1] is String)
+                    if (rule[0] is FlxColor && rule[1] is String)
                         newRules.push(new FlxTextFormatMarkerPair(new FlxTextFormat(rule[0]), rule[1]));
                     else
                         errorPrint('Rule #' + (rules.indexOf(rule) + 1) + ' is Not [FlxColor, String]');

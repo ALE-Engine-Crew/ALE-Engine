@@ -392,11 +392,41 @@ Uso: `updateHitbox(tag:String)`
 
 Sirve para Actualizar la Hitbox de un Sprite
 
-Ejemplo; `updateHitbox('mySprite')`
+Ejemplo: `updateHitbox('mySprite')`
 
 ---
 
+# Text
 
+## newText
+
+Uso: `newText(tag:String, ?x:Float, ?y:Float, ?width:Float, ?text:String, ?size:Int)`
+
+Sirve para Crear una Instancia de FlxText
+
+Ejemplo: `newText('myText', 10, 100, 1280, 'ALE Engine Supremacy', 24)`
+
+---
+
+## applyTextMarkup
+
+Uso: `applyTextMarkup(tag:String, text:String, rules:Array<Array<Dynamic>>)`
+
+Sirve para Asignarle Varios Colores a la Vez a un Texto
+
+Ejemplo: `applyTextMarkup('myText', '*ALE* #Engine# %Supremacy%', {{'*', colorFromName('cyan')}, {'#', colorFromName('red')}, {'%', colorFromName('green')}})` </br>
+<sub>Se Hace Uso de las Funciones de [Color](#color)</sub>
+
+---
+
+## setTextFormat
+
+Uso: `setTextFormat(tag:String, ?font:String, ?size:Int, ?color:FlxColor, ?alignment:String, ?borderStyle:String, ?borderColor:FlxColor)`
+
+Sirve para Cambiar la Fuente, el Tamaño, el Color, la Alineación, el Estilo del borde y el Color del Borde a un Texto
+
+Ejemplo: `setTextFormat('myText', 'vcr.ttf', 24, colorFromName('white'), 'center', 'shadow', colorFromName('black'))` </br>
+<sub>Se Hace Uso de las Funciones de [Color](#color)</sub>
 
 ---
 
