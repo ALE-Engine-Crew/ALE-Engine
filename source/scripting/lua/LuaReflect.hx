@@ -251,6 +251,8 @@ class LuaReflect extends LuaPresetBase
                 return retStr;
             }
         );
+
+        set("setVariable", set);
     }
     
     function parseInstances(args:Array<Dynamic>)
@@ -418,6 +420,7 @@ class LuaReflect extends LuaPresetBase
 
 		return value;
 	}
+
 	function getGroupStuff(leArray:Dynamic, variable:String, ?allowMaps:Bool = false) {
 		var split:Array<String> = variable.split('.');
 
