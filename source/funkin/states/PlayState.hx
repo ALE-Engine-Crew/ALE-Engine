@@ -114,6 +114,8 @@ class PlayState extends ScriptState
 
 	public var scoreTxt:FlxText;
 
+    public var paused:Bool = false;
+
     override function create()
     {
         super.create();
@@ -138,6 +140,10 @@ class PlayState extends ScriptState
 		camGame.target = camPos;
 		camGame.followLerp = 2.4 * STAGE.cameraSpeed;
         cameraZoom = STAGE.cameraZoom;
+
+        setOnScripts('camGame', camGame);
+        setOnScripts('camHUD', camHUD);
+        setOnScripts('camOther', camOther);
         
         callOnScripts('onCreate');
 
@@ -620,6 +626,8 @@ class PlayState extends ScriptState
 
     public function pauseSong()
     {
+        paused = true;
+
         FlxG.sound.music.pause();
 
         for (voice in voices)
@@ -628,6 +636,8 @@ class PlayState extends ScriptState
 
     public function resumeSong()
     {
+        paused = false;
+
         FlxG.sound.music.resume();
 
         for (voice in voices)
@@ -652,10 +662,13 @@ class PlayState extends ScriptState
 
         callOnScripts('onFocus');
 
-        FlxG.sound.music.play();
-
-        for (voice in voices)
-            voice.play();
+        if (!paused)
+        {
+            FlxG.sound.music.play();
+    
+            for (voice in voices)
+                voice.play();
+        }
     }
 
     override public function onFocusLost()
@@ -664,10 +677,13 @@ class PlayState extends ScriptState
 
         callOnScripts('onFocusLost');
 
-        FlxG.sound.music.pause();
-
-        for (voice in voices)
-            voice.pause();
+        if (!paused)
+        {
+            FlxG.sound.music.pause();
+    
+            for (voice in voices)
+                voice.pause();
+        }
     }
 
     override public function openSubState(substate:flixel.FlxSubState):Void
