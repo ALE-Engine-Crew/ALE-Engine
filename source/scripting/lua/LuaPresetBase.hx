@@ -52,7 +52,7 @@ class LuaPresetBase
 
     public inline function tagIs(name:String, type:Dynamic):Bool
     {
-        var result:Bool = Std.is(getTag(name), type);
+        var result:Bool = Std.isOfType(getTag(name), type);
 
         if (!result)
             errorPrint('Object "' + name + '" is Not a ' + Type.typeof(type));

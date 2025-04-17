@@ -54,6 +54,28 @@ Uso: `setObjectCameras(tag:String, cameras:Array<String>)`
 
 Sirve para Cambiar las Cámaras en donde se Muestra un Objeto
 
+Ejemplo: `setObjectCameras('mySprite', {'camGame'})`
+
+---
+
+## setVariable
+
+Uso: `setVariable(name:String, value:Dynamic)`
+
+Sirve para Asignar una Variable al Script
+
+Ejemplo: `setVariable('epicBool', true)`
+
+---
+
+## setTag
+
+Uso: `setTag(tag:String, value:Dynamic)`
+
+Sirve para Agregar / Alterar una Etiqueta al / del Script
+
+Ejemplo: `setTag('epicTag', true)`
+
 ---
 
 ## switchState
@@ -113,14 +135,6 @@ Sirve para Cerrar el Sub-Estado Actual
 ---
 
 # Reflect
-
-## setVariable
-
-Uso: `setVariable(tag:String, value:Dynamic)`
-
-Sirve para Crear una Variable / Etiqueta
-
-Ejemplo: `serVariable('age', 18)`
 
 ## getProperty
 
@@ -324,6 +338,16 @@ Uso: `newSprite(tag:String, ?x:Float, ?y:Float, ?sprite:String)`
 Crea una Instancia de FlxSprite
 
 Ejemplo: `newSprite('mySprite', 10, 10, 'menuBG')`
+
+---
+
+## newGradient
+
+Uso: `newGradient(tag:String, width:Int, height:Int, colors:Array<FlxColor>, ?chunkSize:Int = 1, ?rotation:Int = 90, ?interpolate:Bool = true)`
+
+Sirve para Crear FlxSprites que se ve como Gradiente
+
+Ejemplo: `newGradient('myGradient', 1280, 720, {colorFromName('black'), colorFromName('transparent')}, 1, 90, true)`
 
 ---
 

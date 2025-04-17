@@ -74,6 +74,10 @@ class LuaGlobal extends LuaPresetBase
             }
         );
 
+        set('setVariable', set);
+
+        set('setTag', setTag);
+
         set('switchState', function(fullClassPath:String, params:Array<Dynamic>)
 		{
 			CoolUtil.switchState(Type.createInstance(Type.resolveClass(fullClassPath), params));

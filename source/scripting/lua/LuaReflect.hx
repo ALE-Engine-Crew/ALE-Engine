@@ -251,8 +251,6 @@ class LuaReflect extends LuaPresetBase
                 return retStr;
             }
         );
-
-        set("setVariable", set);
     }
     
     function parseInstances(args:Array<Dynamic>)

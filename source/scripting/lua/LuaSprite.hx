@@ -1,5 +1,7 @@
 package scripting.lua;
 
+import flixel.util.FlxGradient;
+
 class LuaSprite extends LuaPresetBase
 {
     public function new(lua:LuaScript)
@@ -9,6 +11,12 @@ class LuaSprite extends LuaPresetBase
         set('newSprite', function(tag:String, ?x:Float, ?y:Float, ?sprite:String)
             {
                 setTag(tag, new FlxSprite(x, y, sprite == null ? null : Paths.image(sprite)));
+            }
+        );
+
+        set('newGradient', function(tag:String, width:Int, height:Int, colors:Array<FlxColor>, ?chunkSize:Int = 1, ?rotation:Int = 90, ?interpolate:Bool = true)
+            {
+                setTag(tag, FlxGradient.createGradientFlxSprite(width, height, colors, chunkSize, rotation, interpolate));
             }
         );
 
