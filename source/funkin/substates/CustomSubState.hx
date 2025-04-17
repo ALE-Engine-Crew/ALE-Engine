@@ -32,6 +32,9 @@ class CustomSubState extends ScriptSubState
         callOnScripts('onCreate');
 
         callOnScripts('onCreatePost');
+
+        openCallback = function() { callOnScripts('onOpen'); };
+        closeCallback = function() { callOnScripts('onClose'); };
     }
 
     override public function update(elapsed:Float)

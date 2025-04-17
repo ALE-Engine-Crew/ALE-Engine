@@ -17,6 +17,7 @@ class ALEParserHelper
 			formattedJson = {
 				song: newJson.song,
 				needsVoices: true,
+				speed: newJson.speed,
 				stage: newJson.stage,
 				
 				grids: new Array<Dynamic>(),

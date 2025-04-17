@@ -30,7 +30,9 @@ class Note extends FlxSprite
 	public var customHitCallback:Note -> Void;
 	public var defaultLostCallback:Note -> Void;
 	public var customLostCallback:Note -> Void;
+	public var killFunction:Note -> Void;
 	public var spawned:Bool = false;
+	public var noteGroup:FlxTypedGroup<FlxSprite> = null;
 
 	@:isVar public var hitOffset(get, never):Float;
 	function get_hitOffset():Float return 75 * strum.scrollSpeed;
@@ -81,9 +83,7 @@ class Note extends FlxSprite
 		if (isSustainNote)
 		{
 			animation.addByPrefix('idle', noteAnim + (isSustainEnd ? ' hold end' : ' hold piece'), 24, false);
-		}
-		else
-		{
+		} else {
 			animation.addByPrefix('idle', noteAnim + '0', 24, false);
 		}
 
@@ -158,7 +158,7 @@ class Note extends FlxSprite
             
             if ((y < FlxG.height && y > -height) || (distanceY < FlxG.height && distanceY > -height))
                 y = distanceY;
-
+			
             visible = y < FlxG.height && y > -height && x < FlxG.width && x > -width;
 
 			if (Conductor.songPosition >= strumTime && state == NEUTRAL && (type != PLAYER || strum.botplay))
@@ -172,6 +172,9 @@ class Note extends FlxSprite
 				loseFunction();
 				return;
 			}
+
+			if (Conductor.songPosition - strumTime > 500 && state == LOST)
+				kill();
 		}
 	}
 
@@ -240,5 +243,13 @@ class Note extends FlxSprite
 
 		if (character.voice != null && character.voice.volume != 0)
 			character.voice.volume = 0;
+	}
+
+	override function kill()
+	{
+		if (killFunction != null)
+			killFunction(this);
+
+		super.kill();
 	}
 }

@@ -96,6 +96,20 @@ class CustomState extends ScriptState
         callOnScripts('onFocusLost');
     }
 
+    override public function openSubState(substate:flixel.FlxSubState):Void
+    {
+        super.openSubState(substate);
+
+        callOnScripts('onOpenSubState', [substate]);
+    }
+
+    override public function closeSubState():Void
+    {
+        super.closeSubState();
+
+        callOnScripts('onCloseSubState');
+    }
+
     public function resetCustomState()
     {
         shouldClearMemory = false;

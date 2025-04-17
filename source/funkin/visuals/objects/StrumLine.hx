@@ -82,6 +82,10 @@ class StrumLine extends FlxGroup
                 var note:Note = new Note(type, noteData, strumTime, character, strum);
                 note.defaultHitCallback = defaultHitCallback;
                 note.defaultLostCallback = defaultLostCallback;
+                note.killFunction = function(theNote:Note)
+                {
+                    notes.remove(theNote, true);
+                }
                 unspawnNotes.push(note);
 
                 var curStepCrochet:Float = 60 / daBpm * 1000 / 4;

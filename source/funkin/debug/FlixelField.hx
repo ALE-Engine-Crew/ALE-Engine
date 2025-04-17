@@ -28,6 +28,15 @@ class FlixelField extends DebugField
             theText = 'State: ' + Type.getClassName(Type.getClass(FlxG.state));
         }
 
+        if (FlxG.state.subState is CustomSubState)
+        {
+            var substate:CustomSubState = cast FlxG.state.subState;
+
+            theText += '\nCustom Sub-State: ' + substate.scriptName;
+        } else {
+            theText += '\nSub-State: ' + Type.getClassName(Type.getClass(FlxG.state.subState));
+        }
+
         theText += '\nObject Count: ' + FlxG.state.members.length;
         theText += '\nCamera Count: ' + FlxG.cameras.list.length;
         theText += '\nBitmaps Count: ' + totalBitmaps;

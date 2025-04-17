@@ -595,19 +595,17 @@ class PlayState extends ScriptState
         camHUD.zoom = CoolUtil.fpsLerp(camHUD.zoom, 1, 0.1);
 
         if (FlxG.keys.justPressed.R)
-        {
-            shouldClearMemory = false;
-
-            FlxG.sound.music.pause();
-
-            for (voice in voices)
-                voice.pause();
-            
-            FlxG.resetState();
-        }
+            resetSong();
 
         if (FlxG.keys.justPressed.B)
             botplay = !botplay;
+
+        if (FlxG.keys.justPressed.ENTER)
+        {
+            pauseSong();
+
+            CoolUtil.openSubState(new CustomSubState(CoolVars.data.pauseSubState));
+        }
 
         if (iconsZoomLerpFunction != null)
             iconsZoomLerpFunction();
@@ -618,6 +616,34 @@ class PlayState extends ScriptState
 		healthBar.percent = CoolUtil.fpsLerp(healthBar.percent, 100 - health, 0.2);
 
         callOnScripts('onUpdatePost', [elapsed]);
+    }
+
+    public function pauseSong()
+    {
+        FlxG.sound.music.pause();
+
+        for (voice in voices)
+            voice.pause();
+    }
+
+    public function resumeSong()
+    {
+        FlxG.sound.music.resume();
+
+        for (voice in voices)
+            voice.resume();
+    }
+
+    public function resetSong()
+    {
+        shouldClearMemory = false;
+
+        FlxG.sound.music.pause();
+
+        for (voice in voices)
+            voice.pause();
+        
+        FlxG.resetState();
     }
 
     override public function onFocus()
@@ -642,6 +668,20 @@ class PlayState extends ScriptState
 
         for (voice in voices)
             voice.pause();
+    }
+
+    override public function openSubState(substate:flixel.FlxSubState):Void
+    {
+        super.openSubState(substate);
+
+        callOnScripts('onOpenSubState', [substate]);
+    }
+
+    override public function closeSubState():Void
+    {
+        super.closeSubState();
+
+        callOnScripts('onCloseSubState');
     }
 
     override public function destroy()

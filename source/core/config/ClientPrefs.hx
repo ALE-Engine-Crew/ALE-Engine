@@ -22,4 +22,16 @@ package core.config;
 class ClientPrefs
 {
     public static var data:SaveData = {};
+
+	public static function loadPrefs()
+	{
+		if (ClientPrefs.data.framerate > FlxG.drawFramerate)
+		{
+			FlxG.updateFramerate = ClientPrefs.data.framerate;
+			FlxG.drawFramerate = ClientPrefs.data.framerate;
+		} else {
+			FlxG.drawFramerate = ClientPrefs.data.framerate;
+			FlxG.updateFramerate = ClientPrefs.data.framerate;
+		}
+	}
 }

@@ -273,6 +273,8 @@ class CoolUtil
 		return FlxColor.fromRGB(r, g, b);
 	}
 
+    private static var iconImage:String = null;
+
 	public static function reloadGameMetadata()
 	{
 		CoolVars.data = {
@@ -309,6 +311,18 @@ class CoolUtil
 		} catch (error:Dynamic) {
 			trace('Error While Loading Game Data (data.json): ' + error);
 		}
+
+        if (iconImage != CoolVars.data.icon)
+        {
+            if (Paths.fileExists(CoolVars.data.icon + '.png'))
+            {
+                iconImage = CoolVars.data.icon;
+
+                openfl.Lib.current.stage.window.setIcon(lime.graphics.Image.fromFile(Paths.getPath(CoolVars.data.icon + '.png')));
+            }
+        }
+
+        FlxG.stage.window.title = CoolVars.data.title;
 	}
 
     public static inline function switchState(state:flixel.FlxState = null, skipTransIn:Bool = false, skipTransOut = false)
