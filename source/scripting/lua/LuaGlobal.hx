@@ -14,9 +14,9 @@ class LuaGlobal extends LuaPresetBase
             if (tagIs(tag, FlxBasic))
             {
                 if (type == STATE)
-                    ScriptState.instance.add(getTag(tag));
+                    FlxG.state.add(getTag(tag));
                 else
-                    ScriptSubState.instance.add(getTag(tag));
+                    FlxG.state.subState.add(getTag(tag));
             }
         });
 
@@ -24,13 +24,13 @@ class LuaGlobal extends LuaPresetBase
             {
                 if (type == STATE)
                 {
-                    if (ScriptState.instance.members.indexOf(getTag(tag)) != -1)
-                        ScriptState.instance.remove(getTag(tag));
+                    if (FlxG.state.members.indexOf(getTag(tag)) != -1)
+                        FlxG.state.remove(getTag(tag));
                     else
                         errorPrint('Object ' + tag + ' Has Not Been Added Yet');
                 } else {
-                    if (ScriptSubState.instance.members.indexOf(getTag(tag)) != -1)
-                        ScriptSubState.instance.remove(getTag(tag));
+                    if (FlxG.state.subState.members.indexOf(getTag(tag)) != -1)
+                        FlxG.state.subState.remove(getTag(tag));
                     else
                         errorPrint('Object ' + tag + ' Has Not Been Added Yet');
                 }
@@ -42,10 +42,10 @@ class LuaGlobal extends LuaPresetBase
                 if (type == STATE)
                 {
                     if (tagIs(tag, FlxBasic))
-                        ScriptState.instance.insert(position, getTag(tag));
+                        FlxG.state.insert(position, getTag(tag));
                 } else {
                     if (tagIs(tag, FlxBasic))
-                        ScriptSubState.instance.insert(position, getTag(tag));
+                        FlxG.state.subState.insert(position, getTag(tag));
                 }
             }
         );
@@ -99,7 +99,7 @@ class LuaGlobal extends LuaPresetBase
 
         if (type == SUBSTATE)
         {
-            set('close', ScriptSubState.instance.close);
+            set('close', FlxG.state.subState.close);
         }
     }
 

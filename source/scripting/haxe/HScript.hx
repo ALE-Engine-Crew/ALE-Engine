@@ -1,8 +1,8 @@
 package scripting.haxe;
 
+#if HSCRIPT_ALLOWED
 import cpp.*;
 
-#if HSCRIPT_ALLOWED
 import haxe.ds.StringMap;
 
 import tea.SScript;
@@ -74,21 +74,21 @@ class HScript extends SScript
 		if (type == STATE)
 		{
 			instanceVariables = [
-				'game' => ScriptState.instance,
-				'add' => ScriptState.instance.add,
-				'insert' => ScriptState.instance.insert,
+				'game' => FlxG.state,
+				'add' => FlxG.state.add,
+				'insert' => FlxG.state.insert,
 				'controls' => ScriptState.instance.controls,
-				'openSubState' => ScriptState.instance.openSubState,
-				'debugPrint' => debugPrint
+				'openSubState' => FlxG.state.openSubState,
+				'debugPrint' => ScriptState.instance.debugPrint
 			];
 		} else if (type == SUBSTATE) {
 			instanceVariables = [
-				'game' => ScriptSubState.instance,
-				'add' => ScriptSubState.instance.add,
-				'insert' => ScriptSubState.instance.insert,
+				'game' => FlxG.state.subState,
+				'add' => FlxG.state.subState.add,
+				'insert' => FlxG.state.subState.insert,
 				'controls' => ScriptSubState.instance.controls,
-				'close' => ScriptSubState.instance.close,
-				'debugPrint' => debugPrint
+				'close' => FlxG.state.subState.close,
+				'debugPrint' => ScriptSubState.instance.debugPrint
 			];
 		}
 

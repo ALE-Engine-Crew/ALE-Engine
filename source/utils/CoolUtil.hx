@@ -9,6 +9,8 @@ import flixel.graphics.tile.FlxGraphicsShader as FlxShader;
 
 import funkin.visuals.ALECamera;
 
+import funkin.substates.CustomTransition;
+
 import core.structures.*;
 
 import openfl.system.Capabilities;
@@ -309,7 +311,7 @@ class CoolUtil
 		}
 	}
 
-    public static inline function switchState(state:flixel.FlxState = null)
+    public static inline function switchState(state:flixel.FlxState = null, skipTransIn:Bool = false, skipTransOut = false)
     {
         if (state == null)
             FlxG.resetState();
@@ -319,15 +321,30 @@ class CoolUtil
             var custom:CustomState = Std.downcast(state, CustomState);
             
             if (Paths.fileExists('scripts/states/' + custom.scriptName + '.hx') || Paths.fileExists('scripts/states/' + custom.scriptName + '.lua'))
-                FlxG.switchState(state);
+                transitionSwitch(state, skipTransIn, skipTransOut);
             else
                 debugPrint('Custom State called "' + custom.scriptName + '" doesn\'t Exist', FlxColor.RED);
-
-            return;
-        }
-
-        FlxG.switchState(state);
+        } else {
+			transitionSwitch(state, skipTransIn, skipTransOut);
+		}
     }
+
+	private static function transitionSwitch(state:flixel.FlxState, skipTransIn, skipTransOut)
+	{
+		CoolVars.skipTransIn = skipTransIn;
+		CoolVars.skipTransOut = skipTransOut; 
+
+        if (CoolVars.skipTransIn)
+		{
+            CoolVars.skipTransIn = false;
+
+			FlxG.switchState(state);
+		} else {
+			CustomTransition.finishCallback = () -> { FlxG.switchState(state); };
+
+            CoolUtil.openSubState(new CustomTransition(true));
+		}
+	}
 
 	public static function openSubState(subState:flixel.FlxSubState = null)
 	{
@@ -357,7 +374,5 @@ class CoolUtil
 			MusicBeatState.instance.debugPrint(text, color);
 		else
 			Sys.println(text);
-
-
 	}
 }

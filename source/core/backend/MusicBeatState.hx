@@ -11,6 +11,8 @@ import hl.Gc;
 
 import funkin.visuals.objects.DebugText;
 
+import funkin.substates.CustomTransition;
+
 /**
  * It is a FlxState extension that calculates the Beats, Steps and Sections of the game music (FlxG.sound.music)
  */
@@ -34,6 +36,11 @@ class MusicBeatState extends FlxState
 		add(debugTexts);
 
         controls = new Controls();
+
+        if (CoolVars.skipTransOut)
+            CoolVars.skipTransOut = false;
+        else
+            CoolUtil.openSubState(new CustomTransition(false));
 
         super.create();
     }

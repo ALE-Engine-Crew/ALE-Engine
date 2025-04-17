@@ -73,6 +73,8 @@
 	<haxeflag name="--macro" value="include('my.pack')" />
 
 	<haxedef name="DISABLED_MACRO_SUPERLATIVE" if="android" />
+
+	<haxedef name="hscriptPos" if="HSCRIPT_ALLOWED" />
 	
 	<assets path='art/iconOG.png' rename='icon.png' if="linux" />
 	

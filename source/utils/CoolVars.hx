@@ -48,5 +48,8 @@ class CoolVars
      */
     public static var engineVersion:String = '';
 
+    public static var skipTransIn:Bool = false;
+    public static var skipTransOut:Bool = false;
+
     @:allow(cpp.WindowsTerminalCPP) private static var isConsoleVisible:Bool = false;
 }

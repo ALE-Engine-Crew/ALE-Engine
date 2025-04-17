@@ -19,6 +19,11 @@ class CustomSubState extends ScriptSubState
 
         instance = this;
 
+        loadScripts();
+    }
+
+    public function loadScripts()
+    {
         loadScript('scripts/substates/' + scriptName);
         loadScript('scripts/substates/global');
         

@@ -52,7 +52,7 @@ class MainState extends MusicBeatState
 
         FlxG.stage.window.title = CoolVars.data.title;
 
-        CoolUtil.switchState(new CustomState(CoolVars.data.initialState));
+        CoolUtil.switchState(new CustomState(CoolVars.data.initialState), true, true);
     
         //CoolUtil.loadSong('stress', 'hard');
 

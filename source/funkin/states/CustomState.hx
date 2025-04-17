@@ -19,6 +19,11 @@ class CustomState extends ScriptState
 
         instance = this;
 
+        loadScripts();
+    }
+
+    public function loadScripts()
+    {
         loadScript('scripts/states/' + scriptName);
         loadScript('scripts/states/global');
 
@@ -95,6 +100,6 @@ class CustomState extends ScriptState
     {
         shouldClearMemory = false;
 
-        CoolUtil.switchState(new CustomState(scriptName));
+        CoolUtil.switchState(new CustomState(scriptName), true, true);
     }
 }
