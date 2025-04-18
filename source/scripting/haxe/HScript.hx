@@ -63,7 +63,8 @@ class HScript extends SScript
             Conductor,
             core.backend.MusicBeatState,
             CustomState,
-			CustomSubState
+			CustomSubState,
+			funkin.visuals.objects.Alphabet
         ];
 
         for (theClass in presetClasses)
