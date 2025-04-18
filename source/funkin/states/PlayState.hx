@@ -597,11 +597,11 @@ class PlayState extends ScriptState
         
         callOnScripts('onUpdate', [elapsed]);
 
-        camGame.zoom = CoolUtil.fpsLerp(camGame.zoom, cameraZoom, 0.1);
-        camHUD.zoom = CoolUtil.fpsLerp(camHUD.zoom, 1, 0.1);
+        camGame.zoom = CoolUtil.fpsLerp(camGame.zoom, cameraZoom, 0.05);
+        camHUD.zoom = CoolUtil.fpsLerp(camHUD.zoom, 1, 0.05);
 
         if (FlxG.keys.justPressed.R)
-            resetSong();
+            restartSong();
 
         if (FlxG.keys.justPressed.B)
             botplay = !botplay;
@@ -644,15 +644,14 @@ class PlayState extends ScriptState
             voice.resume();
     }
 
-    public function resetSong()
+    public function restartSong()
     {
         shouldClearMemory = false;
 
-        FlxG.sound.music.pause();
-
-        for (voice in voices)
-            voice.pause();
+        pauseSong();
         
+        CoolVars.skipTransOut = true;
+
         FlxG.resetState();
     }
 
