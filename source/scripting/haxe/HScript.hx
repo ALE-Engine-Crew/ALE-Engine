@@ -30,20 +30,21 @@ class HScript extends SScript
         var presetClasses:Array<Dynamic> = [
             // Flixel
             flixel.FlxG,
-            flixel.math.FlxMath,
             flixel.FlxSprite,
-            flixel.text.FlxText,
             flixel.FlxCamera,
+            flixel.math.FlxMath,
+            flixel.text.FlxText,
             flixel.util.FlxTimer,
             flixel.tweens.FlxTween,
             flixel.tweens.FlxEase,
-            flixel.addons.display.FlxRuntimeShader,
             flixel.effects.FlxFlicker,
-            flixel.addons.display.FlxBackdrop,
-            flixel.addons.editors.ogmo.FlxOgmo3Loader,
             flixel.tile.FlxTilemap,
 			flixel.group.FlxGroup,
 			flixel.group.FlxGroup.FlxTypedGroup,
+            flixel.addons.display.FlxRuntimeShader,
+			flixel.addons.display.FlxGridOverlay,
+            flixel.addons.display.FlxBackdrop,
+            flixel.addons.editors.ogmo.FlxOgmo3Loader,
 
             // Haxe
             StringTools,

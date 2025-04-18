@@ -230,7 +230,7 @@ class Paths
     public static inline function fileExists(path:String, ?pathMode:PathType = BOTH):Bool
     {
         #if MODS_ALLOWED
-        if (FileSystem.exists(modFolder() + '/' + path) && (pathMode == MODS || pathMode == BOTH))
+        if (FileSystem.exists(modFolder() + '/' + path) && (pathMode == MODS || pathMode == BOTH) && Mods.folder != '' && Mods.folder != null)
             return true;
         #end
 
