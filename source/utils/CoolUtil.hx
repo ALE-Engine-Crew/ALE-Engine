@@ -181,6 +181,8 @@ class CoolUtil
 
 		FlxG.camera.bgColor = FlxColor.BLACK;
 
+		FlxG.sound.destroy();
+
 		FlxG.resetGame();
 	}
 

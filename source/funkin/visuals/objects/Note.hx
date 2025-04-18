@@ -153,6 +153,8 @@ class Note extends FlxSprite
 
 			alpha = strum.alpha * (state == LOST ? 0.3 : isSustainNote ? 0.85 : 1);
 
+			visible = strum.visible;
+
             if ((x < FlxG.width && x > -width) || (distanceX < FlxG.width && distanceX > -width))
                 x = distanceX;
             
