@@ -157,29 +157,27 @@ class CoolUtil
 	{
 		CoolVars.skipTransIn = CoolVars.skipTransOut = true;
 
-		if (FlxG.state.subState != null)
-			FlxG.state.subState.close();
-
-		FlxG.game.removeChild(MainState.debugCounter);
-		MainState.debugCounter.destroy();
-		MainState.debugCounter = null;
-
-		for (key in CoolVars.globalVars.keys())
-			CoolVars.globalVars.remove(key);
-
-        #if (windows && cpp)
-		cpp.WindowsCPP.setWindowBorderColor(255, 255, 255);
-		#end
-		
-		FlxTween.globalManager.clear();
-
 		if (ScriptState.instance != null)
 			ScriptState.instance.destroyScripts();
 
 		if (ScriptSubState.instance != null)
 			ScriptSubState.instance.destroyScripts();
 
-		Paths.clearEngineCache();
+		if (FlxG.state.subState != null)
+			FlxG.state.subState.close();
+
+		for (key in CoolVars.globalVars.keys())
+			CoolVars.globalVars.remove(key);
+
+		FlxG.game.removeChild(MainState.debugCounter);
+		MainState.debugCounter.destroy();
+		MainState.debugCounter = null;
+
+        #if (windows && cpp)
+		cpp.WindowsCPP.setWindowBorderColor(255, 255, 255);
+		#end
+		
+		FlxTween.globalManager.clear();
 
 		FlxG.camera.bgColor = FlxColor.BLACK;
 

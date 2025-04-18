@@ -41,7 +41,7 @@ class LuaScript
 
     public function set(name:String, value:Dynamic)
     {
-        if (lua == null || closed)
+        if (lua == null || closed || (type == STATE ? ScriptState.instance == null : ScriptSubState.instance == null))
             return;
 
         Convert.toLua(lua, value);
@@ -58,7 +58,7 @@ class LuaScript
 
     public function call(name:String, ?args:Array<Dynamic>):Dynamic
     {
-        if (closed)
+        if (closed || (type == STATE ? ScriptState.instance == null : ScriptSubState.instance == null))
             return null;
 
         LuaCallbackHandler.type = type;

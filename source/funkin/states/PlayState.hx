@@ -703,6 +703,8 @@ class PlayState extends ScriptState
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 
+        callOnScripts('onDestroy');
+
         destroyScripts();
 
         super.destroy();
