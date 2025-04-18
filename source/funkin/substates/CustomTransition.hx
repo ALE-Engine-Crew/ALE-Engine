@@ -4,17 +4,19 @@ class CustomTransition extends CustomSubState
 {
     public var instance:CustomTransition;
 
-    public static var finishCallback:Void -> Void = null;
+    public final finishCallback:Void -> Void;
 
     public var transIn:Bool = false;
     public var transOut:Bool = false;
 
-    override public function new(transIn:Bool)
+    override public function new(transIn:Bool, ?finishCallback:Void -> Void = null)
     {
         super(CoolVars.data.transition);
 
         this.transIn = transIn;
         this.transOut = !transIn;
+
+        this.finishCallback = finishCallback;
     }
 
     override function create()
@@ -37,19 +39,13 @@ class CustomTransition extends CustomSubState
         callOnScripts('onCreate');
 
         callOnScripts('onCreatePost');
+
+        setOnScripts('finishCallback', finishCallback);
     }
 
     override function close()
     {
         instance = null;
-        
-        if (finishCallback != null)
-        {
-            if (transIn)
-                finishCallback();
-
-            finishCallback = null;
-        }
 
         super.close();
     }

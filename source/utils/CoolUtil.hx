@@ -17,6 +17,8 @@ import openfl.system.Capabilities;
 import openfl.filters.ShaderFilter;
 import openfl.utils.Assets;
 
+import core.config.MainState;
+
 import utils.ALEParserHelper;
 
 /**
@@ -152,7 +154,37 @@ class CoolUtil
 	 * Used to reset and clean the game.
 	 */
 	public static function resetEngine():Void
+	{
+		CoolVars.skipTransIn = CoolVars.skipTransOut = true;
+
+		if (FlxG.state.subState != null)
+			FlxG.state.subState.close();
+
+		FlxG.game.removeChild(MainState.debugCounter);
+		MainState.debugCounter.destroy();
+		MainState.debugCounter = null;
+
+		for (key in CoolVars.globalVars.keys())
+			CoolVars.globalVars.remove(key);
+
+        #if (windows && cpp)
+		cpp.WindowsCPP.setWindowBorderColor(255, 255, 255);
+		#end
+		
+		FlxTween.globalManager.clear();
+
+		if (ScriptState.instance != null)
+			ScriptState.instance.destroyScripts();
+
+		if (ScriptSubState.instance != null)
+			ScriptSubState.instance.destroyScripts();
+
+		Paths.clearEngineCache();
+
+		FlxG.camera.bgColor = FlxColor.BLACK;
+
 		FlxG.resetGame();
+	}
 
 	/**
 	 * Serves to make the location of a song more flexible
@@ -357,9 +389,7 @@ class CoolUtil
 
 			FlxG.switchState(state);
 		} else {
-			CustomTransition.finishCallback = () -> { FlxG.switchState(state); };
-
-            CoolUtil.openSubState(new CustomTransition(true));
+            CoolUtil.openSubState(new CustomTransition(true, () -> { FlxG.switchState(state); }));
 		}
 	}
 

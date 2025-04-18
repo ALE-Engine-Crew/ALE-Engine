@@ -21,9 +21,8 @@ class ScriptState extends MusicBeatState
     public var luaScripts:Array<LuaScript> = [];
     #end
 
-	public var camHUD:FlxCamera;
 	public var camGame:FlxCamera;
-	public var camOther:FlxCamera;
+	public var camHUD:FlxCamera;
 
     override public function create()
     {
@@ -37,11 +36,6 @@ class ScriptState extends MusicBeatState
 		camHUD.bgColor = FlxColor.TRANSPARENT;
 		
 		FlxG.cameras.add(camHUD, false);
-
-		camOther = new FlxCamera();
-		camOther.bgColor = FlxColor.TRANSPARENT;
-		
-		FlxG.cameras.add(camOther, false);
     }
 
     override public function destroy()

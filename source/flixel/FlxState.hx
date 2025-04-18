@@ -17,6 +17,9 @@ import flixel.util.typeLimit.NextState;
 // show deprecation warning when `switchTo` is overriden in dereived classes
 class FlxState extends FlxGroup
 {
+	public var allowDraw:Bool = true;
+	public var allowUpdate:Bool = true;
+	
 	/**
 	 * Determines whether or not this state is updated even when it is not the active state.
 	 * For example, if you have your game state first, and then you push a menu state on top of it,
@@ -107,7 +110,7 @@ class FlxState extends FlxGroup
 
 	override public function draw():Void
 	{
-		if (persistentDraw || subState == null)
+		if (allowDraw && (persistentDraw || subState == null))
 			super.draw();
 
 		if (subState != null)
@@ -235,7 +238,7 @@ class FlxState extends FlxGroup
 	@:allow(flixel.FlxGame)
 	function tryUpdate(elapsed:Float):Void
 	{
-		if (persistentUpdate || subState == null || subState is funkin.substates.CustomTransition)
+		if (allowUpdate && (persistentUpdate || subState == null || subState is funkin.substates.CustomTransition))
 			update(elapsed);
 
 		if (_requestSubStateReset)

@@ -143,7 +143,6 @@ class PlayState extends ScriptState
 
         setOnScripts('camGame', camGame);
         setOnScripts('camHUD', camHUD);
-        setOnScripts('camOther', camOther);
         
         callOnScripts('onCreate');
 
@@ -597,8 +596,8 @@ class PlayState extends ScriptState
         
         callOnScripts('onUpdate', [elapsed]);
 
-        camGame.zoom = CoolUtil.fpsLerp(camGame.zoom, cameraZoom, 0.05);
-        camHUD.zoom = CoolUtil.fpsLerp(camHUD.zoom, 1, 0.05);
+        camGame.zoom = CoolUtil.fpsLerp(camGame.zoom, cameraZoom, 0.1);
+        camHUD.zoom = CoolUtil.fpsLerp(camHUD.zoom, 1, 0.1);
 
         if (FlxG.keys.justPressed.R)
             restartSong();
@@ -703,7 +702,7 @@ class PlayState extends ScriptState
     {
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
-		
+
         destroyScripts();
 
         super.destroy();

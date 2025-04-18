@@ -119,8 +119,6 @@ class LuaGlobal extends LuaPresetBase
                     ScriptState.instance.camGame;
                 case 'HUD', 'CAMHUD', 'CAMERAHUD':
                     ScriptState.instance.camHUD;
-                case 'OTHER', 'CAMOTHER', 'CAMERAOTHER':
-                    ScriptState.instance.camOther;
                 default:
                     null;
             };

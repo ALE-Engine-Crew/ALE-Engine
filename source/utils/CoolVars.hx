@@ -2,6 +2,8 @@ package utils;
 
 import core.structures.DataJson;
 
+import haxe.ds.StringMap;
+
 /**
  * Contains variables that can be useful
  */
@@ -52,4 +54,6 @@ class CoolVars
     public static var skipTransOut:Bool = false;
 
     @:allow(cpp.WindowsTerminalCPP) private static var isConsoleVisible:Bool = false;
+
+    public static var globalVars:StringMap<Dynamic> = new StringMap<Dynamic>();
 }

@@ -31,7 +31,6 @@ class CustomState extends ScriptState
         
         setOnScripts('camGame', camGame);
         setOnScripts('camHUD', camHUD);
-        setOnScripts('camOther', camOther);
 
         callOnScripts('onCreate');
 
