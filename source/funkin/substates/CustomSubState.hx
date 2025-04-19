@@ -57,28 +57,25 @@ class CustomSubState extends ScriptSubState
         super.destroy();
     }
 
-    override public function stepHit()
+    override public function stepHit(curStep:Int)
     {
-        setOnScripts('curStep', curStep);
-        callOnScripts('onStepHit');
+        super.stepHit(curStep);
 
-        super.stepHit();
+        callOnScripts('onStepHit', [curStep]);
     }
 
-    override public function beatHit()
+    override public function beatHit(curBeat:Int)
     {
-        setOnScripts('curBeat', curBeat);
-        callOnScripts('onBeatHit');
+        super.beatHit(curBeat);
 
-        super.beatHit();
+        callOnScripts('onBeatHit', [curBeat]);
     }
 
-    override public function sectionHit()
+    override public function sectionHit(curSection:Int)
     {
-        setOnScripts('curSection', curSection);
-        callOnScripts('onSectionHit');
+        super.sectionHit(curSection);
 
-        super.sectionHit();
+        callOnScripts('onSectionHit', [curSection]);
     }
 
     override public function onFocus()

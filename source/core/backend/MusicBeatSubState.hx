@@ -73,31 +73,31 @@ class MusicBeatSubState extends flixel.FlxSubState
     {
         if (curStep != Conductor.curStep)
         {
-            stepHit();
-
             curStep = Conductor.curStep;
+
+            stepHit(curStep);
         }
         
         if (curBeat != Conductor.curBeat)
         {
-            beatHit();
-
             curBeat = Conductor.curBeat;
+
+            beatHit(curBeat);
         }
         
         if (curSection != Conductor.curSection)
         {
-            sectionHit();
-
             curSection = Conductor.curSection;
+
+            sectionHit(curSection);
         }
     }
 
-    public function stepHit() {}
+    public function stepHit(curStep:Int) {}
 
-    public function beatHit() {}
+    public function beatHit(curBeat:Int) {}
 
-    public function sectionHit() {}
+    public function sectionHit(curSection:Int) {}
 
     public static function switchState(state:flixel.FlxState = null)
     {

@@ -212,8 +212,9 @@ class PlayState extends ScriptState
 		add(healthBar);
 		healthBar.cameras = [camHUD];
 		healthBar.x = FlxG.width / 2 - healthBar.width / 2;
-        healthBar.leftColor = opponentColor;
-        healthBar.rightColor = playerColor;
+        healthBar.leftBar.color = opponentColor;
+        healthBar.rightBar.color = playerColor;
+        healthBar.orientation = RIGHT;
 
 		playerIcon = new HealthIcon(playerIconName);
 		add(playerIcon);
@@ -268,19 +269,11 @@ class PlayState extends ScriptState
 				if (health < 20 && playerIcon.animation.curAnim.curFrame != 1)
 				{
 					playerIcon.animation.curAnim.curFrame = 1;
-
-					playerIcon.updateHitbox();
-				
-					playerIcon.y = healthBar.y + healthBar.height / 2 - playerIcon.height / 2;
 				}
 	
 				if (health >= 20 && playerIcon.animation.curAnim.curFrame != 0)
 				{
 					playerIcon.animation.curAnim.curFrame = 0;
-
-					playerIcon.updateHitbox();
-				
-					playerIcon.y = healthBar.y + healthBar.height / 2 - playerIcon.height / 2;
 				}
 			}
 	
@@ -289,19 +282,14 @@ class PlayState extends ScriptState
 				if (health > 80 && opponentIcon.animation.curAnim.curFrame != 1)
 				{
 					opponentIcon.animation.curAnim.curFrame = 1;
-
-					opponentIcon.y = healthBar.y + healthBar.height / 2 - opponentIcon.height / 2;
 				}
 	
 				if (health <= 80 && opponentIcon.animation.curAnim.curFrame != 0)
 				{
 					opponentIcon.animation.curAnim.curFrame = 0;
-					
-					opponentIcon.y = healthBar.y + healthBar.height / 2 - opponentIcon.height / 2;
 				}
 			}
 		};
-
 
         callOnScripts('onCreatePost');
     }
@@ -507,16 +495,15 @@ class PlayState extends ScriptState
         playerStrums = [];
     }
 	
-	override function stepHit()
+	override function stepHit(curStep:Int)
 	{
-		super.stepHit();
+		super.stepHit(curStep);
 
 		if (SONG.needsVoices /* && FlxG.sound.music.time >= -ClientPrefs.data.noteOffset*/)
 			resyncVoices();
 
-		callOnScripts('onStepHit');
-		setOnScripts('curStep', curStep);
-	}
+		callOnScripts('onStepHit', [curStep]);
+    }
 
 	private function resyncVoices():Void
 	{
@@ -537,12 +524,9 @@ class PlayState extends ScriptState
         }
 	}
 
-    override function beatHit()
+    override function beatHit(curBeat:Int)
     {
-        super.beatHit();
-
-        setOnScripts('curBeat', curBeat);
-        callOnScripts('onBeatHit');
+        super.beatHit(curBeat);
 
         if (iconsZoomingFunction != null)
             iconsZoomingFunction();
@@ -564,19 +548,20 @@ class PlayState extends ScriptState
                 if (character.animation.exists('danceRight') && character.idleTimer >= 60 / Conductor.bpm)
                     character.animation.play('danceRight');
         }
+
+        callOnScripts('onBeatHit', [curBeat]);
     }
 
-    override function sectionHit()
+    override function sectionHit(curSection:Int)
     {
-        super.sectionHit();
+        super.sectionHit(curSection);
 
         camGame.zoom += 0.03;
         camHUD.zoom += 0.015;
 
         moveCamera();
 
-        setOnScripts('curSection', curSection);
-        callOnScripts('onSectionHit');
+        callOnScripts('onSectionHit', [curSection]);
     }
 
     function moveCamera()
@@ -618,7 +603,7 @@ class PlayState extends ScriptState
         if (iconsPositionFunction != null)
             iconsPositionFunction();
 		
-		healthBar.percent = CoolUtil.fpsLerp(healthBar.percent, 100 - health, 0.2);
+		healthBar.percent = CoolUtil.fpsLerp(healthBar.percent, health, 0.2);
 
         callOnScripts('onUpdatePost', [elapsed]);
     }

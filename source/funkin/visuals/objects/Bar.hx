@@ -1,160 +1,68 @@
 package funkin.visuals.objects;
 
-import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup;
 
-class Bar extends FlxTypedGroup<FlxSprite>
+import flixel.math.FlxRect;
+
+import core.enums.Orientation;
+
+class Bar extends FlxSpriteGroup
 {
-    public var percent(default, set):Float = 50;
-
-    public var alpha(default, set):Float = 0;
-
-    function set_alpha(value:Float):Float
+    public var orientation(default, set):Orientation = LEFT;
+    function set_orientation(value:Orientation):Orientation
     {
-        if (value > 1)
-            value = 1;
-        
-        if (value < 0)
-            value = 0;
+        orientation = value;
 
-        alpha = value;
+        percent = percent;
 
-        bg.alpha = leftBar.alpha = rightBar.alpha = alpha;
-
-        return value;
+        return orientation;
     }
 
+    public var percent(default, set):Float = 50;
     function set_percent(value:Float):Float
     {
-        if (value > 100)
-            value = 100;
-        
-        if (value < 0)
-            value = 0;
-        
-        percent = value;
+        percent = FlxMath.bound(value, 0, 100);
 
-        leftBar.scale.x = width * value / 100;
-        leftBar.updateHitbox();
+        final leftWidth:Float = leftBar.width * (percent / 100);
 
-        rightBar.scale.x = width - leftBar.width;
-        rightBar.updateHitbox();
-
-        bg.scale.x = width + 10;
-        bg.updateHitbox();
-
-        x = x;
+        if (orientation == LEFT)
+        {
+            leftBar.clipRect = new FlxRect(0, 0, leftWidth, height);
+            rightBar.clipRect = new FlxRect(leftWidth, 0, leftBar.width - leftWidth, height);
+        } else if (orientation == RIGHT) {
+            leftBar.clipRect = new FlxRect(0, 0, leftBar.width - leftWidth, height);
+            rightBar.clipRect = new FlxRect(leftBar.width - leftWidth, 0, leftWidth, height);
+        }
 
         return percent;
     }
 
-    public var x(default, set):Float = 0;
-
-    function set_x(value:Float):Float
-    {
-        x = value;
-
-        leftBar.x = value;
-        rightBar.x = leftBar.x + leftBar.width;
-        bg.x = leftBar.x - 5;
-
-        return value;
-    }
-    
-    public var y(default, set):Float = 0;
-
-    function set_y(value:Float):Float
-    {
-        y = value;
-
-        leftBar.y = rightBar.y = value;
-        bg.y = y - 5;
-
-        return value;
-    }
-
-    public var width(default, set):Float = 600;
-
-    function set_width(value:Float):Float
-    {
-        width = value;
-
-        percent = percent;
-
-        return value;
-    }
-
-    public var height(default, set):Float = 10;
-
-    function set_height(value:Float):Float
-    {
-        height = value;
-
-        leftBar.scale.y = rightBar.scale.y = value;
-
-        leftBar.updateHitbox();
-        leftBar.updateHitbox();
-
-        bg.scale.y = height + 10;
-
-        bg.updateHitbox();
-
-        y = y;
-
-        return value;
-    }
-
-    public var middlePoint(get, never):Float;
-
+    @:isVar public var middlePoint(get, never):Float = 0;
     function get_middlePoint():Float
-        return leftBar.width;
+        return width * ((orientation == LEFT ? percent : 100 - percent) / 100);
 
-    public var leftColor(default, set):FlxColor = FlxColor.WHITE;
+    public var bg:FlxSprite;
+    public var leftBar:FlxSprite;
+    public var rightBar:FlxSprite;
 
-    function set_leftColor(value:FlxColor):FlxColor
-    {
-        leftColor = value;
-
-        leftBar.color = value;
-
-        return value;
-    }
-
-    public var rightColor(default, set):FlxColor = FlxColor.WHITE;
-
-    function set_rightColor(value:FlxColor):FlxColor
-    {
-        rightColor = value;
-
-        rightBar.color = value;
-
-        return value;
-    }
-
-    private var bg:FlxSprite;
-    private var leftBar:FlxSprite;
-    private var rightBar:FlxSprite;
-
-    override public function new(?x:Float = 0, ?y:Float = 0)
+    override public function new(?x:Float = 0, ?y:Float = 0, width:Int = 610, height:Int = 20)
     {
         super();
 
-        leftBar = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE);
-        leftBar.scale.set(width / 2, height);
-        leftBar.updateHitbox();
-        
-        rightBar = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE);
-        rightBar.scale.set(width / 2, height);
-        rightBar.updateHitbox();
-
-        bg = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
-        bg.scale.set(width + 10, height + 10);
-        bg.updateHitbox();
-
+        bg = new FlxSprite().makeGraphic(width, height, FlxColor.BLACK);
         add(bg);
+
+        leftBar = new FlxSprite().makeGraphic(width - 10, height - 10);
         add(leftBar);
+        leftBar.x = leftBar.y = 5;
+
+        rightBar = new FlxSprite().makeGraphic(width - 10, height - 10);
         add(rightBar);
+        rightBar.x = rightBar.y = 5;
 
         this.x = x;
         this.y = y;
+
+        percent = percent;
     }
 }
