@@ -191,6 +191,8 @@ class PlayState extends ScriptState
         for (voice in voices)
             voice.play();
 
+        startPosition = 0;
+
         #if desktop
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
