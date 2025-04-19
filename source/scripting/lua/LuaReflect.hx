@@ -252,6 +252,17 @@ class LuaReflect extends LuaPresetBase
             }
         );
     }
+
+    public static function parseVariable(lua:LuaScript, vars:String)
+    {
+        var variables:Array<String> = vars.split('.');
+        var prop:Dynamic = LuaReflect.getObjectDirectly(lua, variables[0]);
+
+        if (variables.length > 1)
+            prop = LuaReflect.getVarInArray(lua, LuaReflect.getPropertyLoop(lua, variables), variables[variables.length - 1]);
+
+        return prop;
+    }
     
     function parseInstances(args:Array<Dynamic>)
     {

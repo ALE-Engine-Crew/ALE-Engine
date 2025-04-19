@@ -6,41 +6,53 @@ class LuaTween extends LuaPresetBase
     {
         super(lua);
 
-        set('tween', function(tag:String, vars:String, valueType:String, value:Dynamic, duration:Float, ?ease:String = 'linear')
+        set('tween', function(tag:String, vars:String, valueTypes:Dynamic, duration:Float, ?ease:String = 'linear')
             {
-                if (valueType.toLowerCase().trim() == 'zoom')
-                {
-                    vars = switch (vars.toLowerCase())
-                    {
-                        case 'camera', 'camgame', 'cameragame':
-                            'camGame';
-                        case 'hud', 'camhud', 'camerahud':
-                            'camHUD';
-                        default:
-                            'camGame';
-                    }
+                var types = {};
 
-                    return tweenFunction(tag, vars, {zoom: value}, duration, ease);
-                } else {
-                    return tweenFunction(tag, vars,
-                        switch (valueType.toLowerCase().trim())
-                        {
-                            default:
-                                {x: value}
-                            case 'y':
-                                {y: value}
-                            case 'angle':
-                                {angle: value}
-                            case 'alpha':
-                                {alpha: value}
-                        },
-                    duration, ease);
-                }
+                for (field in Reflect.fields(valueTypes))
+                    Reflect.setField(types, field, Reflect.field(valueTypes, field));
+
+                return tweenFunction(tag, vars, types, duration, ease);
             }
         );
+
+        set('cancelTween', cancelTween);
+
+        set('setProperty', (tag:String, properties:Dynamic) ->
+        {
+            var obj = LuaReflect.parseVariable(lua, tag);
+
+            if (obj != null)
+                applyProps(obj, properties);
+        });
     }
 
-    function tweenFunction(tag:String, vars:String, tweenValue:Any, duration:Float, ease:String)
+    function applyProps(obj:Dynamic, props:Dynamic):Void
+    {
+        for (key in Reflect.fields(props))
+        {
+            var value = Reflect.field(props, key);
+
+            if (Reflect.isObject(value))
+            {
+                var subObj = Reflect.field(obj, key);
+
+                if (subObj == null)
+                {
+                    subObj = {};
+                    
+                    Reflect.setProperty(obj, key, subObj);
+                }
+
+                applyProps(subObj, value);
+            } else {
+                Reflect.setProperty(obj, key, value);
+            }
+        }
+    }
+
+    function tweenFunction(tag:String, vars:String, tweenValue:Dynamic, duration:Float, ease:String)
     {
         var target:Dynamic = tweenPrepare(tag, vars);
 
@@ -85,13 +97,7 @@ class LuaTween extends LuaPresetBase
         if (tag != null)
             cancelTween(tag);
 
-        var variables:Array<String> = vars.split('.');
-        var prop:Dynamic = LuaReflect.getObjectDirectly(lua, variables[0]);
-
-        if (variables.length > 1)
-            prop = LuaReflect.getVarInArray(lua, LuaReflect.getPropertyLoop(lua, variables), variables[variables.length - 1]);
-
-        return prop;
+        return LuaReflect.parseVariable(lua, vars);
     }
 
     function cancelTween(tag:String)
@@ -109,48 +115,85 @@ class LuaTween extends LuaPresetBase
             variables.remove(tag);
         }
     }
-    
+
 	public static function easeByString(?ease:String = '')
     {
-		switch(ease.toLowerCase().trim())
+		return switch(ease.toLowerCase().trim())
         {
-			case 'backin': return FlxEase.backIn;
-			case 'backinout': return FlxEase.backInOut;
-			case 'backout': return FlxEase.backOut;
-			case 'bouncein': return FlxEase.bounceIn;
-			case 'bounceinout': return FlxEase.bounceInOut;
-			case 'bounceout': return FlxEase.bounceOut;
-			case 'circin': return FlxEase.circIn;
-			case 'circinout': return FlxEase.circInOut;
-			case 'circout': return FlxEase.circOut;
-			case 'cubein': return FlxEase.cubeIn;
-			case 'cubeinout': return FlxEase.cubeInOut;
-			case 'cubeout': return FlxEase.cubeOut;
-			case 'elasticin': return FlxEase.elasticIn;
-			case 'elasticinout': return FlxEase.elasticInOut;
-			case 'elasticout': return FlxEase.elasticOut;
-			case 'expoin': return FlxEase.expoIn;
-			case 'expoinout': return FlxEase.expoInOut;
-			case 'expoout': return FlxEase.expoOut;
-			case 'quadin': return FlxEase.quadIn;
-			case 'quadinout': return FlxEase.quadInOut;
-			case 'quadout': return FlxEase.quadOut;
-			case 'quartin': return FlxEase.quartIn;
-			case 'quartinout': return FlxEase.quartInOut;
-			case 'quartout': return FlxEase.quartOut;
-			case 'quintin': return FlxEase.quintIn;
-			case 'quintinout': return FlxEase.quintInOut;
-			case 'quintout': return FlxEase.quintOut;
-			case 'sinein': return FlxEase.sineIn;
-			case 'sineinout': return FlxEase.sineInOut;
-			case 'sineout': return FlxEase.sineOut;
-			case 'smoothstepin': return FlxEase.smoothStepIn;
-			case 'smoothstepinout': return FlxEase.smoothStepInOut;
-			case 'smoothstepout': return FlxEase.smoothStepOut;
-			case 'smootherstepin': return FlxEase.smootherStepIn;
-			case 'smootherstepinout': return FlxEase.smootherStepInOut;
-			case 'smootherstepout': return FlxEase.smootherStepOut;
+			case 'backin':
+				FlxEase.backIn;
+			case 'backinout':
+				FlxEase.backInOut;
+			case 'backout':
+				FlxEase.backOut;
+			case 'bouncein':
+				FlxEase.bounceIn;
+			case 'bounceinout':
+				FlxEase.bounceInOut;
+			case 'bounceout':
+				FlxEase.bounceOut;
+			case 'circin':
+				FlxEase.circIn;
+			case 'circinout':
+				FlxEase.circInOut;
+			case 'circout':
+				FlxEase.circOut;
+			case 'cubein':
+				FlxEase.cubeIn;
+			case 'cubeinout':
+				FlxEase.cubeInOut;
+			case 'cubeout':
+				FlxEase.cubeOut;
+			case 'elasticin':
+				FlxEase.elasticIn;
+			case 'elasticinout':
+				FlxEase.elasticInOut;
+			case 'elasticout':
+				FlxEase.elasticOut;
+			case 'expoin':
+				FlxEase.expoIn;
+			case 'expoinout':
+				FlxEase.expoInOut;
+			case 'expoout':
+				FlxEase.expoOut;
+			case 'quadin':
+				FlxEase.quadIn;
+			case 'quadinout':
+				FlxEase.quadInOut;
+			case 'quadout':
+				FlxEase.quadOut;
+			case 'quartin':
+				FlxEase.quartIn;
+			case 'quartinout':
+				FlxEase.quartInOut;
+			case 'quartout':
+				FlxEase.quartOut;
+			case 'quintin':
+				FlxEase.quintIn;
+			case 'quintinout':
+				FlxEase.quintInOut;
+			case 'quintout':
+				FlxEase.quintOut;
+			case 'sinein':
+				FlxEase.sineIn;
+			case 'sineinout':
+				FlxEase.sineInOut;
+			case 'sineout':
+				FlxEase.sineOut;
+			case 'smoothstepin':
+				FlxEase.smoothStepIn;
+			case 'smoothstepinout':
+				FlxEase.smoothStepInOut;
+			case 'smoothstepout':
+				FlxEase.smoothStepOut;
+			case 'smootherstepin':
+				FlxEase.smootherStepIn;
+			case 'smootherstepinout':
+				FlxEase.smootherStepInOut;
+			case 'smootherstepout':
+				FlxEase.smootherStepOut;
+			default:
+				FlxEase.linear;
 		}
-		return FlxEase.linear;
 	}
 }
