@@ -69,5 +69,11 @@ class LuaSound extends LuaPresetBase
                     FlxG.sound.music.stop();
             }
         );
+
+        set('playSoundFile', function(path:String)
+            {
+                FlxG.sound.play(Paths.sound(path));
+            }
+        );
     }
 }

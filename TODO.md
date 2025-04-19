@@ -14,5 +14,7 @@
         - [x] Implement
         - [ ] API
     - [ ] Lua
-        - [ ] Implement
+        - [x] Implement
         - [ ] API
+            - [ ] Tweens & Callbacks
+            - [ ] Timers & Callbacks
