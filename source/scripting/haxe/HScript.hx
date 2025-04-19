@@ -65,6 +65,8 @@ class HScript extends SScript
             core.backend.MusicBeatState,
             CustomState,
 			CustomSubState,
+			funkin.visuals.objects.AttachedSprite,
+			funkin.visuals.objects.AttachedText,
 			funkin.visuals.objects.Alphabet
         ];
 
