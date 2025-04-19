@@ -11,11 +11,11 @@ class Controls
 
     public var UI_LEFT(get, never):Bool;
     function get_UI_LEFT():Bool
-        return FlxG.keys.pressed.ENTER;
+        return FlxG.keys.pressed.LEFT;
 
     public var UI_LEFT_P(get, never):Bool;
     function get_UI_LEFT_P():Bool
-        return FlxG.keys.justPressed.ENTER;
+        return FlxG.keys.justPressed.LEFT;
 
     public var UI_DOWN(get, never):Bool;
     function get_UI_DOWN():Bool
