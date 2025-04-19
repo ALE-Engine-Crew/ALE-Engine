@@ -1,87 +1,100 @@
 package scripting.lua;
 
+import flixel.tweens.FlxTween.FlxTweenType;
+
 class LuaTween extends LuaPresetBase
 {
     override public function new(lua:LuaScript)
     {
         super(lua);
 
-        set('tween', function(tag:String, vars:String, valueTypes:Dynamic, duration:Float, ?ease:String = 'linear')
+        set('tween', function(tag:String, vars:String, valueTypes:Dynamic, duration:Float, ?options:Dynamic)
             {
                 var types = {};
 
                 for (field in Reflect.fields(valueTypes))
                     Reflect.setField(types, field, Reflect.field(valueTypes, field));
 
-                return tweenFunction(tag, vars, types, duration, ease);
+				var opts = {};
+
+				for (field in Reflect.fields(options))
+				{
+					switch (field)
+					{
+						case 'type':
+							Reflect.setField(opts, 'type', tweenTypeByString(Reflect.field(options, field)));
+						case 'startDelay':
+							Reflect.setField(opts, 'startDelay', Reflect.field(options, field));
+						case 'loopDelay':
+							Reflect.setField(opts, 'loopDelay', Reflect.field(options, field));
+						case 'ease':
+							Reflect.setField(opts, 'ease', easeByString(Reflect.field(options, field)));
+					}
+				}
+
+                return tweenFunction(tag, vars, types, duration, opts);
             }
         );
 
         set('cancelTween', cancelTween);
-
-        set('setProperty', (tag:String, properties:Dynamic) ->
-        {
-            var obj = LuaReflect.parseVariable(lua, tag);
-
-            if (obj != null)
-                applyProps(obj, properties);
-        });
     }
 
-    function applyProps(obj:Dynamic, props:Dynamic):Void
+    function tweenFunction(tag:String, vars:String, tweenValue:Dynamic, duration:Float, options:Dynamic)
     {
-        for (key in Reflect.fields(props))
-        {
-            var value = Reflect.field(props, key);
+		var ogTag:String = tag;
 
-            if (Reflect.isObject(value))
-            {
-                var subObj = Reflect.field(obj, key);
+		var theOptions = {
+			onStart: function(twn:FlxTween)
+			{
+				if (type == STATE)
+				{
+					if (ScriptState.instance != null)
+						ScriptState.instance.callOnLuaScripts('onTweenStart', [ogTag, vars]);
+				} else {
+					if (ScriptSubState.instance != null)
+						ScriptSubState.instance.callOnLuaScripts('onTweenStart', [ogTag, vars]);
+				}
+			},
+			onComplete: function(twn:FlxTween)
+			{
+				variables.remove(tag);
 
-                if (subObj == null)
-                {
-                    subObj = {};
-                    
-                    Reflect.setProperty(obj, key, subObj);
-                }
+				if (type == STATE)
+				{
+					if (ScriptState.instance != null)
+						ScriptState.instance.callOnLuaScripts('onTweenCompleted', [ogTag, vars]);
+				} else {
+					if (ScriptSubState.instance != null)
+						ScriptSubState.instance.callOnLuaScripts('onTweenCompleted', [ogTag, vars]);
+				}
+			},
+			onUpdate: function(twn:FlxTween)
+			{
+				if (type == STATE)
+				{
+					if (ScriptState.instance != null)
+						ScriptState.instance.callOnLuaScripts('onTweenUpdate', [ogTag, vars]);
+				} else {
+					if (ScriptSubState.instance != null)
+						ScriptSubState.instance.callOnLuaScripts('onTweenUpdate', [ogTag, vars]);
+				}
+			}
+		};
 
-                applyProps(subObj, value);
-            } else {
-                Reflect.setProperty(obj, key, value);
-            }
-        }
-    }
+		for (field in Reflect.fields(options))
+			Reflect.setField(theOptions, field, Reflect.field(options, field));
 
-    function tweenFunction(tag:String, vars:String, tweenValue:Dynamic, duration:Float, ease:String)
-    {
         var target:Dynamic = tweenPrepare(tag, vars);
 
         if (target != null)
         {
             if (tag != null)
             {
-                var ogTag:String = tag;
-
                 tag = LuaReflect.formatVariable('tween_' + tag);
 
-                setTag(tag, FlxTween.tween(target, tweenValue, duration, {ease: easeByString(ease),
-                        onComplete: function(twn:FlxTween)
-                        {
-                            variables.remove(tag);
-
-                            if (type == STATE)
-                            {
-                                if (ScriptState.instance != null)
-                                    ScriptState.instance.callOnLuaScripts('onTweenCompleted', [ogTag, vars]);
-                            } else {
-                                if (ScriptSubState.instance != null)
-                                    ScriptSubState.instance.callOnLuaScripts('onTweenCompleted', [ogTag, vars]);
-                            }
-                        }
-                    })
-                );
+                setTag(tag, FlxTween.tween(target, tweenValue, duration, theOptions));
             } else {
-                FlxTween.tween(target, tweenValue, duration, {ease: easeByString(ease)});
+                FlxTween.tween(target, tweenValue, duration, theOptions);
             }
 
             return tag;
@@ -194,6 +207,25 @@ class LuaTween extends LuaPresetBase
 				FlxEase.smootherStepOut;
 			default:
 				FlxEase.linear;
+		}
+	}
+
+	public static function tweenTypeByString(?type:String)
+	{
+		return switch (type.toUpperCase().trim())
+		{
+			case 'BACKWARD':
+				FlxTweenType.BACKWARD;
+			case 'LOOPING':
+				FlxTweenType.LOOPING;
+			case 'ONESHOT':
+				FlxTweenType.ONESHOT;
+			case 'PERSIST':
+				FlxTweenType.PERSIST;
+			case 'PINGPONG':
+				FlxTweenType.PINGPONG;
+			default:
+				null;
 		}
 	}
 }

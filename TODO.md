@@ -19,6 +19,7 @@
         - [ ] API
             - [ ] Tweens & Callbacks
             - [ ] Timers & Callbacks
+            - [ ] New setProperty
         - [ ] Docs
             - [ ] playSoundFile
             - [ ] 

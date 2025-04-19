@@ -24,22 +24,13 @@ class LuaReflect extends LuaPresetBase
             }
         );
 
-        set("setProperty", function(variable:String, value:Dynamic, allowMaps:Bool = false)
-            {
-                var split:Array<String> = variable.split('.');
+        set('setProperty', (tag:String, properties:Dynamic) ->
+        {
+            var obj = LuaReflect.parseVariable(lua, tag);
 
-                if (split.length > 1)
-                {
-                    setVarInArray(lua, getPropertyLoop(lua, split, true, allowMaps), split[split.length-1], value, allowMaps);
-
-                    return true;
-                }
-
-                setVarInArray(lua, type == STATE ? ScriptState.instance : ScriptSubState.instance, variable, value, allowMaps);
-
-                return true;
-            }
-        );
+            if (obj != null)
+                applyProps(obj, properties);
+        });
 
         set("getPropertyFromClass", function(classVar:String, variable:String, ?allowMaps:Bool = false)
             {
@@ -251,6 +242,30 @@ class LuaReflect extends LuaPresetBase
                 return retStr;
             }
         );
+    }
+
+    function applyProps(obj:Dynamic, props:Dynamic):Void
+    {
+        for (key in Reflect.fields(props))
+        {
+            var value = Reflect.field(props, key);
+
+            if (Reflect.isObject(value))
+            {
+                var subObj = Reflect.field(obj, key);
+
+                if (subObj == null)
+                {
+                    subObj = {};
+                    
+                    Reflect.setProperty(obj, key, subObj);
+                }
+
+                applyProps(subObj, value);
+            } else {
+                Reflect.setProperty(obj, key, value);
+            }
+        }
     }
 
     public static function parseVariable(lua:LuaScript, vars:String)
