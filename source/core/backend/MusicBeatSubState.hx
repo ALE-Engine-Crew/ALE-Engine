@@ -69,43 +69,33 @@ class MusicBeatSubState extends flixel.FlxSubState
         super.destroy();
     }
 
-    override public function update(elapsed:Float):Void
+    private function updateMusic()
     {
-        super.update(elapsed);
-
-        var step:Int = Math.floor(Conductor.songPosition / 1000 * Conductor.bpm / 15);
-    
-        if (step > curStep)
+        if (curStep != Conductor.curStep)
         {
-            curStep = step;
-            
             stepHit();
+
+            curStep = Conductor.curStep;
         }
-    }
-
-    public function stepHit()
-    {
-        var beat:Int = Math.floor(curStep / 4);
-
-        if (beat > curBeat)
+        
+        if (curBeat != Conductor.curBeat)
         {
-            curBeat = beat;
-
             beatHit();
+
+            curBeat = Conductor.curBeat;
         }
-    }
-
-    public function beatHit()
-    {
-        var section:Int = Math.floor(curBeat / 4);
-
-        if (section > curSection)
+        
+        if (curSection != Conductor.curSection)
         {
-            curSection = section;
-
             sectionHit();
+
+            curSection = Conductor.curSection;
         }
     }
+
+    public function stepHit() {}
+
+    public function beatHit() {}
 
     public function sectionHit() {}
 

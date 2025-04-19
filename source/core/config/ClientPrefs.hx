@@ -17,6 +17,8 @@ package core.config;
 	public var cacheOnGPU:Bool = true;
 
 	public var framerate:Int = 240;
+
+	public var shaders:Bool = true;
 }
 
 class ClientPrefs

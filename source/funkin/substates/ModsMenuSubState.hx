@@ -32,7 +32,8 @@ class ModsMenuSubState extends MusicBeatSubState
         'stages',
         'weeks',
         'fonts',
-        'scripts'
+        'scripts',
+        'Disable Mods'
     ];
 
     var options:Array<String> = [];
@@ -45,6 +46,8 @@ class ModsMenuSubState extends MusicBeatSubState
             for (folder in FileSystem.readDirectory('mods'))
                 if (FileSystem.isDirectory('mods/' + folder) && !ignoreFolders.contains(folder))
                     options.push(folder);
+
+        options.push('Disable Mods');
 
         modCamera = new FlxCamera();
         modCamera.bgColor = FlxColor.TRANSPARENT;
@@ -83,8 +86,8 @@ class ModsMenuSubState extends MusicBeatSubState
             close();
 
         if (controls.ACCEPT)
-        {
-            Mods.folder = options[selInt];
+        { 
+            Mods.folder = options[selInt] == 'Disable Mods' ? '' : options[selInt];
 
             CoolUtil.resetEngine();
         }

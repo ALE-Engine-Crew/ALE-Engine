@@ -1,13 +1,13 @@
 package utils;
 
-import lime.utils.Assets as LimeAssets;
 import lime.app.Application;
 
 import flixel.FlxSprite;
 import flixel.system.scaleModes.RatioScaleMode;
-import flixel.graphics.tile.FlxGraphicsShader as FlxShader;
 
 import funkin.visuals.ALECamera;
+
+import funkin.visuals.shaders.ALERuntimeShader;
 
 import funkin.substates.CustomTransition;
 
@@ -15,7 +15,7 @@ import core.structures.*;
 
 import openfl.system.Capabilities;
 import openfl.filters.ShaderFilter;
-import openfl.utils.Assets;
+import openfl.filters.BitmapFilter;
 
 import core.config.MainState;
 
@@ -426,5 +426,59 @@ class CoolUtil
 			MusicBeatState.instance.debugPrint(text, color);
 		else
 			Sys.println(text);
+	}
+
+	public static function createRuntimeShader(shaderName:String):ALERuntimeShader
+	{
+		#if (!flash && sys)
+		if (!ClientPrefs.data.shaders)
+			return null;
+
+		var frag:String = 'shaders/' + shaderName + '.frag';
+		var vert:String = 'shaders/' + shaderName + '.vert';
+
+		var found:Bool = false;
+
+		if (Paths.fileExists(frag))
+		{
+			frag = File.getContent(Paths.getPath(frag));
+
+			found = true;
+		} else {
+			frag = null;
+		}
+
+		if (Paths.fileExists(vert))
+		{
+			vert = File.getContent(Paths.getPath(vert));
+
+			found = true;
+		} else {
+			vert = null;
+		}
+
+		if (found)
+		{
+			return new ALERuntimeShader(shaderName, frag, vert);
+		} else {
+			debugPrint('Missing Shader: ' + shaderName, FlxColor.RED);
+
+			return null;
+		}
+		#else
+		FlxG.log.warn('Platform Unsupported for Runtime Shaders');
+
+		return null;
+		#end
+	}
+
+	public static function setCameraShaders(camera:FlxCamera, shaders:Array<ALERuntimeShader>):Void
+	{
+		var filterArray:Array<BitmapFilter> = [];
+
+		for (shader in shaders)
+			filterArray.push(new ShaderFilter(shader));
+
+		camera.filters = filterArray;
 	}
 }

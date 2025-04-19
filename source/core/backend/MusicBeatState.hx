@@ -99,39 +99,31 @@ class MusicBeatState extends FlxState
 
     private function updateMusic()
     {
-        var step:Int = Math.floor(Conductor.songPosition / 1000 * Conductor.bpm / 15);
-    
-        if (step > curStep)
+        if (curStep != Conductor.curStep)
         {
-            curStep = step;
-            
             stepHit();
+
+            curStep = Conductor.curStep;
         }
-    }
-
-    public function stepHit()
-    {
-        var beat:Int = Math.floor(curStep / 4);
-
-        if (beat > curBeat)
-        {
-            curBeat = beat;
-
-            beatHit();
-        }
-    }
-
-    public function beatHit()
-    {
-        var section:Int = Math.floor(curBeat / 4);
         
-        if (section > curSection)
+        if (curBeat != Conductor.curBeat)
         {
-            curSection = section;
+            beatHit();
 
+            curBeat = Conductor.curBeat;
+        }
+        
+        if (curSection != Conductor.curSection)
+        {
             sectionHit();
+
+            curSection = Conductor.curSection;
         }
     }
+
+    public function stepHit() {}
+
+    public function beatHit() {}
 
     public function sectionHit() {}
 
