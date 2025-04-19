@@ -72,7 +72,7 @@ class LuaSound extends LuaPresetBase
 
         set('playSoundFile', function(path:String)
             {
-                if (Paths.fileExists('sounds/' + path + '.' + Paths.SOUND_EXT))
+                if (Paths.sound(path) != null)
                     FlxG.sound.play(Paths.sound(path));
                 else
                     errorPrint('Missing File: sounds/' + path + '.' + Paths.SOUND_EXT);
