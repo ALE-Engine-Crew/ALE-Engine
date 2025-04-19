@@ -12,5 +12,6 @@ class LuaPreset
         new LuaFileSystem(lua);
         new LuaSound(lua);
         new LuaTween(lua);
+        new LuaKeys(lua);
     }
 }
