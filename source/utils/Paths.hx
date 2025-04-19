@@ -24,9 +24,9 @@ import flash.media.Sound;
  */
 class Paths
 {
-    inline public static var IMAGE_EXT = 'png';
-	inline public static var SOUND_EXT = #if web 'mp3' #else 'ogg' #end;
-	inline public static var VIDEO_EXT = 'mp4';
+    public static inline final IMAGE_EXT = 'png';
+	public static inline final SOUND_EXT = #if web 'mp3' #else 'ogg' #end;
+	public static inline final VIDEO_EXT = 'mp4';
 
 	public static var cachedGraphics:StringMap<FlxGraphic> = new StringMap<FlxGraphic>();
     public static var cachedSounds:StringMap<Sound> = new StringMap<Sound>();
