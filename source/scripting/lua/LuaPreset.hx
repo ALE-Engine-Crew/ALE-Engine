@@ -13,5 +13,6 @@ class LuaPreset
         new LuaSound(lua);
         new LuaTween(lua);
         new LuaKeys(lua);
+        new LuaMouse(lua);
     }
 }

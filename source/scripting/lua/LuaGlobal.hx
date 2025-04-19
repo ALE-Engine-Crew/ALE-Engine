@@ -63,7 +63,7 @@ class LuaGlobal extends LuaPresetBase
                 var theCameras:Array<FlxCamera> = [];
 
                 for (cam in cameras)
-                    theCameras.push(cameraFromString(cam));
+                    theCameras.push(cameraFromString(lua, cam));
 
                 if (tagIs(tag, FlxObject))
                 {
@@ -107,33 +107,26 @@ class LuaGlobal extends LuaPresetBase
         }
     }
 
-    function cameraFromString(name:String):FlxCamera
+    public static function cameraFromString(lua:LuaScript, name:String):FlxCamera
     {
         var result:FlxCamera = null;
         
-        if (type == STATE)
+        if (lua.type == STATE)
         {
             result = switch(name.toUpperCase())
             {
-                case 'CAMERA', 'CAMGAME', 'CAMERAGAME':
-                    ScriptState.instance.camGame;
                 case 'HUD', 'CAMHUD', 'CAMERAHUD':
                     ScriptState.instance.camHUD;
                 default:
-                    null;
+                    ScriptState.instance.camGame;
             };
         } else {
             result = switch(name.toUpperCase())
             {
-                case 'CAMERA', 'CAMGAME', 'CAMERAGAME':
-                    ScriptSubState.instance.camGame;
                 default:
-                    null;
+                    ScriptSubState.instance.camGame;
             };
         }
-
-        if (result == null)
-            errorPrint(name + ' is Not a Camera');
 
         return result;
     }

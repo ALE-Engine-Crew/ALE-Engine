@@ -49,10 +49,10 @@ class LuaTween extends LuaPresetBase
 				if (type == STATE)
 				{
 					if (ScriptState.instance != null)
-						ScriptState.instance.callOnLuaScripts('onTweenStart', [ogTag, vars]);
+						ScriptState.instance.callOnLuaScripts('onTweenStart', [ogTag]);
 				} else {
 					if (ScriptSubState.instance != null)
-						ScriptSubState.instance.callOnLuaScripts('onTweenStart', [ogTag, vars]);
+						ScriptSubState.instance.callOnLuaScripts('onTweenStart', [ogTag]);
 				}
 			},
 			onComplete: function(twn:FlxTween)
@@ -62,10 +62,10 @@ class LuaTween extends LuaPresetBase
 				if (type == STATE)
 				{
 					if (ScriptState.instance != null)
-						ScriptState.instance.callOnLuaScripts('onTweenCompleted', [ogTag, vars]);
+						ScriptState.instance.callOnLuaScripts('onTweenCompleted', [ogTag]);
 				} else {
 					if (ScriptSubState.instance != null)
-						ScriptSubState.instance.callOnLuaScripts('onTweenCompleted', [ogTag, vars]);
+						ScriptSubState.instance.callOnLuaScripts('onTweenCompleted', [ogTag]);
 				}
 			},
 			onUpdate: function(twn:FlxTween)
@@ -73,10 +73,10 @@ class LuaTween extends LuaPresetBase
 				if (type == STATE)
 				{
 					if (ScriptState.instance != null)
-						ScriptState.instance.callOnLuaScripts('onTweenUpdate', [ogTag, vars]);
+						ScriptState.instance.callOnLuaScripts('onTweenUpdate', [ogTag]);
 				} else {
 					if (ScriptSubState.instance != null)
-						ScriptSubState.instance.callOnLuaScripts('onTweenUpdate', [ogTag, vars]);
+						ScriptSubState.instance.callOnLuaScripts('onTweenUpdate', [ogTag]);
 				}
 			}
 		};
