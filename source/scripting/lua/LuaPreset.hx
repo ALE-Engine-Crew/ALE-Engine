@@ -11,5 +11,6 @@ class LuaPreset
         new LuaReflect(lua);
         new LuaFileSystem(lua);
         new LuaSound(lua);
+        new LuaTween(lua);
     }
 }

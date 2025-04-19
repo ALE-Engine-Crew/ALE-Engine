@@ -107,7 +107,7 @@ class LuaGlobal extends LuaPresetBase
         }
     }
 
-    private function cameraFromString(name:String):FlxCamera
+    function cameraFromString(name:String):FlxCamera
     {
         var result:FlxCamera = null;
         

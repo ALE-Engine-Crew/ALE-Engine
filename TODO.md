@@ -10,6 +10,7 @@
     - [ ] Modchart Editor
 
 - [ ] Scripting
+    - [ ] Better Error Handling
     - [ ] HScript
         - [x] Implement
         - [ ] API

@@ -9,7 +9,7 @@ class LuaReflect extends LuaPresetBase
 {
 	static final instanceStr:Dynamic = "##LUA_STRINGTOOBJ";
 
-    public function new(lua:LuaScript)
+    override public function new(lua:LuaScript)
     {
         super(lua);
 
@@ -18,9 +18,9 @@ class LuaReflect extends LuaPresetBase
                 var split:Array<String> = variable.split('.');
 
                 if (split.length > 1)
-                    return getVarInArray(getPropertyLoop(split, true, allowMaps), split[split.length-1], allowMaps);
+                    return getVarInArray(lua, getPropertyLoop(lua, split, true, allowMaps), split[split.length-1], allowMaps);
 
-                return getVarInArray(type == STATE ? ScriptState.instance : ScriptSubState.instance, variable, allowMaps);
+                return getVarInArray(lua, type == STATE ? ScriptState.instance : ScriptSubState.instance, variable, allowMaps);
             }
         );
 
@@ -30,12 +30,12 @@ class LuaReflect extends LuaPresetBase
 
                 if (split.length > 1)
                 {
-                    setVarInArray(getPropertyLoop(split, true, allowMaps), split[split.length-1], value, allowMaps);
+                    setVarInArray(lua, getPropertyLoop(lua, split, true, allowMaps), split[split.length-1], value, allowMaps);
 
                     return true;
                 }
 
-                setVarInArray(type == STATE ? ScriptState.instance : ScriptSubState.instance, variable, value, allowMaps);
+                setVarInArray(lua, type == STATE ? ScriptState.instance : ScriptSubState.instance, variable, value, allowMaps);
 
                 return true;
             }
@@ -56,15 +56,15 @@ class LuaReflect extends LuaPresetBase
 
                 if (split.length > 1)
                 {
-                    var obj:Dynamic = getVarInArray(myClass, split[0], allowMaps);
+                    var obj:Dynamic = getVarInArray(lua, myClass, split[0], allowMaps);
 
                     for (i in 1...split.length-1)
-                        obj = getVarInArray(obj, split[i], allowMaps);
+                        obj = getVarInArray(lua, obj, split[i], allowMaps);
     
-                    return getVarInArray(obj, split[split.length-1], allowMaps);
+                    return getVarInArray(lua, obj, split[split.length-1], allowMaps);
                 }
 
-                return getVarInArray(myClass, variable, allowMaps);
+                return getVarInArray(lua, myClass, variable, allowMaps);
             }
         );
 
@@ -83,17 +83,17 @@ class LuaReflect extends LuaPresetBase
 
                 if (split.length > 1)
                 {
-                    var obj:Dynamic = getVarInArray(myClass, split[0], allowMaps);
+                    var obj:Dynamic = getVarInArray(lua, myClass, split[0], allowMaps);
 
                     for (i in 1...split.length-1)
-                        obj = getVarInArray(obj, split[i], allowMaps);
+                        obj = getVarInArray(lua, obj, split[i], allowMaps);
     
-                    setVarInArray(obj, split[split.length-1], value, allowMaps);
+                    setVarInArray(lua, obj, split[split.length-1], value, allowMaps);
 
                     return value;
                 }
 
-                setVarInArray(myClass, variable, value, allowMaps);
+                setVarInArray(lua, myClass, variable, value, allowMaps);
 
                 return value;
             }
@@ -106,7 +106,7 @@ class LuaReflect extends LuaPresetBase
                 var realObject:Dynamic = null;
 
                 if (split.length > 1)
-                    realObject = getPropertyLoop(split, false, allowMaps);
+                    realObject = getPropertyLoop(lua, split, false, allowMaps);
                 else
                     realObject = Reflect.getProperty(type == STATE ? ScriptState.instance : ScriptSubState.instance, obj);
     
@@ -144,7 +144,7 @@ class LuaReflect extends LuaPresetBase
                 var realObject:Dynamic = null;
 
                 if (split.length > 1)
-                    realObject = getPropertyLoop(split, false, allowMaps);
+                    realObject = getPropertyLoop(lua, split, false, allowMaps);
                 else
                     realObject = Reflect.getProperty(type == STATE ? ScriptState.instance : ScriptSubState.instance, obj);
     
@@ -274,7 +274,7 @@ class LuaReflect extends LuaPresetBase
                     args[i] = (lastIndex > -1) ? Type.resolveClass(myArg.substring(0, lastIndex)) : ScriptState.instance;
 
                     for (j in 0...split.length)
-                        args[i] = getVarInArray(args[i], split[j].trim());
+                        args[i] = getVarInArray(lua, args[i], split[j].trim());
                 }
             }
         }
@@ -297,14 +297,14 @@ class LuaReflect extends LuaPresetBase
             return null;
 
         for (i in 0...split.length)
-            obj = getVarInArray(obj, split[i].trim());
+            obj = getVarInArray(lua, obj, split[i].trim());
 
         funcToRun = cast obj;
         
         return funcToRun != null ? Reflect.callMethod(obj, funcToRun, args) : null;
     }
 
-    function setVarInArray(instance:Dynamic, variable:String, value:Dynamic, allowMaps:Bool = false):Any
+    function setVarInArray(lua:LuaScript, instance:Dynamic, variable:String, value:Dynamic, allowMaps:Bool = false):Any
     {
         var splitProps:Array<String> = variable.split('[');
 
@@ -312,9 +312,9 @@ class LuaReflect extends LuaPresetBase
         {
             var target:Dynamic = null;
 
-            if (variables.exists(splitProps[0]))
+            if (lua.variables.exists(splitProps[0]))
             {
-                var retVal:Dynamic = variables.get(splitProps[0]);
+                var retVal:Dynamic = lua.variables.get(splitProps[0]);
                 
                 if (retVal != null)
                     target = retVal;
@@ -342,9 +342,9 @@ class LuaReflect extends LuaPresetBase
             return value;
         }
 
-        if (variables.exists(variable))
+        if (lua.variables.exists(variable))
         {
-            variables.set(variable, value);
+            lua.variables.set(variable, value);
 
             return value;
         }
@@ -354,7 +354,7 @@ class LuaReflect extends LuaPresetBase
         return value;
     }
 
-    function getVarInArray(instance:Dynamic, variable:String, allowMaps:Bool = false):Any
+    public static function getVarInArray(lua:LuaScript, instance:Dynamic, variable:String, allowMaps:Bool = false):Any
     {
         var splitProps:Array<String> = variable.split('[');
 
@@ -362,9 +362,9 @@ class LuaReflect extends LuaPresetBase
         {
             var target:Dynamic = null;
 
-            if (variables.exists(splitProps[0]))
+            if (lua.variables.exists(splitProps[0]))
             {
-                var retVal:Dynamic = variables.get(splitProps[0]);
+                var retVal:Dynamic = lua.variables.get(splitProps[0]);
 
                 if (retVal != null)
                     target = retVal;
@@ -385,9 +385,9 @@ class LuaReflect extends LuaPresetBase
         if (allowMaps && isMap(instance))
             return instance.get(variable);
 
-        if (variables.exists(variable))
+        if (lua.variables.exists(variable))
         {
-            var retVal:Dynamic = variables.get(variable);
+            var retVal:Dynamic = lua.variables.get(variable);
 
             if (retVal != null)
                 return retVal;
@@ -440,9 +440,9 @@ class LuaReflect extends LuaPresetBase
 		return Reflect.getProperty(leArray, variable);
 	}
 
-	function getPropertyLoop(split:Array<String>,?getProperty:Bool=true, ?allowMaps:Bool = false):Dynamic
+	public static function getPropertyLoop(lua:LuaScript, split:Array<String>,?getProperty:Bool=true, ?allowMaps:Bool = false):Dynamic
 	{
-		var obj:Dynamic = getObjectDirectly(split[0]);
+		var obj:Dynamic = getObjectDirectly(lua, split[0]);
 
 		var end = split.length;
 
@@ -450,12 +450,12 @@ class LuaReflect extends LuaPresetBase
             end = split.length-1;
 
 		for (i in 1...end)
-            obj = getVarInArray(obj, split[i], allowMaps);
+            obj = getVarInArray(lua, obj, split[i], allowMaps);
 
 		return obj;
 	}
 
-	function isMap(variable:Dynamic)
+	static function isMap(variable:Dynamic)
 	{
 		if (variable.exists != null && variable.keyValueIterator != null)
             return true;
@@ -463,20 +463,23 @@ class LuaReflect extends LuaPresetBase
 		return false;
 	}
 
-	function getObjectDirectly(objectName:String, ?allowMaps:Bool = false):Dynamic
+	public static function getObjectDirectly(lua:LuaScript, objectName:String, ?allowMaps:Bool = false):Dynamic
 	{
 		switch(objectName)
 		{
 			case 'this' | 'instance' | 'game':
-				return type == STATE ? ScriptState.instance : ScriptSubState.instance;
+				return lua.type == STATE ? ScriptState.instance : ScriptSubState.instance;
 			
 			default:
-				var obj:Dynamic = variables.get(objectName);
+				var obj:Dynamic = lua.variables.get(objectName);
 
 				if (obj == null)
-                    obj = getVarInArray(type == STATE ? ScriptState.instance : ScriptSubState.instance, objectName, allowMaps);
+                    obj = getVarInArray(lua, lua.type == STATE ? ScriptState.instance : ScriptSubState.instance, objectName, allowMaps);
 
 				return obj;
 		}
 	}
+
+	public static function formatVariable(tag:String)
+		return tag.trim().replace(' ', '_').replace('.', '');
 }
