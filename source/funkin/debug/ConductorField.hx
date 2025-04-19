@@ -11,7 +11,7 @@ class ConductorField extends DebugField
 
     override function updateField()
     {
-        theText = 'Song Position: ' + Math.floor(Conductor.songPosition);
+        theText = 'Song Position: ' + Conductor.songPosition;
         theText += '\n - Step: ' + Conductor.curStep;
         theText += '\n - Beat: ' + Conductor.curBeat;
         theText += '\n - Section: ' + Conductor.curSection;

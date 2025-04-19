@@ -88,6 +88,7 @@ class StrumLine extends FlxGroup
                 }
                 unspawnNotes.push(note);
 
+                /*
                 var curStepCrochet:Float = 60 / daBpm * 1000 / 4;
 
                 final roundSustain:Int = Math.round(sustainLength / Conductor.stepCrochet);
@@ -108,6 +109,7 @@ class StrumLine extends FlxGroup
                             prevNote.resizeByRatio(curStepCrochet / Conductor.stepCrochet);
                     }
                 }
+                    */
             }
         }
 
