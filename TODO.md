@@ -17,9 +17,5 @@
     - [ ] Lua
         - [x] Implement
         - [ ] Docs
-            - [ ] Tweens & Callbacks
-            - [ ] Timers & Callbacks
-            - [ ] playSoundFile
-            - [ ] Timer
-            - [ ] Tweens
-            - [ ] New setProperty
+            - [ ] Tween Callbacks
+            - [ ] Timer Callbacks

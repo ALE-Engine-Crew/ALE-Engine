@@ -148,11 +148,11 @@ Ejemplo: `getProperty('playerIcon.scale.x')`
 
 ## setProperty
 
-Uso: `setProperty(variable:String, value:Dynamic, allowMaps:Bool = false)`
+Uso: `setProperty(variable:String, properties:Dynamic)`
 
 Sirve para Asignar una Propiedad de una Variable, ya sea Propia del Script o Propia del Estado / Sub-Estado en donde se está Ejecutando
 
-Ejemplo: `setProperty('playerIcon.y', 100)`
+Ejemplo: `setProperty('playerIcon', {scale = {x = 2, y = 2}, {x = 100, y = 100}})`
 
 ---
 
@@ -540,6 +540,16 @@ Sirve para Despausar la Música del Juego
 
 ---
 
+## playSoundFile
+
+Uso: `playSoundFile`
+
+Sirve para Correr un Sonido
+
+Ejemplo: `playSoundFile('scrollMenu')`
+
+---
+
 # Color
 
 ## colorFromString
@@ -572,10 +582,74 @@ Ejemplo: `colorFromName('red')`
 
 ---
 
-## FlxTween
+# FlxTween
+
+## tween
 
 Uso: `tween(tag:String, vars:String, valueTypes:Dynamic, duration:Float, ?options:Dynamic)`
 
 Sirve para Crear y Correr un FlxTween
 
-Ejemplo: `tween('mySprite', 'pene.scale', {x = 5, y = 5}, 1, {ease = 'circInOut', type = 'pingpong'})`
+Ejemplo: `tween('myTween', 'mySprite.scale', {x = 5, y = 5}, 1, {ease = 'circInOut', type = 'pingpong'})`
+
+---
+
+## cancelTween
+
+Uso: `cancelTween(tag:String)`
+
+Sirve para Cancelar un Tween
+
+Ejemplo: `cancelTween('myTween')`
+
+---
+
+# FlxTimer
+
+## newTimer
+
+Uso: `newTimer(tag:String)`
+
+Sirve para Crear un FlxTimer
+
+Ejemplo: `newTimer('myTimer')`
+
+---
+
+## startTimer
+
+Uso: `startTimer(tag:String, time:Float = 1, loops:Int)`
+
+Sirve para Correr un Timer ya Creado
+
+Ejemplo: `startTimer('myTimer', 1, 1)`
+
+---
+
+## cancelTimer
+
+Uso: `cancelTimer(tag:String)`
+
+Sirve para Cancelar un Timer que esté Corriendo
+
+Ejemplo: `cancelTimer('myTimer')`
+
+---
+
+## resetTimer
+
+Uso: `resetTimer(tag:String, ?newTime:Float = -1)`
+
+Sirve para Reiniciar un Timer y Reajustar su Duración de forma Opcional
+
+Ejemplo: `resetTimer('myTimer', 0.5)`
+
+---
+
+## runTimer
+
+Uso: `runTimer(tag:String, time:Float = 1, loops:Int = 1)`
+
+Sirve para Crear y Correr un Timer
+
+Ejemplo: `runTimer('fastTimer', 0.5, 1)`
