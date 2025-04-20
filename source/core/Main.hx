@@ -21,10 +21,6 @@ import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
 
-import haxe.ui.HaxeUIApp;
-import haxe.ui.components.Button;
-import haxe.ui.containers.VBox;
-
 #if windows
 @:buildXml('
 <target id="haxe">

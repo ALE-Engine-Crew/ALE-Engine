@@ -14,8 +14,7 @@ haxelib install tjson 1.4.0
 haxelib install lime 8.2.2
 haxelib install flixel-addons 3.2.3
 haxelib install extension-androidtools 2.1.1 --skip-dependencies
-haxelib install haxeui-core --skip-dependencies
-haxelib install haxeui-flixel --skip-dependencies
+
 haxelib install ale-ui --skip-dependencies
 
 haxelib install setup/sscript.zip
