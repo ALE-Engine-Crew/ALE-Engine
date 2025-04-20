@@ -329,15 +329,65 @@ Ejemplo: `pathIsFolder('data')`
 
 ---
 
-# FlxSprite
+# FlxSprite API
 
 ## newSprite
-
-Uso: `newSprite(tag:String, ?x:Float, ?y:Float, ?sprite:String)`
+**Uso:**
+```lua
+newSprite(tag:String, ?x:Float, ?y:Float, ?sprite:String)
+```
 
 Crea una Instancia de FlxSprite
 
-Ejemplo: `newSprite('mySprite', 10, 10, 'menuBG')`
+**Ejemplo:**
+```lua
+newSprite('mySprite', 10, 10, 'menuBG')
+```
+
+---
+
+## loadGraphic
+**Uso:**
+```lua
+loadGraphic(tag:String, name:String, ?animated:Bool = false, ?frameWidth:Int = 0, frameHeight:Int = 0)
+```
+
+Sirve para Cargar una Imágen a un Sprite
+
+**Ejemplo:**
+```lua
+loadGraphic('mySprite', 'menuBGMagenta')
+```
+
+---
+
+## makeGraphic
+**Uso:**
+```lua
+makeGraphic(tag:String, width:Int, height:Int, ?color:FlxColor = FlxColor.WHITE)
+```
+
+Sirve para Crear un Gráfico y Asignárselo a un Sprite
+
+**Ejemplo:**
+```lua
+makeGraphic('mySprite', 100, 100, colorFromName('blue'))
+```
+
+---
+
+## playAnimation
+**Uso:**
+```lua
+playAnimation(tag:String, name:String, ?force:Bool, ?reversed:Bool, ?frame:Int)
+```
+
+Sirve para Reproducir una Animación que ya fue Añadida al Sprite
+
+**Ejemplo:**
+```lua
+playAnimation('mySprite', 'epicAnim', true, false)
+```
 
 ---
 
@@ -351,16 +401,6 @@ Ejemplo: `newGradient('myGradient', 1280, 720, {colorFromName('black'), colorFro
 
 ---
 
-## loadGraphic
-
-Uso: `loadGraphic(tag:String, name:String, ?animated:Bool = false, ?frameWidth:Int = 0, frameHeight:Int = 0)`
-
-Sirve para Cargar una Imágen a un Sprite
-
-Ejemplo: `loadGraphic('mySprite', 'menuBGMagenta')`
-
----
-
 ## getSparrowAtlas
 
 Uso: `getSparrowAtlas(tag:String, path:String)`
@@ -368,17 +408,6 @@ Uso: `getSparrowAtlas(tag:String, path:String)`
 Sirve para Cargar un Sprite Animado que Hace uso de XML
 
 Ejemplo: `getSparrowAtlas('mySprite', 'characters/BOYFRIEND')`
-
----
-
-## makeGraphic
-
-Uso: `makeGraphic(tag:String, width:Int, height:Int, ?color:FlxColor = FlxColor.WHITE)`
-
-Sirve para Crear un Gráfico y Asignárselo a un Sprite
-
-Ejemplo: `makeGraphic('mySprite', 100, 100, colorFromName('blue'))` </br>
-<sub>Se Hace Uso de las Funciones de [Color](#color)</sub>
 
 ---
 
@@ -402,14 +431,6 @@ Ejemplo: `addAnimationByIndices('mySprite', 'epicAnim', 'epicAnim', {0, 12, 20},
 
 ---
 
-## playAnimation
-
-Uso: `playAnimation(tag:String, name:String, ?force:Bool, ?reversed:Bool, ?frame:Int)`
-
-Sirve para Reproducir una Animación que ya fue Añadida al Sprite
-
-Ejemplo: `playAnimation('mySprite', 'epicAnim', true, false)`
-
 ## updateHitbox
 
 Uso: `updateHitbox(tag:String)`
@@ -420,59 +441,131 @@ Ejemplo: `updateHitbox('mySprite')`
 
 ---
 
-# FlxText
+# FlxText API
 
 ## newText
-
-Uso: `newText(tag:String, ?x:Float, ?y:Float, ?width:Float, ?text:String, ?size:Int)`
+**Uso:**
+```lua
+newText(tag:String, ?x:Float, ?y:Float, ?width:Float, ?text:String, ?size:Int)
+```
 
 Sirve para Crear una Instancia de FlxText
 
-Ejemplo: `newText('myText', 10, 100, 1280, 'ALE Engine Supremacy', 24)`
+**Ejemplo:**
+```lua
+newText('myText', 10, 100, 1280, 'ALE Engine Supremacy', 24)
+```
 
 ---
 
 ## applyTextMarkup
-
-Uso: `applyTextMarkup(tag:String, text:String, rules:Array<Array<Dynamic>>)`
+**Uso:**
+```lua
+applyTextMarkup(tag:String, text:String, rules:Array<Array<Dynamic>>)
+```
 
 Sirve para Asignarle Varios Colores a la Vez a un Texto
 
-Ejemplo: `applyTextMarkup('myText', '*ALE* #Engine# %Supremacy%', {{'*', colorFromName('cyan')}, {'#', colorFromName('red')}, {'%', colorFromName('green')}})` </br>
-<sub>Se Hace Uso de las Funciones de [Color](#color)</sub>
+**Ejemplo:**
+```lua
+applyTextMarkup('myText', '*ALE* #Engine# %Supremacy%', {
+  {'*', colorFromName('cyan')},
+  {'#', colorFromName('red')},
+  {'%', colorFromName('green')}
+})
+```
 
 ---
 
 ## setTextFormat
-
-Uso: `setTextFormat(tag:String, ?font:String, ?size:Int, ?color:FlxColor, ?alignment:String, ?borderStyle:String, ?borderColor:FlxColor)`
+**Uso:**
+```lua
+setTextFormat(tag:String, ?font:String, ?size:Int, ?color:FlxColor, ?alignment:String, ?borderStyle:String, ?borderColor:FlxColor)
+```
 
 Sirve para Cambiar la Fuente, el Tamaño, el Color, la Alineación, el Estilo del borde y el Color del Borde a un Texto
 
-Ejemplo: `setTextFormat('myText', 'vcr.ttf', 24, colorFromName('white'), 'center', 'shadow', colorFromName('black'))` </br>
-<sub>Se Hace Uso de las Funciones de [Color](#color)</sub>
+**Ejemplo:**
+```lua
+setTextFormat('myText', 'vcr.ttf', 24, colorFromName('white'), 'center', 'shadow', colorFromName('black'))
+```
 
 ---
 
-# FlxSound
+# FlxSound API
 
 ## newSound
-
-Uso: `newSound(tag:String, sound:String)`
+**Uso:**
+```lua
+newSound(tag:String, sound:String)
+```
 
 Sirve para Crear una Instancia de FlxSound
 
-Ejemplo: `newSound('mySound', 'scrollMenu')`
+**Ejemplo:**
+```lua
+newSound('mySound', 'scrollMenu')
+```
 
 ---
 
 ## playSound
-
-Uso: `playSound(tag:String)`
+**Uso:**
+```lua
+playSound(tag:String)
+```
 
 Sirve para Reproducir un Sonido
 
-Ejemplo: `playSound('mySound')`
+**Ejemplo:**
+```lua
+playSound('mySound')
+```
+
+---
+
+## playMusic
+**Uso:**
+```lua
+playMusic(sound:String)
+```
+
+Sirve para Reproducir Música en el Juego
+
+**Ejemplo:**
+```lua
+playMusic('freakyMenu')
+```
+
+---
+
+## pauseSound
+**Uso:**
+```lua
+pauseSound(tag:String)
+```
+
+Sirve para Pausar un Sonido
+
+**Ejemplo:**
+```lua
+pauseSound('mySound')
+```
+
+---
+
+## resumeSound
+**Uso:**
+```lua
+resumeSound(tag:String)
+```
+
+Sirve para Despausar un Sonido
+
+**Ejemplo:**
+```lua
+resumeSound('mySound')
+```
 
 ---
 
@@ -627,29 +720,44 @@ Ejemplo: `startTimer('myTimer', 1, 1)`
 ---
 
 ## cancelTimer
-
-Uso: `cancelTimer(tag:String)`
+**Uso:**
+```lua
+cancelTimer(tag:String)
+```
 
 Sirve para Cancelar un Timer que esté Corriendo
 
-Ejemplo: `cancelTimer('myTimer')`
+**Ejemplo:**
+```lua
+cancelTimer('myTimer')
+```
 
 ---
 
 ## resetTimer
-
-Uso: `resetTimer(tag:String, ?newTime:Float = -1)`
+**Uso:**
+```lua
+resetTimer(tag:String, ?newTime:Float = -1)
+```
 
 Sirve para Reiniciar un Timer y Reajustar su Duración de forma Opcional
 
-Ejemplo: `resetTimer('myTimer', 0.5)`
+**Ejemplo:**
+```lua
+resetTimer('myTimer', 0.5)
+```
 
 ---
 
 ## runTimer
-
-Uso: `runTimer(tag:String, time:Float = 1, loops:Int = 1)`
+**Uso:**
+```lua
+runTimer(tag:String, time:Float = 1, loops:Int = 1)
+```
 
 Sirve para Crear y Correr un Timer
 
-Ejemplo: `runTimer('fastTimer', 0.5, 1)`
+**Ejemplo:**
+```lua
+runTimer('fastTimer', 0.5, 1)
+```
