@@ -244,22 +244,15 @@ class LuaReflect extends LuaPresetBase
         );
     }
 
-    function applyProps(obj:Dynamic, props:Dynamic):Void
+    function applyProps(obj:Dynamic, props:Dynamic)
     {
         for (key in Reflect.fields(props))
         {
-            var value = Reflect.field(props, key);
+            var value:Dynamic = Reflect.field(props, key);
 
-            if (Reflect.isObject(value))
+            if (Reflect.fields(value).length > 0)
             {
                 var subObj = Reflect.field(obj, key);
-
-                if (subObj == null)
-                {
-                    subObj = {};
-                    
-                    Reflect.setProperty(obj, key, subObj);
-                }
 
                 applyProps(subObj, value);
             } else {
