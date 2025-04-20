@@ -16,10 +16,10 @@
         - [ ] API
     - [ ] Lua
         - [x] Implement
-        - [ ] API
+        - [ ] Docs
             - [ ] Tweens & Callbacks
             - [ ] Timers & Callbacks
-            - [ ] New setProperty
-        - [ ] Docs
             - [ ] playSoundFile
-            - [ ] 
+            - [ ] Timer
+            - [ ] Tweens
+            - [ ] New setProperty

@@ -569,3 +569,13 @@ Uso: `colorFromName(name:String)`
 Sirve para Obtener un Color por medio de su Nombre
 
 Ejemplo: `colorFromName('red')`
+
+---
+
+## FlxTween
+
+Uso: `tween(tag:String, vars:String, valueTypes:Dynamic, duration:Float, ?options:Dynamic)`
+
+Sirve para Crear y Correr un FlxTween
+
+Ejemplo: `tween('mySprite', 'pene.scale', {x = 5, y = 5}, 1, {ease = 'circInOut', type = 'pingpong'})`
