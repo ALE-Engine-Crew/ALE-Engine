@@ -75,14 +75,9 @@ class LuaCallbackHandler
 				return 1;
 			}
         } catch (error:Dynamic) {
-            if (Lua_helper.sendErrorsToLua)
-            {
-                LuaL.error(lua, 'Callback Error: ' + (error.message != null ? error.message : error));
-                
-                return 0;
-            }
+            debugPrint(error, FlxColor.RED);
 
-            throw error;
+            return 0;
         }
 
         return 0;

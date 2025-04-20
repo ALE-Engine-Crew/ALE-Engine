@@ -195,54 +195,6 @@ class WindowsCPP
 
 	#if (windows && cpp)
 	@:functionCode('
-		HWND window = GET_MAIN_WINDOW();
-		SetWindowLong(window, GWL_EXSTYLE, GetWindowLong(window, GWL_EXSTYLE) ^ WS_EX_LAYERED);
-	')
-	#end
-	public static function setWindowLayered() {}
-
-	#if (windows && cpp)
-	@:functionCode('
-        HWND window = GET_MAIN_WINDOW();
-
-		float a = alpha;
-
-		if (alpha > 1) {
-			a = 1;
-		} 
-		if (alpha < 0) {
-			a = 0;
-		}
-
-       	SetLayeredWindowAttributes(window, 0, (255 * (a * 100)) / 100, LWA_ALPHA);
-    ')
-	#end
-	public static function setWindowAlpha(alpha:Float) {}
-
-	#if (windows && cpp)
-	@:functionCode('
-		HWND hwnd = GET_MAIN_WINDOW();
-
-		DWORD exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-		BYTE alpha = 255;
-		
-		if (exStyle & WS_EX_LAYERED) {
-			DWORD flags;
-			GetLayeredWindowAttributes(hwnd, NULL, &alpha, &flags);
-		}
-
-		float alphaFloat = static_cast<float>(alpha) / 255.0f;
-
-		return alphaFloat;
-	')
-	#end
-	public static function getWindowAlpha():Float
-	{
-		return 0;
-	}
-
-	#if (windows && cpp)
-	@:functionCode('
 	POINT MousePoint;
 	GetCursorPos(&MousePoint);
 
@@ -285,7 +237,7 @@ class WindowsCPP
 		return (allocatedRAM / 1024);
 	")
 	#end
-	public static function obtainRAM()
+	public static function obtainRAM():Float
 	{
 		return 0;
 	}

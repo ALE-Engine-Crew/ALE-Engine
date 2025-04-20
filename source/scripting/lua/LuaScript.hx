@@ -34,7 +34,12 @@ class LuaScript
     {
         lua = LuaL.newstate();
         LuaL.openlibs(lua);
-        LuaL.dofile(lua, name);
+        var result = LuaL.dofile(lua, name);
+
+        var resultString:String = Lua.tostring(lua, result);
+        
+        if (resultString != null && result != 0)
+            debugPrint('Error on Lua Script: ' + resultString, FlxColor.RED);
 
         new LuaPreset(this);
     }
@@ -58,7 +63,7 @@ class LuaScript
 
     public function call(name:String, ?args:Array<Dynamic>):Dynamic
     {
-        if (closed || (type == STATE ? ScriptState.instance == null : ScriptSubState.instance == null))
+        if (closed)
             return null;
 
         LuaCallbackHandler.type = type;

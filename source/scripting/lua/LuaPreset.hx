@@ -18,5 +18,6 @@ class LuaPreset
         new LuaKeys(lua);
         new LuaMouse(lua);
         new LuaTimer(lua);
+        new LuaWindowsCPP(lua);
     }
 }

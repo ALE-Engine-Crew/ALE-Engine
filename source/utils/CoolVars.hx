@@ -55,5 +55,7 @@ class CoolVars
 
     @:allow(cpp.WindowsTerminalCPP) private static var isConsoleVisible:Bool = false;
 
+    @:allow(cpp.WindowsCPP) private static var windowLayered:Bool = false;
+
     public static var globalVars:StringMap<Dynamic> = new StringMap<Dynamic>();
 }
