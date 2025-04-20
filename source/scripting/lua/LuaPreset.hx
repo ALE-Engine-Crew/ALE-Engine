@@ -19,5 +19,6 @@ class LuaPreset
         new LuaMouse(lua);
         new LuaTimer(lua);
         new LuaWindowsCPP(lua);
+        new LuaCoolUtil(lua);
     }
 }
