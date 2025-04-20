@@ -67,4 +67,10 @@ class LuaPresetBase
         else
             variables.set(name, value);
     }
+
+    public inline function removeTag(name:String)
+    {
+        if (tagExists(name))
+            variables.remove(name);
+    }
 }

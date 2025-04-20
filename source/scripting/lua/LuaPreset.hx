@@ -14,5 +14,6 @@ class LuaPreset
         new LuaTween(lua);
         new LuaKeys(lua);
         new LuaMouse(lua);
+        new LuaTimer(lua);
     }
 }
