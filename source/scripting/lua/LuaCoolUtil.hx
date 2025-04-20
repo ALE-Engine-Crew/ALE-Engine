@@ -89,6 +89,18 @@ class LuaCoolUtil extends LuaPresetBase
                     getTag(spriteTag).shader = getTag(shaderTag);
             }
         );
+
+        set('getGameSize', function(type:String)
+            {
+                return switch (type.toLowerCase().trim())
+                {
+                    case 'y':
+                        FlxG.height;
+                    default:
+                        FlxG.width;
+                }
+            }
+        );
     }
 
     function cameraFromString(lua:LuaScript, camera:String):FlxCamera
