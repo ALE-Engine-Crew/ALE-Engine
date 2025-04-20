@@ -1,4 +1,4 @@
-package scripting.lua;
+package scripting.lua.haxe;
 
 import Type.ValueType;
 

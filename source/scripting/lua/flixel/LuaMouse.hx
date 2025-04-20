@@ -1,4 +1,4 @@
-package scripting.lua;
+package scripting.lua.flixel;
 
 class LuaMouse extends LuaPresetBase
 {

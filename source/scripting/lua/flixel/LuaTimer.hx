@@ -1,4 +1,4 @@
-package scripting.lua;
+package scripting.lua.flixel;
 
 import flixel.util.FlxTimer;
 

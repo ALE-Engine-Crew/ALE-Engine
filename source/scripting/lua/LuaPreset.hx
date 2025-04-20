@@ -1,5 +1,8 @@
 package scripting.lua;
 
+import scripting.lua.flixel.*;
+import scripting.lua.haxe.*;
+
 class LuaPreset
 {
     public function new(lua:LuaScript)

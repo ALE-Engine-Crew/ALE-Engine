@@ -169,7 +169,7 @@ class WindowsCPP
 		MessageBox(GetActiveWindow(), message, caption, icon | MB_SETFOREGROUND);
 	')
 	#end
-	public static function showMessageBox(caption:String, message:String, icon:core.enums.MessageBoxIcon = MSG_WARNING) {}
+	public static function showMessageBox(caption:String, message:String, icon:core.enums.MessageBoxIcon = WARNING) {}
 
 	#if (windows && cpp)
 	@:functionCode('

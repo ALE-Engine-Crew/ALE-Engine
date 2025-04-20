@@ -17,6 +17,14 @@ import core.config.CopyState;
 import openfl.Lib;
 import openfl.events.Event;
 
+import openfl.events.UncaughtErrorEvent;
+import haxe.CallStack;
+import haxe.io.Path;
+
+import haxe.ui.HaxeUIApp;
+import haxe.ui.components.Button;
+import haxe.ui.containers.VBox;
+
 #if windows
 @:buildXml('
 <target id="haxe">
@@ -82,6 +90,8 @@ class Main extends Sprite
 
 	private function init(?event:Event):Void
 	{
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
+
 		if (hasEventListener(Event.ADDED_TO_STAGE))
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 
@@ -148,5 +158,34 @@ class Main extends Sprite
 		    sprite.__cacheBitmap = null;
 			sprite.__cacheBitmapData = null;
 		}
+	}
+	
+	function onCrash(e:UncaughtErrorEvent):Void
+	{
+		var errMsg:String = "";
+		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
+
+		for (stackItem in callStack)
+		{
+			switch (stackItem)
+			{
+				case FilePos(s, file, line, column):
+					errMsg += file + " (line " + line + ")\n";
+				default:
+					Sys.println(stackItem);
+			}
+		}
+
+		errMsg += "\nUncaught Error: " + e.error;
+	
+		#if (windows && cpp)
+		cpp.WindowsCPP.showMessageBox('ALE Engine | Crash Handler', errMsg, ERROR);
+		#else
+		Application.current.window.alert(errMsg, 'ALE Engine | Crash Handler');
+		#end
+
+		Sys.println(errMsg);
+
+		Sys.exit(1);
 	}
 }

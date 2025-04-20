@@ -1,4 +1,4 @@
-package scripting.lua;
+package scripting.lua.flixel;
 
 class LuaSound extends LuaPresetBase
 {
@@ -70,12 +70,12 @@ class LuaSound extends LuaPresetBase
             }
         );
 
-        set('playSoundFile', function(path:String)
+        set('playSoundFile', function(path:String, ?volume:Float = 1)
             {
                 if (Paths.sound(path) == null)
                     errorPrint('Missing File: sounds/' + path + '.' + Paths.SOUND_EXT);
                 else
-                    FlxG.sound.play(Paths.sound(path));
+                    FlxG.sound.play(Paths.sound(path), volume);
             }
         );
     }

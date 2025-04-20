@@ -1,4 +1,6 @@
-package scripting.lua;
+package scripting.lua.flixel;
+
+import scripting.lua.haxe.LuaReflect;
 
 import flixel.tweens.FlxTween.FlxTweenType;
 

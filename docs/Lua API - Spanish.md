@@ -4,108 +4,168 @@
 
 ## add
 
-Uso: `add(tag:String)`
+Uso: 
+`````````lua
+add(tag:String)
+`````````
 
 Sirve para Añadir Objetos al Estado / Sub-Estado <br/>
 <sub>Solo Sirve con Objetos que son Sub-Clase de FlxBasic</sub>
 
-Ejemplo: `add('theSprite')`
+Ejemplo: 
+`````````lua
+add('theSprite')
+`````````
 
 ---
 
 ## remove
 
-Uso: `remove(tag:String)`
+Uso: 
+`````````lua
+remove(tag:String)
+`````````
 
 Sirve para Remover Objetos del Estado / Sub-Estado <br/>
 <sub>Solo Sirve con Objetos que ya Han Sido Añadidos, Obviamente</sub>
 
-Ejemplo: `remove('theSprite')`
+Ejemplo: 
+`````````lua
+remove('theSprite')
+`````````
 
 ---
 
 ## insert
 
-Uso: `insert(position:Int, tag:String)`
+Uso: 
+`````````lua
+insert(position:Int, tag:String)
+`````````
 
 Similar a [add](#add), pero que Inserta el Objeto en una Posición Específica
 
-Ejemplo: `insert(1, 'theSprite')`
+Ejemplo: 
+`````````lua
+insert(1, 'theSprite')
+`````````
 
 ---
 
 ## debugPrint
 
-Uso: `debugPrint(text:Dynamic, ?color:FlxColor)`
+Uso: 
+`````````lua
+debugPrint(text:Dynamic, ?color:FlxColor)
+`````````
 
 Sirve para Mostrar un Texto tanto en la Pantalla como en la Consola
 
 También cual se le Puede Asignar un Color <br/>
 <sub>(Opcional)</sub>
 
-Ejemplo: `debugPrint('ALE Engine Supremacy', colorFromName('RED'))` </br>
+Ejemplo: 
+`````````lua
+debugPrint('ALE Engine Supremacy', colorFromName('RED'))
+`````````
 <sub>Se Hace Uso de las Funciones de [Color](#color)</sub>
 
 ---
 
 ## setObjectCameras
 
-Uso: `setObjectCameras(tag:String, cameras:Array<String>)`
+Uso: 
+`````````lua
+setObjectCameras(tag:String, cameras:Array<String>)
+`````````
 
 Sirve para Cambiar las Cámaras en donde se Muestra un Objeto
 
-Ejemplo: `setObjectCameras('mySprite', {'camGame'})`
+Ejemplo: 
+`````````lua
+setObjectCameras('mySprite', {'camGame'})
+`````````
 
 ---
 
 ## setVariable
 
-Uso: `setVariable(name:String, value:Dynamic)`
+Uso: 
+`````````lua
+setVariable(name:String, value:Dynamic)
+`````````
 
 Sirve para Asignar una Variable al Script
 
-Ejemplo: `setVariable('epicBool', true)`
+Ejemplo: 
+`````````lua
+setVariable('epicBool', true)
+`````````
 
 ---
 
 ## setTag
 
-Uso: `setTag(tag:String, value:Dynamic)`
+Uso: 
+`````````lua
+setTag(tag:String, value:Dynamic)
+`````````
 
 Sirve para Agregar / Alterar una Etiqueta al / del Script
 
-Ejemplo: `setTag('epicTag', true)`
+Ejemplo: 
+`````````lua
+setTag('epicTag', true)
+`````````
 
 ---
 
 ## switchState
 
-Uso: `switchState(fullClassPath:String, params:Array<Dynamic>)`
+Uso: 
+`````````lua
+switchState(fullClassPath:String, params:Array<Dynamic>)
+`````````
 
 Sirve para Dirigirse a Otro Estado
 
-Ejemplo: `switchState('funkin.states.CustomState', ['CoolState'])`
+Ejemplo: 
+`````````lua
+switchState('funkin.states.CustomState', ['CoolState'])
+`````````
 
 ---
 
 ## switchToCustomState
 
-Uso: `switchToCustomState(name:String)`
+Uso: 
+`````````lua
+switchToCustomState(name:String)
+`````````
 
 Sirve para Dirigirse a un Estado Personalizado </br>
 <sub>Si el Script del Estado no Existe, se Mostrará un Error en la Pantalla</sub>
 
-Ejemplo: `switchToCustomState('CoolState')`
+Ejemplo: 
+`````````lua
+switchToCustomState('CoolState')
+`````````
 
 ---
 
 ## openSubState
 
-Uso: `openSubState(fullClassPath:String, params:Array<Dynamic>)`
+Uso: 
+`````````lua
+openSubState(fullClassPath:String, params:Array<Dynamic>)
+`````````
 
 Sirve para Abrir un Sub-Estado
 
-Ejemplo: `openSubState('funkin.substates.CustomSubState', ['CoolSubState'])`
+Ejemplo: 
+`````````lua
+openSubState('funkin.substates.CustomSubState', ['CoolSubState'])
+`````````
 
 <sub>Solo está Disponible para Estados</sub>
 
@@ -113,12 +173,18 @@ Ejemplo: `openSubState('funkin.substates.CustomSubState', ['CoolSubState'])`
 
 ## openCustomSubState
 
-Uso: `openCustomSubState(name:String)`
+Uso: 
+`````````lua
+openCustomSubState(name:String)
+`````````
 
 Sirve para Abrir un Sub-Estado Personalizado </br>
 <sub>Si el Script del Sub-Estado no Existe, se Mostrará un Error en la Pantalla</sub>
 
-Ejemplo: `openCustomSubState('CoolSubState')`
+Ejemplo: 
+`````````lua
+openCustomSubState('CoolSubState')
+`````````
 
 <sub>Solo está Disponible para Estados</sub>
 
@@ -126,7 +192,10 @@ Ejemplo: `openCustomSubState('CoolSubState')`
 
 ## close
 
-Uso / Ejemplo: `close()`
+Uso / Ejemplo: 
+`````````lua
+close()
+`````````
 
 Sirve para Cerrar el Sub-Estado Actual
 
@@ -138,112 +207,178 @@ Sirve para Cerrar el Sub-Estado Actual
 
 ## getProperty
 
-Uso: `getProperty(variable:String, ?allowMaps:Bool = false)`
+Uso: 
+`````````lua
+getProperty(variable:String, ?allowMaps:Bool = false)
+`````````
 
 Sirve para Obtener una Propiedad de una Variable, ya sea Propia del Script o Propia del Estado / Sub-Estado en donde se está Ejecutando
 
-Ejemplo: `getProperty('playerIcon.scale.x')`
+Ejemplo: 
+`````````lua
+getProperty('playerIcon.scale.x')
+`````````
 
 ---
 
 ## setProperty
 
-Uso: `setProperty(variable:String, properties:Dynamic)`
+Uso: 
+`````````lua
+setProperty(variable:String, properties:Dynamic)
+`````````
 
 Sirve para Asignar una Propiedad de una Variable, ya sea Propia del Script o Propia del Estado / Sub-Estado en donde se está Ejecutando
 
-Ejemplo: `setProperty('playerIcon', {scale = {x = 2, y = 2}, {x = 100, y = 100}})`
+Ejemplo: 
+`````````lua
+setProperty('playerIcon', {scale = {x = 2, y = 2}, {x = 100, y = 100}})
+`````````
 
 ---
 
 ## getPropertyFromClass
 
-Uso: `getPropertyFromClass(classVar:String, variable:String, ?allowMaps:Bool = false)`
+Uso: 
+`````````lua
+getPropertyFromClass(classVar:String, variable:String, ?allowMaps:Bool = false)
+`````````
 
 Sirve para Obtener el Valor de una Variable que se Encuentra en la Clase donde se Especifique
 
-Ejemplo: `getPropertyFromClass('core.config.ClientPrefs', 'antialiasing')`
+Ejemplo: 
+`````````lua
+getPropertyFromClass('core.config.ClientPrefs', 'antialiasing')
+`````````
 
 ---
 
 ## setPropertyFromClass
 
-Uso: `setPropertyFromClass(classVar:String, variable:String, value:Dynamic, ?allowMaps:Bool = false)`
+Uso: 
+`````````lua
+setPropertyFromClass(classVar:String, variable:String, value:Dynamic, ?allowMaps:Bool = false)
+`````````
 
 Sirve para Asignar un Valor a una Variable que se Encuentra en la Clase donde se Especifique
 
-Ejemplo: `setPropertyFromClass('core.config.ClientPrefs', 'antialiasing', true)`
+Ejemplo: 
+`````````lua
+setPropertyFromClass('core.config.ClientPrefs', 'antialiasing', true)
+`````````
 
 ---
 
 ## getPropertyFromGroup
 
-Uso: `getPropertyFromGroup(obj:String, index:Int, variable:Dynamic, ?allowMaps:Bool = false)`
+Uso: 
+`````````lua
+getPropertyFromGroup(obj:String, index:Int, variable:Dynamic, ?allowMaps:Bool = false)
+`````````
 
 Sirve para Obtener un Valor de un Grupo
 
-Ejemplo: `getPropertyFromGroup('characters', 1, 'icon')`
+Ejemplo: 
+`````````lua
+getPropertyFromGroup('characters', 1, 'icon')
+`````````
 
 ---
 
 ## setPropertyFromGroup
 
-Uso: `setPropertyFromGroup(obj:String, index:Int, variable:Dynamic, value:Dynamic, ?allowMaps:Bool = false)`
+Uso: 
+`````````lua
+setPropertyFromGroup(obj:String, index:Int, variable:Dynamic, value:Dynamic, ?allowMaps:Bool = false)
+`````````
 
 Sirve para Asignar un Valor en un Grupo
 
-Ejemplo: `setPropertyFromGroup('characters', 1, 'icon', 'dad')`
+Ejemplo: 
+`````````lua
+setPropertyFromGroup('characters', 1, 'icon', 'dad')
+`````````
 
 ---
 
 ## removeFromGroup
 
-Uso: `removeFromGroup(obj:String, index:Int, dontDestroy:Bool = false)`
+Uso: 
+`````````lua
+removeFromGroup(obj:String, index:Int, dontDestroy:Bool = false)
+`````````
 
 Sirve para Remover un Miembro de un Grupo
 
-Ejemplo: `removeFromGroup('characters', 1, true)`
+Ejemplo: 
+`````````lua
+removeFromGroup('characters', 1, true)
+`````````
 
 ---
 
 ## callMethod
 
-Uso: `callMethod(funcToRun:String, ?args:Array<Dynamic> = null)`
+Uso: 
+`````````lua
+callMethod(funcToRun:String, ?args:Array<Dynamic> = null)
+`````````
 
 Sirve para Llamar a una Función y Obtener su Valor
 
-Ejemplo: `callMethod('resyncVoices')`
+Ejemplo: 
+`````````lua
+callMethod('resyncVoices')
+`````````
 
 ---
 
 ## callMethodFromClass
 
-Uso: `callMethodFromClass(className:String, funcToRun:String, ?args:Array<Dynamic> = null)`
+Uso: 
+`````````lua
+callMethodFromClass(className:String, funcToRun:String, ?args:Array<Dynamic> = null)
+`````````
 
 Sirve para Llamar a una Función de la Clase Especificada y Obtener su Valor
 
-Ejemplo: `callMethodFromClass('utils.CoolUtil', 'browserLoad', {'https://www.youtube.com/watch?v=dQw4w9WgXcQ'})`
+Ejemplo: 
+`````````lua
+callMethodFromClass('utils.CoolUtil', 'browserLoad', {'https://www.youtube.com/watch?v=dQw4w9WgXcQ'})
+`````````
 
 ---
 
 ## createInstance
 
-Uso: `createInstance(variableToSave:String, className:String, ?args:Array<Dynamic> = null)`
+Uso: 
+`````````lua
+createInstance(variableToSave:String, className:String, ?args:Array<Dynamic> = null)
+`````````
 
 Sirve para Crear una instancia de la Clase Indicada y Guardarla en una Variable/Etiqueta
 
-Ejemplo: `createInstance('uselessIcon', 'funkin.visuals.objects.HealthIcon', {'dad'})`
+Ejemplo: 
+`````````lua
+createInstance('uselessIcon', 'funkin.visuals.objects.HealthIcon', {'dad'})
+`````````
 
 ---
 
 ## instanceArg
 
-Uso: `instanceArg(instanceName:String, ?className:String = null)`
+Uso: 
+`````````lua
+instanceArg(instanceName:String, ?className:String = null)
+`````````
 
 Sirve para Formatear una Cadena de Manera Específica para Indicar a las Funciones Mencionadas Anteriormente que la Cadena debe ser una Instancia </br>
-<sub>Se Utiliza con `callMethod`, `callMethodFromClass`, `createInstance`, `setProperty`, `setPropertyFromGroup`, `setPropertyFromClass`</sub>
+<sub>Se Utiliza con ```callMethod```, ```callMethodFromClass```, ```createInstance```, ```setProperty```, ```setPropertyFromGroup```, ```setPropertyFromClass```</sub>
 
-Ejemplo: `setVariable('firstCharacter', instanceArg('characters.members[0]'))`
+Ejemplo: 
+`````````lua
+setVariable('firstCharacter', instanceArg('characters.members[0]'))
+`````````
 
 ---
 
@@ -251,81 +386,129 @@ Ejemplo: `setVariable('firstCharacter', instanceArg('characters.members[0]'))`
 
 ## pathExists
 
-Uso: `pathExists(path:String)`
+Uso: 
+`````````lua
+pathExists(path:String)
+`````````
 
-Sirve para Verificar si un Archivo / Carpeta Existe o No dentro de la Carpeta `assets` o `mods/Mod`
+Sirve para Verificar si un Archivo / Carpeta Existe o No dentro de la Carpeta ```assets``` o ```mods/Mod```
 
-Ejemplo: `pathExists('data.json')`
+Ejemplo: 
+`````````lua
+pathExists('data.json')
+`````````
 
 ---
 
 ## getFileContent
 
-Uso: `getFileContent(path:String)`
+Uso: 
+`````````lua
+getFileContent(path:String)
+`````````
 
 Sirve para Obtener el Contenido de un Archivo
 
-Ejemplo: `getFileContent('data.json')`
+Ejemplo: 
+`````````lua
+getFileContent('data.json')
+`````````
 
 ---
 
 ## createFile
 
-Uso: `createFile(path:String, value:String)`
+Uso: 
+`````````lua
+createFile(path:String, value:String)
+`````````
 
 Sirve para Crear un Archivo dentro de la Carpeta de Tu Mod
 
-Ejemplo: `createFile('README.txt', 'ALE Engine Supremacy')`
+Ejemplo: 
+`````````lua
+createFile('README.txt', 'ALE Engine Supremacy')
+`````````
 
 ---
 
 ## deleteFile
 
-Uso: `deleteFile(path:String)`
+Uso: 
+`````````lua
+deleteFile(path:String)
+`````````
 
 Sirve para Eliminar un Archivo que se Encuentra dentro de la Carpeta de tu Mod
 
-Ejemplo: `deleteFile('data.json')`
+Ejemplo: 
+`````````lua
+deleteFile('data.json')
+`````````
 
 ---
 
 ## createFolder
 
-Uso: `createFolder(path:String)`
+Uso: 
+`````````lua
+createFolder(path:String)
+`````````
 
 Sirve para Crear una Carpeta dentro de la Carpeta de tu Mod
 
-Ejemplo: `createFolder('extraFolder')`
+Ejemplo: 
+`````````lua
+createFolder('extraFolder')
+`````````
 
 ---
 
 ## deleteFolder
 
-Uso: `deleteFolder(path:String)`
+Uso: 
+`````````lua
+deleteFolder(path:String)
+`````````
 
 Sirve para Eliminar una Carpeta dentro de la Carpeta de tu Mod
 
-Ejemplo: `deleteFolder('extraFolder')`
+Ejemplo: 
+`````````lua
+deleteFolder('extraFolder')
+`````````
 
 ---
 
 ## readFolder
 
-Uso: `readFolder(path:String)`
+Uso: 
+`````````lua
+readFolder(path:String)
+`````````
 
 Sirve para Leer una Carpeta y Obtener el Nombre de Cada uno de sus Archivos Junto con su Extensión
 
-Ejemplo: `readFolder('data')`
+Ejemplo: 
+`````````lua
+readFolder('data')
+`````````
 
 ---
 
 ## pathIsFolder
 
-Uso: `pathIsFolder(path:String)`
+Uso: 
+`````````lua
+pathIsFolder(path:String)
+`````````
 
 Sirve para Saber la Ruta Indicada es o no una Carpeta
 
-Ejemplo: `pathIsFolder('data')`
+Ejemplo: 
+`````````lua
+pathIsFolder('data')
+`````````
 
 ---
 
@@ -333,111 +516,141 @@ Ejemplo: `pathIsFolder('data')`
 
 ## newSprite
 **Uso:**
-```lua
+`````````lua
 newSprite(tag:String, ?x:Float, ?y:Float, ?sprite:String)
-```
+`````````
 
 Crea una Instancia de FlxSprite
 
 **Ejemplo:**
-```lua
+`````````lua
 newSprite('mySprite', 10, 10, 'menuBG')
-```
+`````````
 
 ---
 
 ## loadGraphic
 **Uso:**
-```lua
+`````````lua
 loadGraphic(tag:String, name:String, ?animated:Bool = false, ?frameWidth:Int = 0, frameHeight:Int = 0)
-```
+`````````
 
 Sirve para Cargar una Imágen a un Sprite
 
 **Ejemplo:**
-```lua
+`````````lua
 loadGraphic('mySprite', 'menuBGMagenta')
-```
+`````````
 
 ---
 
 ## makeGraphic
 **Uso:**
-```lua
+`````````lua
 makeGraphic(tag:String, width:Int, height:Int, ?color:FlxColor = FlxColor.WHITE)
-```
+`````````
 
 Sirve para Crear un Gráfico y Asignárselo a un Sprite
 
 **Ejemplo:**
-```lua
+`````````lua
 makeGraphic('mySprite', 100, 100, colorFromName('blue'))
-```
+`````````
 
 ---
 
 ## playAnimation
 **Uso:**
-```lua
+`````````lua
 playAnimation(tag:String, name:String, ?force:Bool, ?reversed:Bool, ?frame:Int)
-```
+`````````
 
 Sirve para Reproducir una Animación que ya fue Añadida al Sprite
 
 **Ejemplo:**
-```lua
+`````````lua
 playAnimation('mySprite', 'epicAnim', true, false)
-```
+`````````
 
 ---
 
 ## newGradient
 
-Uso: `newGradient(tag:String, width:Int, height:Int, colors:Array<FlxColor>, ?chunkSize:Int = 1, ?rotation:Int = 90, ?interpolate:Bool = true)`
+Uso: 
+`````````lua
+newGradient(tag:String, width:Int, height:Int, colors:Array<FlxColor>, ?chunkSize:Int = 1, ?rotation:Int = 90, ?interpolate:Bool = true)
+`````````
 
 Sirve para Crear FlxSprites que se ve como Gradiente
 
-Ejemplo: `newGradient('myGradient', 1280, 720, {colorFromName('black'), colorFromName('transparent')}, 1, 90, true)`
+Ejemplo: 
+`````````lua
+newGradient('myGradient', 1280, 720, {colorFromName('black'), colorFromName('transparent')}, 1, 90, true)
+`````````
 
 ---
 
 ## getSparrowAtlas
 
-Uso: `getSparrowAtlas(tag:String, path:String)`
+Uso: 
+`````````lua
+getSparrowAtlas(tag:String, path:String)
+`````````
 
 Sirve para Cargar un Sprite Animado que Hace uso de XML
 
-Ejemplo: `getSparrowAtlas('mySprite', 'characters/BOYFRIEND')`
+Ejemplo: 
+`````````lua
+getSparrowAtlas('mySprite', 'characters/BOYFRIEND')
+`````````
 
 ---
 
 ## addAnimationByPrefix
 
-Uso: `addAnimationByPrefix(tag:String, name:String, prefix:String, ?frameRate:Float, ?looped:Bool, ?flipX:Bool, ?flipY:Bool)`
+Uso: 
+`````````lua
+addAnimationByPrefix(tag:String, name:String, prefix:String, ?frameRate:Float, ?looped:Bool, ?flipX:Bool, ?flipY:Bool)
+`````````
 
 Sirve para Añadir una Animación a un Sprite Animado
 
-Ejemplo: `addAnimationByPrefix('mySprite', 'epicAnim', 'epicAnim', 24, true, true, false)`
+Ejemplo: 
+`````````lua
+addAnimationByPrefix('mySprite', 'epicAnim', 'epicAnim', 24, true, true, false)
+`````````
 
 ---
 
 ## addAnimationByIndices
 
-Uso: `addAnimationByIndices(tag:String, name:String, prefix:String, indices:Array<Int>, ?frameRate:Float, ?looped:Bool, flipX:Bool, flipY:Bool)`
+Uso: 
+`````````lua
+addAnimationByIndices(tag:String, name:String, prefix:String, indices:Array<Int>, ?frameRate:Float, ?looped:Bool, flipX:Bool, flipY:Bool)
+`````````
 
 Sirve para Añadir una Animación a un Sprite Animado basándose en Índices
 
-Ejemplo: `addAnimationByIndices('mySprite', 'epicAnim', 'epicAnim', {0, 12, 20}, 24, true, true, false)`
+Ejemplo: 
+`````````lua
+addAnimationByIndices('mySprite', 'epicAnim', 'epicAnim', {0, 12, 20}, 24, true, true, false)
+`````````
 
 ---
 
 ## updateHitbox
 
-Uso: `updateHitbox(tag:String)`
+Uso: 
+`````````lua
+updateHitbox(tag:String)
+`````````
 
 Sirve para Actualizar la Hitbox de un Sprite
 
-Ejemplo: `updateHitbox('mySprite')`
+Ejemplo: 
+`````````lua
+updateHitbox('mySprite')
+`````````
 
 ---
 
@@ -445,50 +658,50 @@ Ejemplo: `updateHitbox('mySprite')`
 
 ## newText
 **Uso:**
-```lua
+`````````lua
 newText(tag:String, ?x:Float, ?y:Float, ?width:Float, ?text:String, ?size:Int)
-```
+`````````
 
 Sirve para Crear una Instancia de FlxText
 
 **Ejemplo:**
-```lua
+`````````lua
 newText('myText', 10, 100, 1280, 'ALE Engine Supremacy', 24)
-```
+`````````
 
 ---
 
 ## applyTextMarkup
 **Uso:**
-```lua
+`````````lua
 applyTextMarkup(tag:String, text:String, rules:Array<Array<Dynamic>>)
-```
+`````````
 
 Sirve para Asignarle Varios Colores a la Vez a un Texto
 
 **Ejemplo:**
-```lua
+`````````lua
 applyTextMarkup('myText', '*ALE* #Engine# %Supremacy%', {
   {'*', colorFromName('cyan')},
   {'#', colorFromName('red')},
   {'%', colorFromName('green')}
 })
-```
+`````````
 
 ---
 
 ## setTextFormat
 **Uso:**
-```lua
+`````````lua
 setTextFormat(tag:String, ?font:String, ?size:Int, ?color:FlxColor, ?alignment:String, ?borderStyle:String, ?borderColor:FlxColor)
-```
+`````````
 
 Sirve para Cambiar la Fuente, el Tamaño, el Color, la Alineación, el Estilo del borde y el Color del Borde a un Texto
 
 **Ejemplo:**
-```lua
+`````````lua
 setTextFormat('myText', 'vcr.ttf', 24, colorFromName('white'), 'center', 'shadow', colorFromName('black'))
-```
+`````````
 
 ---
 
@@ -496,122 +709,149 @@ setTextFormat('myText', 'vcr.ttf', 24, colorFromName('white'), 'center', 'shadow
 
 ## newSound
 **Uso:**
-```lua
+`````````lua
 newSound(tag:String, sound:String)
-```
+`````````
 
 Sirve para Crear una Instancia de FlxSound
 
 **Ejemplo:**
-```lua
+`````````lua
 newSound('mySound', 'scrollMenu')
-```
+`````````
 
 ---
 
 ## playSound
 **Uso:**
-```lua
+`````````lua
 playSound(tag:String)
-```
+`````````
 
 Sirve para Reproducir un Sonido
 
 **Ejemplo:**
-```lua
+`````````lua
 playSound('mySound')
-```
+`````````
 
 ---
 
 ## playMusic
 **Uso:**
-```lua
+`````````lua
 playMusic(sound:String)
-```
+`````````
 
 Sirve para Reproducir Música en el Juego
 
 **Ejemplo:**
-```lua
+`````````lua
 playMusic('freakyMenu')
-```
+`````````
 
 ---
 
 ## pauseSound
 **Uso:**
-```lua
+`````````lua
 pauseSound(tag:String)
-```
+`````````
 
 Sirve para Pausar un Sonido
 
 **Ejemplo:**
-```lua
+`````````lua
 pauseSound('mySound')
-```
+`````````
 
 ---
 
 ## resumeSound
 **Uso:**
-```lua
+`````````lua
 resumeSound(tag:String)
-```
+`````````
 
 Sirve para Despausar un Sonido
 
 **Ejemplo:**
-```lua
+`````````lua
 resumeSound('mySound')
-```
+`````````
 
 ---
 
 ## pauseSound
 
-Uso: `pauseSound(tag:String)`
+Uso: 
+`````````lua
+pauseSound(tag:String)
+`````````
 
 Sirve para Pausar un Sonido
 
-Ejemplo: `pauseSound('mySound')`
+Ejemplo: 
+`````````lua
+pauseSound('mySound')
+`````````
 
 ---
 
 ## resumeSound
 
-Uso: `resumeSound(tag:String)`
+Uso: 
+`````````lua
+resumeSound(tag:String)
+`````````
 
 Sirve para Despausar un Sonido
 
-Ejemplo: `resumeSound('mySound')`
+Ejemplo: 
+`````````lua
+resumeSound('mySound')
+`````````
 
 ---
 
 ## stopSound
 
-Uso: `stopSound(tag:String)`
+Uso: 
+`````````lua
+stopSound(tag:String)
+`````````
 
 Sirve para Parar un Sonido
 
-Ejemplo: `stopSound('mySound')`
+Ejemplo: 
+`````````lua
+stopSound('mySound')
+`````````
 
 ---
 
 ## playMusic
 
-Uso: `playMusic(sound:String)`
+Uso: 
+`````````lua
+playMusic(sound:String)
+`````````
 
 Sirve para Reproducir Música en el Juego
 
-Ejemplo: `playMusic('freakyMenu')`
+Ejemplo: 
+`````````lua
+playMusic('freakyMenu')
+`````````
 
 ---
 
 ## pauseMusic
 
-Uso / Ejemplo: `pauseMusic()`
+Uso / Ejemplo: 
+`````````lua
+pauseMusic()
+`````````
 
 Sirve para Pausar la Música del Juego
 
@@ -619,7 +859,10 @@ Sirve para Pausar la Música del Juego
 
 ## stopMusic
 
-Uso / Ejemplo: `stopMusic()`
+Uso / Ejemplo: 
+`````````lua
+stopMusic()
+`````````
 
 Sirve para Parar la Música del Juego
 
@@ -627,7 +870,10 @@ Sirve para Parar la Música del Juego
 
 ## resumeMusic
 
-Uso / Ejemplo: `resumeMusic()`
+Uso / Ejemplo: 
+`````````lua
+resumeMusic()
+`````````
 
 Sirve para Despausar la Música del Juego
 
@@ -635,11 +881,17 @@ Sirve para Despausar la Música del Juego
 
 ## playSoundFile
 
-Uso: `playSoundFile`
+Uso: 
+`````````lua
+playSoundFile(path:String, ?volume:Float = 1)
+`````````
 
 Sirve para Correr un Sonido
 
-Ejemplo: `playSoundFile('scrollMenu')`
+Ejemplo: 
+`````````lua
+playSoundFile('scrollMenu', 1)
+`````````
 
 ---
 
@@ -647,31 +899,49 @@ Ejemplo: `playSoundFile('scrollMenu')`
 
 ## colorFromString
 
-Uso: `colorFromString(color:String)`
+Uso: 
+`````````lua
+colorFromString(color:String)
+`````````
 
 Sirve para Obtener un Color por medio de un String que Contenga su Código Hexadecimal
 
-Ejemplo: `colorFromString('5DE2E7')`
+Ejemplo: 
+`````````lua
+colorFromString('5DE2E7')
+`````````
 
 ---
 
 ## colorFromRGB
 
-Uso: `colorFromRGB(r:Int, g:Int, b:Int)`
+Uso: 
+`````````lua
+colorFromRGB(r:Int, g:Int, b:Int)
+`````````
 
 Sirve para Obtener un Color por medio de su RGB
 
-Ejemplo: `colorFromRGB(93, 226, 231)`
+Ejemplo: 
+`````````lua
+colorFromRGB(93, 226, 231)
+`````````
 
 ---
 
 ## colorFromName
 
-Uso: `colorFromName(name:String)`
+Uso: 
+`````````lua
+colorFromName(name:String)
+`````````
 
 Sirve para Obtener un Color por medio de su Nombre
 
-Ejemplo: `colorFromName('red')`
+Ejemplo: 
+`````````lua
+colorFromName('red')
+`````````
 
 ---
 
@@ -679,21 +949,33 @@ Ejemplo: `colorFromName('red')`
 
 ## tween
 
-Uso: `tween(tag:String, vars:String, valueTypes:Dynamic, duration:Float, ?options:Dynamic)`
+Uso: 
+`````````lua
+tween(tag:String, vars:String, valueTypes:Dynamic, duration:Float, ?options:Dynamic)
+`````````
 
 Sirve para Crear y Correr un FlxTween
 
-Ejemplo: `tween('myTween', 'mySprite.scale', {x = 5, y = 5}, 1, {ease = 'circInOut', type = 'pingpong'})`
+Ejemplo: 
+`````````lua
+tween('myTween', 'mySprite.scale', {x = 5, y = 5}, 1, {ease = 'circInOut', type = 'pingpong'})
+`````````
 
 ---
 
 ## cancelTween
 
-Uso: `cancelTween(tag:String)`
+Uso: 
+`````````lua
+cancelTween(tag:String)
+`````````
 
 Sirve para Cancelar un Tween
 
-Ejemplo: `cancelTween('myTween')`
+Ejemplo: 
+`````````lua
+cancelTween('myTween')
+`````````
 
 ---
 
@@ -701,63 +983,75 @@ Ejemplo: `cancelTween('myTween')`
 
 ## newTimer
 
-Uso: `newTimer(tag:String)`
+Uso: 
+`````````lua
+newTimer(tag:String)
+`````````
 
 Sirve para Crear un FlxTimer
 
-Ejemplo: `newTimer('myTimer')`
+Ejemplo: 
+`````````lua
+newTimer('myTimer')
+`````````
 
 ---
 
 ## startTimer
 
-Uso: `startTimer(tag:String, time:Float = 1, loops:Int)`
+Uso: 
+`````````lua
+startTimer(tag:String, time:Float = 1, loops:Int)
+`````````
 
 Sirve para Correr un Timer ya Creado
 
-Ejemplo: `startTimer('myTimer', 1, 1)`
+Ejemplo: 
+`````````lua
+startTimer('myTimer', 1, 1)
+`````````
 
 ---
 
 ## cancelTimer
 **Uso:**
-```lua
+`````````lua
 cancelTimer(tag:String)
-```
+`````````
 
 Sirve para Cancelar un Timer que esté Corriendo
 
 **Ejemplo:**
-```lua
+`````````lua
 cancelTimer('myTimer')
-```
+`````````
 
 ---
 
 ## resetTimer
 **Uso:**
-```lua
+`````````lua
 resetTimer(tag:String, ?newTime:Float = -1)
-```
+`````````
 
 Sirve para Reiniciar un Timer y Reajustar su Duración de forma Opcional
 
 **Ejemplo:**
-```lua
+`````````lua
 resetTimer('myTimer', 0.5)
-```
+`````````
 
 ---
 
 ## runTimer
 **Uso:**
-```lua
+`````````lua
 runTimer(tag:String, time:Float = 1, loops:Int = 1)
-```
+`````````
 
 Sirve para Crear y Correr un Timer
 
 **Ejemplo:**
-```lua
+`````````lua
 runTimer('fastTimer', 0.5, 1)
-```
+`````````
