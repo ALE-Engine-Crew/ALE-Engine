@@ -8,6 +8,8 @@ import haxe.ds.StringMap;
 import tea.SScript;
 import tea.SScript.TeaCall;
 
+import core.structures.OptionsCategory;
+
 import core.enums.ScriptType;
 
 class HScript extends SScript
