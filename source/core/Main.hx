@@ -48,6 +48,7 @@ import lime.graphics.Image;
 
 class Main extends Sprite
 {
+	@:allow(utils.CoolUtil)
 	private static var game = {
 		width: 1280,
 		height: 720,

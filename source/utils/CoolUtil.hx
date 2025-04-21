@@ -18,6 +18,7 @@ import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 
 import core.config.MainState;
+import core.Main;
 
 import utils.ALEParserHelper;
 
@@ -155,6 +156,8 @@ class CoolUtil
 	 */
 	public static function resetEngine():Void
 	{
+		resizeGame(Main.game.width, Main.game.height);
+
 		CoolVars.skipTransIn = CoolVars.skipTransOut = true;
 
 		if (ScriptState.instance != null)
