@@ -4,5 +4,6 @@ package core.enums;
 {
     var BOOL = 'bool';
     var FLOAT = 'float';
+    var INTEGER = 'integer';
     var STRING = 'string';
 }
