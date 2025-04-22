@@ -69,7 +69,8 @@ class HScript extends SScript
 			CustomSubState,
 			funkin.visuals.objects.AttachedSprite,
 			funkin.visuals.objects.AttachedText,
-			funkin.visuals.objects.Alphabet
+			funkin.visuals.objects.Alphabet,
+			funkin.visuals.objects.AttachedAlphabet
         ];
 
         for (theClass in presetClasses)

@@ -52,4 +52,16 @@ class Controls
     public var BACK(get, never):Bool;
     function get_BACK():Bool
         return FlxG.keys.justPressed.ESCAPE;
+
+    public var MOUSE_WHEEL_DOWN(get, never):Bool;
+    function get_MOUSE_WHEEL_DOWN():Bool
+        return FlxG.mouse.wheel < 0;
+
+    public var MOUSE_WHEEL_UP(get, never):Bool;
+    function get_MOUSE_WHEEL_UP():Bool
+        return FlxG.mouse.wheel > 0;
+
+    public var MOUSE_WHEEL(get, never):Bool;
+    function get_MOUSE_WHEEL():Bool
+        return FlxG.mouse.wheel != 0;
 }
