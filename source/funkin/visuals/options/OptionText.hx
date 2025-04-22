@@ -26,7 +26,7 @@ class OptionText extends FlxSpriteGroup
         
         switch (data.type)
         {
-            case 'bool':
+            case OptionsBasicType.BOOL:
                 checkBox = new FlxSpriteGroup();
                 checkBox.frames = Paths.getSparrowAtlas('ui/checkBox');
                 checkBox.animation.addByPrefix('start', 'start', 24, false);
