@@ -53,7 +53,7 @@ class DebugField extends Sprite implements IFlxDestroyable
         x = -20;
     }
 
-    override function __enterFrame(time:Int)
+    override function __enterFrame(time:#if linux Float #else Int #end)
     {
         alpha = CoolUtil.fpsLerp(alpha, enabled ? 1 : 0, 0.25);
 

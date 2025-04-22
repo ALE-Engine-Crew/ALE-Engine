@@ -64,4 +64,16 @@ class Controls
     public var MOUSE_WHEEL(get, never):Bool;
     function get_MOUSE_WHEEL():Bool
         return FlxG.mouse.wheel != 0;
+
+    public var MOUSE(get, never):Bool;
+    function get_MOUSE():Bool
+        return FlxG.mouse.pressed;
+
+    public var MOUSE_P(get, never):Bool;
+    function get_MOUSE_P():Bool
+        return FlxG.mouse.justPressed;
+
+    public var MOUSE_R(get, never):Bool;
+    function get_MOUSE_R():Bool
+        return FlxG.mouse.justReleased;
 }
