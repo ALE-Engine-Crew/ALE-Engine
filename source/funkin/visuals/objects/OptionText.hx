@@ -8,8 +8,6 @@ import funkin.visuals.objects.Alphabet;
 
 class OptionText extends FlxSpriteGroup
 {
-    public var data:OptionsOption;
-
     public var text:Alphabet;
     public var extraText:Alphabet;
     public var checkBox:FlxSprite;
@@ -21,9 +19,16 @@ class OptionText extends FlxSpriteGroup
     {
         value = v;
 
+        if (type == INTEGER || type == FLOAT)
+        {
+            value = FlxMath.bound(value, min, max);
+
+            value = CoolUtil.floorDecimal(value, type == FLOAT ? decimals : 0);
+        }
+
         switch (type)
         {
-            case OptionsBasicType.BOOL:
+            case BOOL:
                 switch (value)
                 {
                     case false:
@@ -31,47 +36,48 @@ class OptionText extends FlxSpriteGroup
                     case true:
                         checkBox.animation.play('true', true);
                 }
-            case OptionsBasicType.STRING:
-                extraText.text = value;
             default:
+                extraText.text = value;
         }
 
         if (Reflect.field(ClientPrefs.data, variable) == null)
             Reflect.setField(ClientPrefs.modData, variable, value);
         else
             Reflect.setField(ClientPrefs.data, variable, value);
-        
-        for (val in Reflect.fields(ClientPrefs.modData))
-            debugPrint(val + ': ' + Reflect.field(ClientPrefs.modData, val));
-        
+
         return value;
     }
 
+    public final strings:Array<String>;
+
     public final change:Float;
-    public final decimals:Float;
+    public final decimals:Int;
     public final variable:String;
+    public final min:Float;
+    public final max:Float;
 
     override public function new(option:OptionsOption)
     {
         super();
 
-        data = option;
+        type = option.type;
 
-        type = data.type;
+        variable = option.variable;
 
+        strings = option.strings;
+        
         change = option.change;
-
         decimals = option.decimals;
+        min = option.min;
+        max = option.max;
 
-        variable = data.variable;
-
-        text = new Alphabet(x, y, data.name + (data.type == BOOL ? '' : ':'));
+        text = new Alphabet(x, y, option.name + (option.type == BOOL ? '' : ':'));
         text.scaleX = text.scaleY = 0.75;
         add(text);
         
-        switch (data.type)
+        switch (type)
         {
-            case OptionsBasicType.BOOL:
+            case BOOL:
                 checkBox = new FlxSprite();
                 checkBox.frames = Paths.getSparrowAtlas('ui/checkBox');
                 checkBox.animation.addByPrefix('start', 'start', 24, false);
@@ -119,8 +125,44 @@ class OptionText extends FlxSpriteGroup
         }
 
         if (Reflect.field(ClientPrefs.data, variable) == null)
-            value = data.initialValue;
+            value = option.initialValue;
         else
             value = Reflect.field(ClientPrefs.data, variable);
+    }
+
+    public function moveRight()
+    {
+        if (type == BOOL)
+            return;
+
+        if (type == STRING)
+        {
+            if (strings.indexOf(value) == strings.length - 1)
+                value = strings[0];
+            else
+                value = strings[strings.indexOf(value) + 1];
+
+            return;
+        }
+
+        value += change;
+    }
+
+    public function moveLeft()
+    {
+        if (type == BOOL)
+            return;
+
+        if (type == STRING)
+        {
+            if (strings.indexOf(value) == 0)
+                value = strings[strings.length - 1];
+            else
+                value = strings[strings.indexOf(value) - 1];
+
+            return;
+        }
+
+        value -= change;
     }
 }

@@ -17,6 +17,10 @@ class Controls
     function get_UI_LEFT_P():Bool
         return FlxG.keys.justPressed.LEFT;
 
+    public var UI_LEFT_R(get, never):Bool;
+    function get_UI_LEFT_R():Bool
+        return FlxG.keys.justReleased.LEFT;
+
     public var UI_DOWN(get, never):Bool;
     function get_UI_DOWN():Bool
         return FlxG.keys.pressed.DOWN;
@@ -24,6 +28,10 @@ class Controls
     public var UI_DOWN_P(get, never):Bool;
     function get_UI_DOWN_P():Bool
         return FlxG.keys.justPressed.DOWN;
+
+    public var UI_DOWN_R(get, never):Bool;
+    function get_UI_DOWN_R():Bool
+        return FlxG.keys.justReleased.DOWN;
 
     public var UI_UP(get, never):Bool;
         function get_UI_UP():Bool
@@ -33,13 +41,21 @@ class Controls
         function get_UI_UP_P():Bool
         return FlxG.keys.justPressed.UP;
 
+    public var UI_UP_R(get, never):Bool;
+    function get_UI_UP_R():Bool
+        return FlxG.keys.justReleased.UP;
+
     public var UI_RIGHT(get, never):Bool;
-        function get_UI_RIGHT():Bool
+    function get_UI_RIGHT():Bool
         return FlxG.keys.pressed.RIGHT;
 
     public var UI_RIGHT_P(get, never):Bool;
-        function get_UI_RIGHT_P():Bool
+    function get_UI_RIGHT_P():Bool
         return FlxG.keys.justPressed.RIGHT;
+
+    public var UI_RIGHT_R(get, never):Bool;
+    function get_UI_RIGHT_R():Bool
+        return FlxG.keys.justReleased.RIGHT;
 
     public var ACCEPT(get, never):Bool;
     function get_ACCEPT():Bool

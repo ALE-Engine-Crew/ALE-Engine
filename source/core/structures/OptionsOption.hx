@@ -17,7 +17,7 @@ typedef OptionsOption =
     @:optional var min:Float;
     @:optional var max:Float;
     @:optional var change:Float;
-    @:optional var decimals:Float;
+    @:optional var decimals:Int;
 
     @:optional var strings:Array<String>;
 }

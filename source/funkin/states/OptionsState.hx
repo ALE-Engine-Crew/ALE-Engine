@@ -27,7 +27,7 @@ class OptionsState extends MusicBeatState
     
     var selInt:SelInt = {menus: 0, options: 0};
     
-    var defaultMenus:Array<OptionsCategory>;
+    var categories:Array<OptionsCategory>;
     
     var descriptions:FlxText;
     var descriptionsBG:FlxSprite;
@@ -68,6 +68,8 @@ class OptionsState extends MusicBeatState
         spawnCategories();
     }
 
+    var pressTimer:Dynamic = {left: 0, right: 0};
+
     override function update(elapsed:Float)
     {
         super.update(elapsed);
@@ -99,7 +101,7 @@ class OptionsState extends MusicBeatState
     
             if (controls.ACCEPT || controls.MOUSE_P)
             {
-                var curMenu = defaultMenus[selInt.menus];
+                var curMenu = categories[selInt.menus];
     
                 if (curMenu.stateData == null)
                 {
@@ -127,6 +129,13 @@ class OptionsState extends MusicBeatState
                     }
                 }
             }
+
+            if (controls.CANCEL)
+            {
+                CoolUtil.switchState(new CustomState(CoolVars.data.mainMenuState));
+
+                canSelect.menus = false;
+            }
         } else if (canSelect.options) {
             if (controls.UI_DOWN_P || controls.UI_UP_P || controls.MOUSE_WHEEL)
             {
@@ -150,12 +159,38 @@ class OptionsState extends MusicBeatState
     
                 FlxG.sound.play(Paths.sound('scrollMenu'));
             }
+
+            if (controls.UI_RIGHT || controls.UI_LEFT)
+            {
+                var option:OptionText = optSprites.members[selInt.options];
+
+                if (option.type != BOOL)
+                {
+                    if (controls.UI_RIGHT_P || pressTimer.right >= 0.75)
+                        option.moveRight();
+                    
+                    if (controls.UI_LEFT_P || pressTimer.left >= 0.75)
+                        option.moveLeft();
+                }
+            }
+
+            if (controls.UI_LEFT)
+                pressTimer.left += elapsed;
+
+            if (controls.UI_RIGHT)
+                pressTimer.right += elapsed;
+
+            if (controls.UI_RIGHT_R)
+                pressTimer.right = 0;
+
+            if (controls.UI_LEFT_R)
+                pressTimer.left = 0;
     
             if (controls.ACCEPT || controls.MOUSE_P)
             {
                 var option:OptionText = optSprites.members[selInt.options];
 
-                if (option.type == OptionsBasicType.BOOL)
+                if (option.type == BOOL)
                     option.value = !option.value;
             }
     
@@ -183,9 +218,9 @@ class OptionsState extends MusicBeatState
     
         catSprites.clear();
     
-        for (category in defaultMenus)
+        for (category in categories)
         {
-            var index:Int = defaultMenus.indexOf(category);
+            var index:Int = categories.indexOf(category);
             var offIndex:Int = index - selInt.menus;
     
             var alpha:Alphabet = new Alphabet(165 - Math.pow(1.75, Math.abs(offIndex)) * 25, 300 + 100 * offIndex, category.name + (category.stateData == null ? ' >' : ''));
@@ -211,9 +246,9 @@ class OptionsState extends MusicBeatState
         
         optSprites.clear();
     
-        for (option in defaultMenus[selInt.menus].options)
+        for (option in categories[selInt.menus].options)
         {
-            var index:Int = defaultMenus[selInt.menus].options.indexOf(option);
+            var index:Int = categories[selInt.menus].options.indexOf(option);
             var offIndex:Int = index - selInt.options;
     
             var sprite:OptionText = new OptionText(option);
@@ -269,7 +304,7 @@ class OptionsState extends MusicBeatState
 
     override public function create()
     {
-        defaultMenus = [
+        categories = [
             {
                 name: 'Note Colors',
                 stateData: {
@@ -397,6 +432,15 @@ class OptionsState extends MusicBeatState
                 ]
             }
         ];
+
+        if (Paths.fileExists('options.json'))
+        {
+            var jsonData:Dynamic = Json.parse(File.getContent(Paths.getPath('options.json')));
+
+            if (jsonData.categories is Array)
+                for (cat in cast(jsonData.categories, Array<Dynamic>))
+                    categories.push(cast cat);
+        }
 
         createPost();
         

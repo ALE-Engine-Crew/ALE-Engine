@@ -68,7 +68,8 @@ class HScript extends SScript
 			funkin.visuals.objects.AttachedSprite,
 			funkin.visuals.objects.AttachedText,
 			funkin.visuals.objects.Alphabet,
-			funkin.visuals.objects.AttachedAlphabet
+			funkin.visuals.objects.AttachedAlphabet,
+			funkin.states.OptionsState
         ];
 
         for (theClass in presetClasses)

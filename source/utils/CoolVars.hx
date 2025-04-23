@@ -16,7 +16,7 @@ class CoolVars
         freeplayState: 'FreeplayState',
         storyMenuState: 'StoryMenuState',
         masterEditorMenu: 'MasterEditorMenu',
-        optionsState: 'OptionsState',
+        mainMenuState: 'MainMenuState',
 
         pauseSubState: 'PauseSubState',
         gameOverScreen: 'GameOverScreen',
