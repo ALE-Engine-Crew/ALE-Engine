@@ -8,8 +8,6 @@ import haxe.ds.StringMap;
 import tea.SScript;
 import tea.SScript.TeaCall;
 
-import core.structures.OptionsCategory;
-
 import core.enums.ScriptType;
 
 class HScript extends SScript
@@ -70,8 +68,7 @@ class HScript extends SScript
 			funkin.visuals.objects.AttachedSprite,
 			funkin.visuals.objects.AttachedText,
 			funkin.visuals.objects.Alphabet,
-			funkin.visuals.objects.AttachedAlphabet,
-			funkin.visuals.options.OptionText
+			funkin.visuals.objects.AttachedAlphabet
         ];
 
         for (theClass in presetClasses)

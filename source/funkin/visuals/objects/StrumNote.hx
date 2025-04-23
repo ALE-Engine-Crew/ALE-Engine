@@ -68,7 +68,7 @@ class StrumNote extends FlxSprite
 		else
 			x += FlxG.width - (160 * 0.7 * 5) + 50;
 
-		y = ClientPrefs.data.downscroll ? FlxG.height - 150 : 50;
+		y = ClientPrefs.data.downScroll ? FlxG.height - 150 : 50;
 
 		var rgbPalette = new RGBPalette();
 

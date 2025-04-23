@@ -1,4 +1,4 @@
-package funkin.visuals.options;
+package funkin.visuals.objects;
 
 import core.enums.OptionsBasicType;
 
@@ -14,11 +14,56 @@ class OptionText extends FlxSpriteGroup
     public var extraText:Alphabet;
     public var checkBox:FlxSprite;
 
+    public final type:OptionsBasicType;
+
+    public var value(default, set):Dynamic;
+    function set_value(v:Dynamic):Dynamic
+    {
+        value = v;
+
+        switch (type)
+        {
+            case OptionsBasicType.BOOL:
+                switch (value)
+                {
+                    case false:
+                        checkBox.animation.play('false', true);
+                    case true:
+                        checkBox.animation.play('true', true);
+                }
+            case OptionsBasicType.STRING:
+                extraText.text = value;
+            default:
+        }
+
+        if (Reflect.field(ClientPrefs.data, variable) == null)
+            Reflect.setField(ClientPrefs.modData, variable, value);
+        else
+            Reflect.setField(ClientPrefs.data, variable, value);
+        
+        for (val in Reflect.fields(ClientPrefs.modData))
+            debugPrint(val + ': ' + Reflect.field(ClientPrefs.modData, val));
+        
+        return value;
+    }
+
+    public final change:Float;
+    public final decimals:Float;
+    public final variable:String;
+
     override public function new(option:OptionsOption)
     {
         super();
 
         data = option;
+
+        type = data.type;
+
+        change = option.change;
+
+        decimals = option.decimals;
+
+        variable = data.variable;
 
         text = new Alphabet(x, y, data.name + (data.type == BOOL ? '' : ':'));
         text.scaleX = text.scaleY = 0.75;
@@ -27,13 +72,12 @@ class OptionText extends FlxSpriteGroup
         switch (data.type)
         {
             case OptionsBasicType.BOOL:
-                checkBox = new FlxSpriteGroup();
+                checkBox = new FlxSprite();
                 checkBox.frames = Paths.getSparrowAtlas('ui/checkBox');
                 checkBox.animation.addByPrefix('start', 'start', 24, false);
                 checkBox.animation.addByPrefix('finish', 'finish', 24, false);
                 checkBox.animation.addByPrefix('true', 'true', 24, false);
                 checkBox.animation.addByPrefix('false', 'false', 24, false);
-                checkBox.animation.play(option.initialValue ? 'start' : 'finish');
                 checkBox.antialiasing = ClientPrefs.data.antialiasing;
                 checkBox.animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
                     switch (name)
@@ -73,7 +117,10 @@ class OptionText extends FlxSpriteGroup
                 extraText.antialiasing = ClientPrefs.data.antialiasing;
                 add(extraText);
         }
-        
-        alpha = 0;
+
+        if (Reflect.field(ClientPrefs.data, variable) == null)
+            value = data.initialValue;
+        else
+            value = Reflect.field(ClientPrefs.data, variable);
     }
 }

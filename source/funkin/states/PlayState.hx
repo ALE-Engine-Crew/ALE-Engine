@@ -632,7 +632,7 @@ class PlayState extends ScriptState
 
     private function initHUD()
     {
-		healthBar = new Bar(null, ClientPrefs.data.downscroll ? 75 : FlxG.height - 70);
+		healthBar = new Bar(null, ClientPrefs.data.downScroll ? 75 : FlxG.height - 70);
 		add(healthBar);
 		healthBar.cameras = [camHUD];
 		healthBar.x = FlxG.width / 2 - healthBar.width / 2;

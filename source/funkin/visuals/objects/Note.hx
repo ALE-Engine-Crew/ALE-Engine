@@ -111,7 +111,7 @@ class Note extends FlxSprite
 		shaderRef.g = shaderArray[1];
 		shaderRef.b = shaderArray[2];
 
-		flipY = isSustainEnd && ClientPrefs.data.downscroll;
+		flipY = isSustainEnd && ClientPrefs.data.downScroll;
 
 		y -= 2000;
 
@@ -128,7 +128,7 @@ class Note extends FlxSprite
 	function get_direction():Float return strum == null ? 90 : strum.direction * Math.PI / 180;
 
 	public var distance(get, never):Float;
-	function get_distance():Float return 0.45 * (Conductor.songPosition - strumTime) * strum.scrollSpeed * (ClientPrefs.data.downscroll ? 1 : -1);
+	function get_distance():Float return 0.45 * (Conductor.songPosition - strumTime) * strum.scrollSpeed * (ClientPrefs.data.downScroll ? 1 : -1);
 
 	public var distanceX(get, never):Float;
 	function get_distanceX():Float
