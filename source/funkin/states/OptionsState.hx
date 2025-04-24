@@ -134,10 +134,12 @@ class OptionsState extends MusicBeatState
             {
                 CoolUtil.switchState(new CustomState(CoolVars.data.mainMenuState));
 
+                FlxG.sound.play(Paths.sound('cancelMenu'));
+
                 canSelect.menus = false;
             }
         } else if (canSelect.options) {
-            if (controls.UI_DOWN_P || controls.UI_UP_P || controls.MOUSE_WHEEL)
+            if ((controls.UI_DOWN_P || controls.UI_UP_P || controls.MOUSE_WHEEL) && !FlxG.keys.pressed.SHIFT)
             {
                 if (controls.UI_DOWN_P || controls.MOUSE_WHEEL_DOWN)
                 {
@@ -160,16 +162,16 @@ class OptionsState extends MusicBeatState
                 FlxG.sound.play(Paths.sound('scrollMenu'));
             }
 
-            if (controls.UI_RIGHT || controls.UI_LEFT)
+            if (controls.UI_RIGHT || controls.UI_LEFT || (FlxG.keys.pressed.SHIFT && controls.MOUSE_WHEEL))
             {
                 var option:OptionText = optSprites.members[selInt.options];
 
                 if (option.type != BOOL)
                 {
-                    if (controls.UI_RIGHT_P || pressTimer.right >= 0.75)
+                    if (controls.UI_RIGHT_P || pressTimer.right >= 0.75 || controls.MOUSE_WHEEL_DOWN)
                         option.moveRight();
                     
-                    if (controls.UI_LEFT_P || pressTimer.left >= 0.75)
+                    if (controls.UI_LEFT_P || pressTimer.left >= 0.75 || controls.MOUSE_WHEEL_UP)
                         option.moveLeft();
                 }
             }
@@ -203,6 +205,8 @@ class OptionsState extends MusicBeatState
     
                 FlxTween.cancelTweensOf(FlxG.camera.scroll);
                 FlxTween.tween(FlxG.camera.scroll, {x: 0}, 0.5, {ease: FlxEase.circInOut});
+
+                FlxG.sound.play(Paths.sound('cancelMenu'));
             }
         }
     }
