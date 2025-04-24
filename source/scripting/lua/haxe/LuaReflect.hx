@@ -59,34 +59,20 @@ class LuaReflect extends LuaPresetBase
             }
         );
 
-        set("setPropertyFromClass", function(classVar:String, variable:String, value:Dynamic, ?allowMaps:Bool = false)
+        set('setPropertyFromClass', function(classVar:String, variables:Dynamic)
             {
                 var myClass:Dynamic = Type.resolveClass(classVar);
-
+            
                 if (myClass == null)
                 {
-                    errorPrint('getPropertyFromClass: Class $classVar not found');
-
+                    debugPrint('Class "' + classVar + '" not found', FlxColor.RED);
+            
                     return null;
                 }
+            
+                applyProps(myClass, variables);
     
-                var split:Array<String> = variable.split('.');
-
-                if (split.length > 1)
-                {
-                    var obj:Dynamic = getVarInArray(lua, myClass, split[0], allowMaps);
-
-                    for (i in 1...split.length-1)
-                        obj = getVarInArray(lua, obj, split[i], allowMaps);
-    
-                    setVarInArray(lua, obj, split[split.length-1], value, allowMaps);
-
-                    return value;
-                }
-
-                setVarInArray(lua, myClass, variable, value, allowMaps);
-
-                return value;
+                return variables;
             }
         );
 
