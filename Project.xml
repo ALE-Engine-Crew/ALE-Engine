@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin': ALE Engine" file="ALEEngine" main="core.Main" packageName="com.alejogdofficial.aleengine" package="com.alejogdofficial.aleengine" version="Alpha 3" company="AlejoGDOfficial" />
+	<app title="Friday Night Funkin': ALE Engine" file="ALEEngine" main="core.Main" packageName="com.aleenginecrew.aleengine" package="com.alejogdofficial.aleengine" version="Alpha 3" company="ALEEngineCrew" />
 
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB" />
 

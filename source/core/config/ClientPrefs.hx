@@ -1,5 +1,7 @@
 package core.config;
 
+import flixel.util.FlxSave;
+
 @:structInit class SaveData
 {
     public var antialiasing:Bool = true;
@@ -36,6 +38,16 @@ class ClientPrefs
 
 	public static function loadPrefs()
 	{
+		var save:FlxSave = new FlxSave();
+		save.bind('defaultPreferences', CoolUtil.getSavePath());
+		for (field in Reflect.fields(save.data.settings))
+			if (Reflect.field(ClientPrefs.data, field) != null)
+				Reflect.setField(ClientPrefs.data, field, Reflect.field(save.data.settings, field));
+
+		var modSave:FlxSave = new FlxSave();
+		modSave.bind('modPreferences', CoolUtil.getSavePath());
+		ClientPrefs.modData = modSave.data.settings;
+
 		if (ClientPrefs.data.framerate > FlxG.drawFramerate)
 		{
 			FlxG.updateFramerate = ClientPrefs.data.framerate;
@@ -44,5 +56,18 @@ class ClientPrefs
 			FlxG.drawFramerate = ClientPrefs.data.framerate;
 			FlxG.updateFramerate = ClientPrefs.data.framerate;
 		}
+	}
+
+	public static function savePrefs()
+	{
+		var save:FlxSave = new FlxSave();
+		save.bind('defaultPreferences', CoolUtil.getSavePath());
+		save.data.settings = ClientPrefs.data;
+		save.flush();
+
+		var modSave:FlxSave = new FlxSave();
+		modSave.bind('modPreferences', CoolUtil.getSavePath());
+		modSave.data.settings = ClientPrefs.modData;
+		modSave.flush();
 	}
 }

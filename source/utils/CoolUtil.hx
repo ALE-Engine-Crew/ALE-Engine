@@ -19,6 +19,7 @@ import openfl.filters.BitmapFilter;
 
 import core.config.MainState;
 import core.Main;
+import core.backend.Mods;
 
 import utils.ALEParserHelper;
 
@@ -116,7 +117,7 @@ class CoolUtil
 	{
 		final company:String = FlxG.stage.application.meta.get('company');
 		
-		return company + '/' + flixel.util.FlxSave.validate(FlxG.stage.application.meta.get('file'));
+		return company + '/' + flixel.util.FlxSave.validate(FlxG.stage.application.meta.get('file')) + '/' + (Mods.folder == '' ? 'ALEEngineDefaultSavePath' : Mods.folder);
 	}
 
 	/**

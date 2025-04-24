@@ -132,6 +132,8 @@ class OptionsState extends MusicBeatState
 
             if (controls.CANCEL)
             {
+                ClientPrefs.loadPrefs();
+
                 CoolUtil.switchState(new CustomState(CoolVars.data.mainMenuState));
 
                 FlxG.sound.play(Paths.sound('cancelMenu'));
@@ -198,6 +200,8 @@ class OptionsState extends MusicBeatState
     
             if (controls.CANCEL)
             {
+                ClientPrefs.savePrefs();
+
                 spawnCategories();
     
                 canSelect.menus = true;
