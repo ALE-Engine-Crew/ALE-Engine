@@ -25,8 +25,10 @@ class MainState extends MusicBeatState
 		FlxG.sound.volumeDownKeys = [NUMPADMINUS, MINUS];
 		FlxG.sound.volumeUpKeys = [NUMPADPLUS, PLUS];
 
+        #if cpp
         debugCounter = new DebugCounter();
         FlxG.stage.addChild(debugCounter);
+        #end
 
         ClientPrefs.loadPrefs();
     
@@ -34,6 +36,10 @@ class MainState extends MusicBeatState
 
         CoolUtil.reloadGameMetadata();
 
+        #if cpp
         CoolUtil.switchState(new CustomState(CoolVars.data.initialState), true, true);
+        #else
+        CoolUtil.switchState(new other.ChartState(), true, true);
+        #end
     }
 }

@@ -1,12 +1,11 @@
 package funkin.visuals.objects;
 
 import flixel.group.FlxGroup;
+import flixel.util.FlxSort;
 
 import core.enums.ALECharacterType;
 
 import core.structures.ALESection;
-
-import flixel.util.FlxSort;
 
 class StrumLine extends FlxGroup
 {

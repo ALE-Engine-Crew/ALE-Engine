@@ -38,9 +38,13 @@ class MusicBeatState extends FlxState
         controls = new Controls();
 
         if (CoolVars.skipTransOut)
+        {
             CoolVars.skipTransOut = false;
-        else
+        } else {
+            #if (cpp)
             CoolUtil.openSubState(new CustomTransition(false));
+            #end
+        }
 
         super.create();
     }

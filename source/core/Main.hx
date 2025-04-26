@@ -21,7 +21,7 @@ import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
 
-#if windows
+#if (windows && cpp)
 @:buildXml('
 <target id="haxe">
 	<lib name="wininet.lib" if="windows" />
@@ -66,7 +66,7 @@ class Main extends Sprite
 	{
 		super();
 
-		#if windows
+		#if (windows && cpp)
 		untyped __cpp__("SetProcessDPIAware();");
 
 		Application.current.window.x = Std.int((Application.current.window.display.bounds.width - Application.current.window.width) / 2);

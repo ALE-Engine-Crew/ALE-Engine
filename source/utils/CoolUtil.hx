@@ -369,7 +369,7 @@ class CoolUtil
         FlxG.stage.window.title = CoolVars.data.title;
 	}
 
-    public static inline function switchState(state:flixel.FlxState = null, skipTransIn:Bool = false, skipTransOut = false)
+    public static inline function switchState(state:flixel.FlxState = null, skipTransIn:Bool = null, skipTransOut:Bool = null)
     {
         if (state == null)
             FlxG.resetState();
@@ -389,8 +389,11 @@ class CoolUtil
 
 	private static function transitionSwitch(state:flixel.FlxState, skipTransIn, skipTransOut)
 	{
-		CoolVars.skipTransIn = skipTransIn;
-		CoolVars.skipTransOut = skipTransOut; 
+		if (skipTransIn != null)
+			CoolVars.skipTransIn = skipTransIn;
+
+		if (skipTransOut != null)
+			CoolVars.skipTransOut = skipTransOut; 
 
         if (CoolVars.skipTransIn)
 		{
@@ -398,7 +401,9 @@ class CoolUtil
 
 			FlxG.switchState(state);
 		} else {
+            #if (cpp)
             CoolUtil.openSubState(new CustomTransition(true, () -> { FlxG.switchState(state); }));
+			#end
 		}
 	}
 

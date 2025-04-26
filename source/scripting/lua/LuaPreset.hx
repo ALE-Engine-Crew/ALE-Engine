@@ -10,6 +10,7 @@ class LuaPreset
         new LuaGlobal(lua);
         new LuaColor(lua);
         new LuaSprite(lua);
+        new LuaBackdrop(lua);
         new LuaText(lua);
         new LuaReflect(lua);
         new LuaFileSystem(lua);
