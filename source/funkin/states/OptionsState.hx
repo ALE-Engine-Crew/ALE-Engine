@@ -34,7 +34,7 @@ class OptionsState extends MusicBeatState
 
     function createPost()
     {
-        var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBG'));
+        var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('ui/menuBG'));
         add(bg);
         bg.scrollFactor.set();
         bg.scale.x = bg.scale.y = 1.125;

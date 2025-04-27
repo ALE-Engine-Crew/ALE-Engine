@@ -4,6 +4,10 @@ import core.enums.ALECharacterType;
 
 class StrumNote extends FlxSprite
 {
+    public var direction:Float = 90;
+
+    public var scrollSpeed:Float = 1;
+
     override public function new(type:ALECharacterType, noteData:Int)
     {
         super();

@@ -9,15 +9,23 @@ import core.structures.ALESection;
 
 class StrumLine extends FlxGroup
 {
+    public var type:ALECharacterType;
+
     public var strums:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
 
     public var notes:FlxTypedGroup<Note> = new FlxTypedGroup<Note>();
 
     public var unspawnNotes:Array<Note> = [];
+
+    public var sections:Array<ALESection> = [];
     
-    override public function new(type:ALECharacterType, notes:Array<ALESection>)
+    override public function new(type:ALECharacterType, sections:Array<ALESection>)
     {
         super();
+
+        this.type = type;
+
+        this.sections = sections;
 
         add(strums);
 
@@ -28,6 +36,8 @@ class StrumLine extends FlxGroup
         }
 
         add(notes);
+
+        spawnNotes();
     }
 
     private function spawnNotes()
@@ -41,12 +51,7 @@ class StrumLine extends FlxGroup
                 var sustainLength:Float = noteArray[2];
                 var strum:StrumNote = strums.members[noteData];
 
-                var note:Note = new Note(type, noteData, strumTime, character, strum);
-                note.defaultHitCallback = defaultHitCallback;
-                note.defaultLostCallback = defaultLostCallback;
-
-                note.killFunction = function(theNote:Note)
-                    notes.remove(theNote, true);
+                var note:Note = new Note(noteData, strumTime, strum);
 
                 unspawnNotes.push(note);
             }
@@ -68,14 +73,16 @@ class StrumLine extends FlxGroup
         {
             var time:Float = spawnTime;
 
-            if (PlayState.instance.scrollSpeed < 1)
-                time /= PlayState.instance.scrollSpeed;
-
             while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
             {
                 var note:Note = unspawnNotes[0];
                 notes.add(note);
                 note.spawned = true;
+                note.updatePosition();
+
+                note.customKillFunction = () -> {
+                    notes.remove(note, true);
+                };
 
                 unspawnNotes.splice(unspawnNotes.indexOf(note), 1);
             }
