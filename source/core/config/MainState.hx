@@ -36,8 +36,8 @@ class MainState extends MusicBeatState
 
         CoolUtil.reloadGameMetadata();
 
-        //CoolUtil.switchState(new CustomState(CoolVars.data.initialState), true, true);
+        CoolUtil.switchState(new CustomState(CoolVars.data.initialState), true, true);
 
-        CoolUtil.switchState(new other.ChartState(), true, true);
+        //CoolUtil.switchState(new other.ChartState(), true, true);
     }
 }
