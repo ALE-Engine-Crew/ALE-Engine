@@ -15,16 +15,16 @@ class ALEParserHelper
 			var newJson:PsychSong = cast json;
 
 			formattedJson = {
-				song: newJson.song,
-				needsVoices: true,
-				speed: newJson.speed,
-				stage: newJson.stage,
+				song: newJson.song ?? 'test',
+				needsVoices: json.needsVoices ?? true,
+				speed: newJson.speed ?? 1,
+				stage: newJson.stage ?? 'stage',
 				
 				grids: new Array<Dynamic>(),
 				events: new Array<Dynamic>(),
 				metadata: {},
 
-				bpm: newJson.bpm,
+				bpm: newJson.bpm ?? 100,
 				beats: 4,
 				steps: 4,
 
@@ -107,8 +107,8 @@ class ALEParserHelper
 			formattedJson = {
 				song: newJson.song,
 				needsVoices: true,
-				speed: newJson.speed,
-				stage: newJson.stage,
+				speed: newJson.speed ?? 1,
+				stage: newJson.stage ?? 'stage',
 				
 				grids: new Array<Dynamic>(),
 				events: new Array<Dynamic>(),
@@ -283,7 +283,7 @@ class ALEParserHelper
             {
                 return cast data;
             } else {
-                var formattedStage:ALEStage = {
+                return cast {
                     opponentsPosition: data.opponent == null ? [[0, 0]] : [data.opponent],
                     playersPosition: data.boyfriend == null ? [[0, 0]] : [data.boyfriend],
                     extrasPosition: data.girlfriend == null ? [[0, 0]] : [data.girlfriend],
@@ -294,11 +294,9 @@ class ALEParserHelper
     
                     format: 'ale-format-v0.1',
     
-                    cameraZoom: data.defaultZoom ?? 1,
-                    cameraSpeed: data.camera_speed ?? 1
+                    cameraZoom: data.defaultZoom,
+                    cameraSpeed: data.camera_speed
                 };
-    
-                return cast formattedStage;
             }
         } else {
             return cast {
