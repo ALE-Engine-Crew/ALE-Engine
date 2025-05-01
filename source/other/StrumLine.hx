@@ -13,7 +13,7 @@ class StrumLine extends FlxGroup
 
     public var strums:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
 
-    public var notes:FlxTypedGroup<Note> = new FlxTypedGroup<Note>();
+    public var notes:NoteGroup = new NoteGroup();
 
     public var unspawnNotes:Array<Note> = [];
 

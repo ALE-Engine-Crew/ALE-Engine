@@ -50,6 +50,8 @@ class Splash extends AttachedSprite
         shaderRef.b = shaderArray[2];
 
         texture = texture;
+
+        alphaMult = ClientPrefs.data.splashAlpha / 100;
     }
 
     function loadTexture(image:String)

@@ -4,6 +4,26 @@ import flixel.util.FlxSave;
 
 @:structInit class SaveData
 {
+	/*
+	public var vSync(default, set):Bool = false;
+	function set_vSync(value:Bool):Bool
+	{
+		vSync = value;
+
+		FlxG.stage.application.window.setVSyncMode(
+			switch (value)
+			{
+				case false:
+					lime.ui.WindowVSyncMode.OFF;
+				case true:
+					lime.ui.WindowVSyncMode.ON;
+			}
+		);
+
+		return value;
+	}
+		*/
+
     public var antialiasing:Bool = true;
     public var flashing:Bool = true;
 	public var lowQuality:Bool = false;
@@ -21,7 +41,7 @@ import flixel.util.FlxSave;
 	public var noReset:Bool = false;
 
 	public var cacheOnGPU:Bool = true;
-	public var framerate:Int = 240;
+	public var framerate:Int = 60;
 
 	public var checkForUpdates:Bool = true;
 	

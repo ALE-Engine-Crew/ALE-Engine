@@ -60,16 +60,14 @@ class Note extends FlxSprite
         scale.x = strum.scale.x;
 
         alpha = strum.alpha * (state == LOST ? 0.3 : isSustainNote ? 0.85 : 1);
-
-        visible = strum.visible;
-
-        if ((x < FlxG.width && x > -width) || (distanceX < FlxG.width && distanceX > -width))
-            x = distanceX;
         
-        if ((y < FlxG.height && y > -height) || (distanceY < FlxG.height && distanceY > -height))
-            y = distanceY;
+        x = distanceX;
 
-        if (y < -height)
+        y = distanceY;
+
+        visible = strum.visible && x > -width && y > -height;
+
+        if (y < -height || Conductor.songPosition > strumTime)
             killFunction();
     }
 

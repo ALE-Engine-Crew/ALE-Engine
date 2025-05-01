@@ -337,6 +337,15 @@ class OptionsState extends MusicBeatState
             {
                 name: 'Graphics',
                 options: [
+                    /*
+                    {
+                        name: 'V-Sync',
+                        description: 'If checked, Enables VSync fixing any screen tearing at the cost of capping the FPS to screen refresh rate.\n(Must restart the game to have an effect)',
+                        variable: 'vSync',
+                        type: cast 'bool',
+                        initialValue: false
+                    },
+                    */
                     {
                         name: 'Low Quality',
                         description: 'If checked, disables some background details, decreases loading times and improves performance.',

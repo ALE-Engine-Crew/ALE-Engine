@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin': ALE Engine" file="ALEEngine" main="core.Main" packageName="com.aleenginecrew.aleengine" package="com.alejogdofficial.aleengine" version="Alpha 3" company="ALEEngineCrew" />
+	<app title="Friday Night Funkin': ALE Engine" file="ALEEngine" main="core.Main" packageName="com.aleenginecrew.aleengine" package="com.alejogdofficial.aleengine" version="Alpha 4" company="ALEEngineCrew" />
 
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB" />
 
@@ -84,4 +84,10 @@
 	<icon path="art/icon32.png" size='32' />
 	<icon path="art/icon64.png" size='64' />
 	<icon path="art/iconOG.png" />
+
+	<!-- OpenAL Config -->
+	<section if="desktop">
+		<assets path="alsoft.txt" rename="plugins/alsoft.ini" type="text" if="windows"/>
+		<assets path="alsoft.txt" rename="plugins/alsoft.conf" type="text" unless="windows"/>
+	</section>
 </project>

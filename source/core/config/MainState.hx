@@ -4,6 +4,8 @@ import funkin.debug.DebugCounter;
 
 import flixel.input.keyboard.FlxKey;
 
+import haxe.io.Path;
+
 /**
  * Used to configure and add the necessary elements before starting the game
  */
@@ -14,6 +16,8 @@ class MainState extends MusicBeatState
     override function create()
     {
         super.create();
+        
+        openalFix();
 
 		FlxG.fixedTimestep = false;
         
@@ -38,6 +42,25 @@ class MainState extends MusicBeatState
 
         CoolUtil.switchState(new CustomState(CoolVars.data.initialState), true, true);
 
-        //CoolUtil.switchState(new other.ChartState(), true, true);
+        // CoolUtil.switchState(new other.ChartState(), true, true);
+    }
+
+    function openalFix()
+    {
+		#if desktop
+		var origin:String = #if hl Sys.getCwd() #else Sys.programPath() #end;
+
+		var configPath:String = Path.directory(Path.withoutExtension(origin));
+
+		#if windows
+		configPath += "/plugins/alsoft.ini";
+		#elseif mac
+		configPath = Path.directory(configPath) + "/Resources/plugins/alsoft.conf";
+		#else
+		configPath += "/plugins/alsoft.conf";
+		#end
+
+		Sys.putEnv("ALSOFT_CONF", configPath);
+		#end	
     }
 }
