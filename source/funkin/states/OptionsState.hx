@@ -32,6 +32,15 @@ class OptionsState extends MusicBeatState
     var descriptions:FlxText;
     var descriptionsBG:FlxSprite;
 
+    var inPlayState:Bool = false;
+
+    override public function new(inPlayState:Bool = false)
+    {
+        super();
+
+        this.inPlayState = inPlayState;
+    }
+
     function createPost()
     {
         var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('ui/menuBG'));
@@ -134,7 +143,14 @@ class OptionsState extends MusicBeatState
             {
                 ClientPrefs.loadPrefs();
 
-                CoolUtil.switchState(new CustomState(CoolVars.data.mainMenuState));
+                if (inPlayState)
+                {
+                    CoolUtil.switchState(new funkin.states.PlayState());
+
+                    shouldClearMemory = false;
+                } else {
+                    CoolUtil.switchState(new CustomState(CoolVars.data.mainMenuState));
+                }
 
                 FlxG.sound.play(Paths.sound('cancelMenu'));
 

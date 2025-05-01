@@ -295,7 +295,7 @@ class ALEParserHelper
                     format: 'ale-format-v0.1',
     
                     cameraZoom: data.defaultZoom,
-                    cameraSpeed: data.camera_speed
+                    cameraSpeed: data.camera_speed ?? 1
                 };
             }
         } else {
