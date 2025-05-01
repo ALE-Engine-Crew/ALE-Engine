@@ -93,6 +93,17 @@ class FlxSoundTray extends Sprite
 		y = _y = -height;
 
 		visible = false;
+
+		Lib.application.window.onClose.add(function()
+			{
+				if (FlxG.save.isBound)
+				{
+					FlxG.save.data.mute = FlxG.sound.muted;
+					FlxG.save.data.volume = FlxG.sound.volume;
+					FlxG.save.flush();
+				}
+			}
+		);
 	}
 	
 	public function update(elapsed:Float):Void
@@ -104,25 +115,13 @@ class FlxSoundTray extends Sprite
 		if (_timer > 0)
 		{
 			_timer -= elapsed / 750;
-		} else if (y > -height) {
+		} else if (Math.floor(y) > -height) {
 			_y = -height;
 
 			_alpha = 0;
-
-			if (y <= -height)
-			{
-				visible = active = false;
-
-				#if FLX_SAVE
-				if (FlxG.save.isBound)
-				{
-					FlxG.save.data.mute = FlxG.sound.muted;
-					FlxG.save.data.volume = FlxG.sound.volume;
-					FlxG.save.flush();
-				}
-				#end
-			}
 		}
+
+		visible = active = Math.floor(y) >= -height;
 	}
 	
 	public function show(up:Bool = false):Void

@@ -21,6 +21,8 @@ import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
 
+import openfl.Lib;
+
 #if (windows && cpp)
 @:buildXml('
 <target id="haxe">
@@ -62,6 +64,12 @@ class Main extends Sprite
 	public static function main():Void
 	{
 		Lib.current.addChild(new Main());
+
+		Lib.application.window.onClose.add(function()
+			{
+				ClientPrefs.savePrefs();
+			}
+		);
 	}
 
 	public function new()

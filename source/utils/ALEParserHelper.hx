@@ -294,8 +294,8 @@ class ALEParserHelper
     
                     format: 'ale-format-v0.1',
     
-                    cameraZoom: data.defaultZoom == null ? 1 : data.defaultZoom,
-                    cameraSpeed: data.camera_speed == null ? 1 : data.camera_speed
+                    cameraZoom: data.defaultZoom ?? 1,
+                    cameraSpeed: data.camera_speed ?? 1
                 };
     
                 return cast formattedStage;
