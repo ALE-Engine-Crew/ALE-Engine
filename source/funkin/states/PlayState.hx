@@ -124,6 +124,8 @@ class PlayState extends ScriptState
     {
         super.create();
 
+        chacheAssets();
+
         instance = this;
 
         initScripts();
@@ -337,6 +339,10 @@ class PlayState extends ScriptState
 		for (strumLine in strumLines)
             if (strumLine.type == PLAYER)
                 strumLine.strums.members[id].animation.play('idle', true);
+    }
+
+    private function chacheAssets()
+    {
     }
 
     private function spawnGrids()

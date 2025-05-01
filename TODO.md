@@ -57,7 +57,6 @@
     - Offset [ ]
     - Another Options [x]
 
-
 - Menus [ ]
     - IntroState [ ]
     - Credits State [ ]
@@ -70,7 +69,6 @@
     - Mods Menu SubState [x]
     - Options State [x]
 
-
 - Debug Field [ ]
     - FPS Field [x]
     - Conductor Field [x]
@@ -78,7 +76,6 @@
     - System Field [x]
     - Hotkeys Field [ ]
     - Outdated Field [ ]
-
 
 - Editors [ ]
     - Chart Editor [ ]
