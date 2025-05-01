@@ -60,13 +60,19 @@ class ClientPrefs
 	{
 		var save:FlxSave = new FlxSave();
 		save.bind('defaultPreferences', CoolUtil.getSavePath());
-		for (field in Reflect.fields(save.data.settings))
-			if (Reflect.field(ClientPrefs.data, field) != null)
-				Reflect.setField(ClientPrefs.data, field, Reflect.field(save.data.settings, field));
+		
+		if (save != null)
+		{
+			for (field in Reflect.fields(save.data.settings))
+				if (Reflect.field(ClientPrefs.data, field) != null)
+					Reflect.setField(ClientPrefs.data, field, Reflect.field(save.data.settings, field));
+		}
 
 		var modSave:FlxSave = new FlxSave();
 		modSave.bind('modPreferences', CoolUtil.getSavePath());
-		ClientPrefs.modData = modSave.data.settings;
+
+		if (modSave != null)
+			ClientPrefs.modData = modSave.data.settings;
 
 		if (ClientPrefs.data.framerate > FlxG.drawFramerate)
 		{

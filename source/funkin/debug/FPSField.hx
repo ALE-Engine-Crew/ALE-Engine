@@ -6,15 +6,21 @@ import openfl.text.TextField;
 
 import flixel.util.FlxStringUtil;
 
+import core.backend.Mods;
+
 #if cpp
 import cpp.vm.Gc;
 #end
 
 class FPSField extends DebugField
 {
+    var gameData:String = '';
+
     public function new()
     {
-        super('FPS: 0', 26, 'Memory: [N/A]', 16);
+        gameData = (Mods.folder.trim() != '' && Mods.folder.trim() != null ? Mods.folder : 'ALE Engine ' + CoolVars.engineVersion) + (CoolVars.developerMode ? ' - Developer Mode' : '');
+
+        super('FPS: 0', 26, 'Memory: [N/A]\n' + gameData, 16);
 
         text.alpha = 0.75;
     }
@@ -36,7 +42,7 @@ class FPSField extends DebugField
         if (memoryPeak < memory)
             memoryPeak = memory;
 
-        text.text = 'Memory: ' + FlxStringUtil.formatBytes(memory) + ' / ' + FlxStringUtil.formatBytes(memoryPeak);
+        text.text = 'Memory: ' + FlxStringUtil.formatBytes(memory) + ' / ' + FlxStringUtil.formatBytes(memoryPeak) + '\n' + gameData;
         #end
     }
 }

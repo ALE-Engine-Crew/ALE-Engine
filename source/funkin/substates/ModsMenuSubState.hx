@@ -7,6 +7,8 @@ import core.backend.Mods;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 
+import flixel.util.FlxSave;
+
 class ModsMenuSubState extends MusicBeatSubState
 {
     var sprites:FlxTypedGroup<Alphabet> = new FlxTypedGroup<Alphabet>();
@@ -87,7 +89,10 @@ class ModsMenuSubState extends MusicBeatSubState
 
         if (controls.ACCEPT)
         { 
-            Mods.folder = options[selInt] == 'Disable Mods' ? '' : options[selInt];
+            var save:FlxSave = new FlxSave();
+            save.bind('ALEEngineData', CoolUtil.getSavePath(false));
+            save.data.currentMod = options[selInt] == 'Disable Mods' ? '' : options[selInt];
+            save.flush();
 
             CoolUtil.resetEngine();
         }

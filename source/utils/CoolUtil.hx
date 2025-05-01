@@ -113,11 +113,11 @@ class CoolUtil
 	 * @return String
 	 */
 	@:access(flixel.util.FlxSave.validate)
-	inline public static function getSavePath():String
+	inline public static function getSavePath(modSupport:Bool = true):String
 	{
 		final company:String = FlxG.stage.application.meta.get('company');
 		
-		return company + '/' + flixel.util.FlxSave.validate(FlxG.stage.application.meta.get('file')) + '/' + (Mods.folder == '' ? 'ALEEngineDefaultSavePath' : Mods.folder);
+		return company + '/' + flixel.util.FlxSave.validate(FlxG.stage.application.meta.get('file')) + (modSupport ? ('/' + (Mods.folder == '' ? 'ALEEngineDefaultSavePath' : Mods.folder)) : '');
 	}
 
 	/**

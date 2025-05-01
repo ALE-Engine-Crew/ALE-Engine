@@ -6,6 +6,8 @@ import flixel.input.keyboard.FlxKey;
 
 import haxe.io.Path;
 
+import core.backend.Mods;
+
 /**
  * Used to configure and add the necessary elements before starting the game
  */
@@ -29,16 +31,18 @@ class MainState extends MusicBeatState
 		FlxG.sound.volumeDownKeys = [NUMPADMINUS, MINUS];
 		FlxG.sound.volumeUpKeys = [NUMPADPLUS, PLUS];
 
-        #if cpp
-        debugCounter = new DebugCounter();
-        FlxG.stage.addChild(debugCounter);
-        #end
+        Mods.init();
 
         ClientPrefs.loadPrefs();
     
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 
         CoolUtil.reloadGameMetadata();
+
+        #if cpp
+        debugCounter = new DebugCounter();
+        FlxG.stage.addChild(debugCounter);
+        #end
 
         CoolUtil.switchState(new CustomState(CoolVars.data.initialState), true, true);
 

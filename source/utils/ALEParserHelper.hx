@@ -86,7 +86,7 @@ class ALEParserHelper
 				{
 					sections: new Array<Dynamic>(),
 
-					character: 'gf',
+					character: json.gfVersion ?? 'gf',
 					type: 'extra'
 				}
 			);
@@ -180,7 +180,7 @@ class ALEParserHelper
 				{
 					sections: new Array<Dynamic>(),
 
-					character: json.song.gfVersion,
+					character: json.song.gfVersion ?? 'gf',
 					type: 'extra'
 				}
 			);

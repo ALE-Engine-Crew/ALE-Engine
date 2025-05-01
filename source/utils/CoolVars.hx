@@ -10,7 +10,7 @@ import haxe.ds.StringMap;
 class CoolVars
 {
     public static var data:DataJson = {
-        developerMode: true,
+        developerMode: false,
 
         initialState: 'IntroState',
         freeplayState: 'FreeplayState',
