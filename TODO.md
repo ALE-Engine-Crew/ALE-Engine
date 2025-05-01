@@ -1,21 +1,90 @@
 # ALE Engine - TODO
 
-- [ ] PlayState
+- Changelog [ ]
 
-- [ ] Menus
+- Docs [ ]
+    - HScript [ ]
+    - Lua [ ]
+    - Building [ ]
+    - Install [ ]
+    - Mods Creating Guide [ ]
 
-- [ ] Editors
-    - [ ] Chart Editor
-    - [ ] Character Editor
-    - [ ] Modchart Editor
+- Scripting [ ]
+    - Better Error Handling [ ]
+    - HScript [ ]
+    - Lua [ ]
+    - Callbacks [ ]
+    - PlayState Functions 'n' Variables [ ]
 
-- [ ] Scripting
-    - [ ] Better Error Handling
-    - [ ] HScript
-        - [x] Implement
-        - [ ] API
-    - [ ] Lua
-        - [x] Implement
-        - [ ] Docs
-            - [ ] Tween Callbacks
-            - [ ] Timer Callbacks
+- Port V-Slice [ ]
+
+- Optimize [ ]
+    - Memory Usage [x]
+    - Performance [ ]
+
+- Controls [ ]
+    - Menus [ ]
+    - PlayState [ ]
+
+- PlayState [ ]
+    - ALE Chart Format
+    - Note Generation [ ]
+        - Custom Notes [ ]
+        - Strums [x]
+        - Splashes [x]
+        - Notes [x]
+        - Sustains [ ]
+        - Rating [ ]
+    - Events [ ]
+    - Game Over [ ]
+    - Characters [ ]
+    - Videos [ ]
+    - Cutscenes [ ]
+    - Dialogues [ ]
+    - Pause Screen [ ]
+        - Default Options [ ]
+        - Charting Options [ ]
+    - UI [ ]
+        - Icons [x]
+        - Health Bar [x]
+        - Score Text [ ]
+    
+
+- Client Preferences [ ]
+    - Flixel's [x]
+    - Mods [x]
+    - Controls [ ]
+    - Offset [ ]
+    - Another Options [x]
+
+
+- Menus [ ]
+    - IntroState [ ]
+    - Credits State [ ]
+    - StoryMenuState [ ]
+    - Freeplay State [ ]
+    - Main Menu State [ ]
+    - Master Editor Menu [ ]
+    - Gameplay Changers SubState
+    - Reset Score SubState
+    - Mods Menu SubState [x]
+    - Options State [x]
+
+
+- Debug Field [ ]
+    - FPS Field [x]
+    - Conductor Field [x]
+    - Flixel Field [x]
+    - System Field [x]
+    - Hotkeys Field [ ]
+    - Outdated Field [ ]
+
+
+- Editors [ ]
+    - Chart Editor [ ]
+    - Character Editor [ ]
+    - Modchart Editor (Optional) [ ]
+    - Dialogue Editor [ ]
+    - Dialogue Portrait Editor [ ]
+    - Week Editor [ ]
+    - Story Menu State Character Editor [ ]
