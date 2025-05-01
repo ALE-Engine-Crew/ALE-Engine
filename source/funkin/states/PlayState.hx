@@ -95,6 +95,8 @@ class PlayState extends ScriptState
 
 		if (iconsAnimationFunction != null)
 			iconsAnimationFunction();
+		
+		healthBar.percent = health;
 
 		return value;
 	}
@@ -249,8 +251,6 @@ class PlayState extends ScriptState
 
         if (iconsPositionFunction != null)
             iconsPositionFunction();
-		
-		healthBar.percent = CoolUtil.fpsLerp(healthBar.percent, health, 0.2);
 
         callOnScripts('onUpdatePost', [elapsed]);
     }
@@ -372,10 +372,11 @@ class PlayState extends ScriptState
             if (character.voicePrefix != null && character.voicePrefix.split(' ').join('') != '')
                 character.voice = loadVoice(character.voicePrefix);
 
-            var strumLine:StrumLine = new StrumLine(grid.sections, grid.type, character, function(_)
+            var strumLine:StrumLine = new StrumLine(grid.sections, grid.type, character,
+                function(_)
                 {
                     if (grid.type == PLAYER)
-                        health += 2;
+                        health += 1.5;
                 },
                 function (_)
                 {
