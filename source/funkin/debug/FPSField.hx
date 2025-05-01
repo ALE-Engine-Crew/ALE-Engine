@@ -18,7 +18,7 @@ class FPSField extends DebugField
 
     public function new()
     {
-        gameData = (Mods.folder.trim() != '' && Mods.folder.trim() != null ? Mods.folder : 'ALE Engine ' + CoolVars.engineVersion) + (CoolVars.developerMode ? ' - Developer Mode' : '');
+        gameData = (Mods.folder.trim() != '' && Mods.folder.trim() != null ? Mods.folder : 'ALE Engine ' + CoolVars.engineVersion) + (CoolVars.data.developerMode ? ' - Developer Mode' : '');
 
         super('FPS: 0', 26, 'Memory: [N/A]\n' + gameData, 16);
 

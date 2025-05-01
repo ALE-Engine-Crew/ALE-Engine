@@ -36,11 +36,6 @@ class CoolVars
     public static var outdated:Bool = false;
 
     /**
-     * Contains if the Developer Mode is enabled
-     */
-    public static var developerMode:Bool = true;
-
-    /**
      * Contains the online version of the Engine
      */
     public static var onlineVersion:String = '';

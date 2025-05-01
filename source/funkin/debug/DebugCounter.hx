@@ -140,7 +140,8 @@ class DebugCounter extends Sprite implements IFlxDestroyable
                 case FlxKey.F3:
                     CoolUtil.resetEngine();
                 case FlxKey.M:
-                    CoolUtil.openSubState(new funkin.substates.ModsMenuSubState());
+                    if (FlxG.state.subState == null && !Std.is(FlxG.state, funkin.states.PlayState))
+                        CoolUtil.openSubState(new funkin.substates.ModsMenuSubState());
             }
     
             keysPressed.push(key);
