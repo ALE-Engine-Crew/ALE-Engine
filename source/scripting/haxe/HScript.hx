@@ -104,6 +104,7 @@ class HScript extends SScript
 		var presetVariables:StringMap<Dynamic> = [
 			'FlxColor' => FlxColorClass,
 			'Json' => utils.ALEJson,
+			'debugTrace' => CoolUtil.debugTrace
 		];
 
 		for (preVar in presetVariables.keys())
@@ -141,9 +142,9 @@ class HScript extends SScript
 			var errorString:String = 'Error: ' + callValue.calledFunction + ' - ' + callValue.exceptions[0].message;
 			
 			if (type == STATE)
-				ScriptState.instance.debugPrint(errorString, FlxColor.RED);
+				ScriptState.instance.debugPrint(errorString, ERROR);
 			else if (type == SUBSTATE)
-				ScriptSubState.instance.debugPrint(errorString, FlxColor.RED);
+				ScriptSubState.instance.debugPrint(errorString, ERROR);
 		}
 
 		if (callValue != null)

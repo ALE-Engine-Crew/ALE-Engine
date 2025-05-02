@@ -2,6 +2,8 @@ package core.backend;
 
 import funkin.visuals.objects.DebugText;
 
+import core.enums.PrintType;
+
 /**
  * It is a FlxSubState extension that calculates the Bits, Steps and Sections of the game music (FlxG.sound.music).
  */
@@ -29,8 +31,22 @@ class MusicBeatSubState extends flixel.FlxSubState
         super.create();
     }
 
-    public inline function debugPrint(text:Dynamic, ?color:FlxColor = FlxColor.WHITE) 
+    public inline function debugPrint(text:Dynamic, ?type:PrintType = TRACE) 
     {
+        var color:FlxColor = switch (type)
+        {
+            case ERROR:
+                0xFFFF5555;
+            case WARNING:
+                0xFFFFA500;
+            case TRACE:
+                0xFFFFFFFF;
+            case HSCRIPT:
+                0xFF88CC44;
+            case LUA:
+                0xFF4466DD;
+        };
+
         text = Std.string(text);
 
         if (debugTexts != null)
@@ -55,7 +71,7 @@ class MusicBeatSubState extends flixel.FlxSubState
             debugTexts.add(newText);
         }
 
-        Sys.println(text);
+        debugTrace(text, type);
     }
 
     override public function destroy()

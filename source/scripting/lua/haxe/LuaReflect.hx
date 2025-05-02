@@ -65,7 +65,7 @@ class LuaReflect extends LuaPresetBase
             
                 if (myClass == null)
                 {
-                    debugPrint('Class "' + classVar + '" not found', FlxColor.RED);
+                    debugPrint('Class "' + classVar + '" not found', ERROR);
             
                     return null;
                 }

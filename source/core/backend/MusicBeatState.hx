@@ -2,12 +2,15 @@ package core.backend;
 
 import flixel.FlxState;
 import flixel.FlxG;
+import flixel.util.FlxStringUtil;
 
 #if cpp
 import cpp.vm.Gc;
 #elseif hl
 import hl.Gc;
 #end
+
+import core.enums.PrintType;
 
 import funkin.visuals.objects.DebugText;
 
@@ -49,8 +52,22 @@ class MusicBeatState extends FlxState
         super.create();
     }
 
-    public inline function debugPrint(text:Dynamic, ?color:FlxColor = FlxColor.WHITE) 
+    public inline function debugPrint(text:Dynamic, ?type:PrintType = TRACE) 
     {
+        var color:FlxColor = switch (type)
+        {
+            case ERROR:
+                0xFFFF5555;
+            case WARNING:
+                0xFFFFA500;
+            case TRACE:
+                0xFFFFFFFF;
+            case HSCRIPT:
+                0xFF88CC44;
+            case LUA:
+                0xFF4466DD;
+        };
+
         text = Std.string(text);
 
         if (debugTexts != null)
@@ -75,7 +92,7 @@ class MusicBeatState extends FlxState
             debugTexts.add(newText);
         }
 
-        Sys.println(text);
+        debugTrace(text, type);
     }
 
     public var shouldClearMemory:Bool = true;

@@ -30,9 +30,9 @@ class LuaPresetBase
     public inline function errorPrint(text:String)
     {
         if (type == STATE)
-            ScriptState.instance.debugPrint(text, FlxColor.RED);
+            ScriptState.instance.debugPrint(text, ERROR);
         else
-            ScriptSubState.instance.debugPrint(text, FlxColor.RED);
+            ScriptSubState.instance.debugPrint(text, ERROR);
     }
 
     public inline function tagExists(name:String):Bool

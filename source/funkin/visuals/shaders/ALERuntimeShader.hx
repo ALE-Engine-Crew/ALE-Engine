@@ -23,7 +23,7 @@ class ALERuntimeShader extends FlxRuntimeShader
 
 			return res;
 		} catch (error) {
-			debugPrint('Error when Starting Shader "' + shaderName + '":\n' + error, FlxColor.RED);
+			debugPrint('Error when Starting Shader "' + shaderName + '":\n' + error, ERROR);
 
 			return null;
 		}

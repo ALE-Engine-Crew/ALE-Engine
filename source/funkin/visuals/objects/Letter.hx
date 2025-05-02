@@ -172,10 +172,7 @@ class Letter extends FlxSprite
 	public function updateLetterTypeOffset()
 	{
 		if (animation.curAnim == null)
-		{
-			trace(character);
 			return;
-		}
 
 		var add:Float = 110;
 		if (animation.curAnim.name.endsWith('bold'))

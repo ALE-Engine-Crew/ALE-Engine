@@ -39,7 +39,7 @@ class LuaScript
         var resultString:String = Lua.tostring(lua, result);
         
         if (resultString != null && result != 0)
-            debugPrint('Error on Lua Script: ' + resultString, FlxColor.RED);
+            debugPrint('Error on Lua Script: ' + resultString, ERROR);
 
         new LuaPreset(this);
     }
@@ -82,7 +82,7 @@ class LuaScript
             if (theType != Lua.LUA_TFUNCTION)
             {
                 if (theType > Lua.LUA_TNIL)
-                    debugPrint('Error: (' + name + '): Attempt to Call a ' + typeToString(theType) + ' value', FlxColor.RED);
+                    debugPrint('Error: (' + name + '): Attempt to Call a ' + typeToString(theType) + ' value', ERROR);
 
                 Lua.pop(lua, 1);
                 
@@ -97,7 +97,7 @@ class LuaScript
 
             if (status != Lua.LUA_OK)
             {
-                debugPrint('Error (' + name + '): ' + getError(status), FlxColor.RED);
+                debugPrint('Error (' + name + '): ' + getError(status), ERROR);
 
                 return null;
             }
@@ -116,7 +116,7 @@ class LuaScript
 
             return result;
         } catch (error:Dynamic) {
-            debugPrint(error, FlxColor.RED);
+            debugPrint(error, ERROR);
         }
 
         return null;

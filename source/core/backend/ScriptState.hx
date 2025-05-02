@@ -85,16 +85,16 @@ class ScriptState extends MusicBeatState
     
                 if (script.parsingException != null)
                 {
-                    debugPrint('Error on Loading: ' + script.parsingException.message, FlxColor.RED);
+                    debugPrint('Error on Loading: ' + script.parsingException.message, ERROR);
 
                     script.destroy();
                 } else {
                     hScripts.push(script);
 
-                    trace('Haxe Script "' + path + '" has been successfully loaded');
+                    debugTrace('Haxe Script "' + path + '" has been successfully loaded', HSCRIPT);
                 }
             } catch (error) {
-                debugPrint('Error: ' + error.message, FlxColor.RED);
+                debugPrint('Error: ' + error.message, ERROR);
             }
         }
         #end
@@ -111,9 +111,9 @@ class ScriptState extends MusicBeatState
             {
                 luaScripts.push(script);
 
-                trace('Lua Script "' + path + '" has been successfully loaded');
+                debugTrace('Lua Script "' + path + '" has been successfully loaded', LUA);
             } catch(error) {
-                debugPrint('Error: ' + error, FlxColor.RED);
+                debugPrint('Error: ' + error, ERROR);
             }
         }
         #end

@@ -21,6 +21,8 @@ import core.config.MainState;
 import core.Main;
 import core.backend.Mods;
 
+import core.enums.PrintType;
+
 import utils.ALEParserHelper;
 
 /**
@@ -264,7 +266,7 @@ class CoolUtil
 
 		if (jsonData == null || Reflect.fields(jsonData).length <= 0)
 		{
-			trace('Missing File: songs/' + name + '/charts/' + difficulty + '.json');
+			debugTrace('Missing File: songs/' + name + '/charts/' + difficulty + '.json', ERROR);
 
 			return;
 		}
@@ -353,7 +355,7 @@ class CoolUtil
 						Reflect.setField(CoolVars.data, field, Reflect.field(json, field));
 			}
 		} catch (error:Dynamic) {
-			trace('Error While Loading Game Data (data.json): ' + error);
+			debugTrace('Error While Loading Game Data (data.json): ' + error, ERROR);
 		}
 
         if (iconImage != CoolVars.data.icon)
@@ -381,7 +383,7 @@ class CoolUtil
             if (Paths.fileExists('scripts/states/' + custom.scriptName + '.hx') || Paths.fileExists('scripts/states/' + custom.scriptName + '.lua'))
                 transitionSwitch(state, skipTransIn, skipTransOut);
             else
-                debugPrint('Custom State called "' + custom.scriptName + '" doesn\'t Exist', FlxColor.RED);
+                debugPrint('Custom State called "' + custom.scriptName + '" doesn\'t Exist', ERROR);
         } else {
 			transitionSwitch(state, skipTransIn, skipTransOut);
 		}
@@ -419,7 +421,7 @@ class CoolUtil
             if (Paths.fileExists('scripts/substates/' + custom.scriptName + '.hx') || Paths.fileExists('scripts/substates/' + custom.scriptName + '.lua'))
                 FlxG.state.openSubState(subState);
             else
-                debugPrint('Custom SubState called "' + custom.scriptName + '" doesn\'t Exist', FlxColor.RED);
+                debugPrint('Custom SubState called "' + custom.scriptName + '" doesn\'t Exist', ERROR);
 
             return;
         }
@@ -427,15 +429,35 @@ class CoolUtil
 		FlxG.state.openSubState(subState);
 	}
 
-	public static function debugPrint(text:Dynamic, ?color:FlxColor)
+	public static function debugPrint(text:Dynamic, ?type:PrintType = TRACE)
 	{
 		if (MusicBeatSubState.instance != null)
-			MusicBeatSubState.instance.debugPrint(text, color);
+			MusicBeatSubState.instance.debugPrint(text, type);
 		else if (MusicBeatState.instance != null)
-			MusicBeatState.instance.debugPrint(text, color);
+			MusicBeatState.instance.debugPrint(text, type);
 		else
-			Sys.println(text);
+			debugTrace(text);
 	}
+
+	public static function debugTrace(text:Dynamic, ?type:PrintType = TRACE, ?pos:haxe.PosInfos)
+	{
+		text = Std.string(text);
+
+		var dataMap:Map<PrintType, Array<Dynamic>> = [
+			ERROR => ['ERROR', 31],
+			WARNING => ['WARNING', 33],
+			TRACE => ['TRACE', 38],
+			HSCRIPT => ['HSCRIPT', 32],
+			LUA => ['LUA', 34]
+		];
+
+		var theText:String = colorConsoleText(dataMap.get(type)[0], dataMap.get(type)[1]) + colorConsoleText(' | ' + Date.now().toString().split(' ')[1] + ' | ', 90) + (pos == null ? '' : colorConsoleText(pos.fileName + ': ', 37)) + text;
+
+		Sys.println(theText);
+	}
+
+	public static function colorConsoleText(text:String, num:Int)
+		return '\x1b[' + num + 'm' + text + '\x1b[97m';
 
 	public static function createRuntimeShader(shaderName:String):ALERuntimeShader
 	{
@@ -470,7 +492,7 @@ class CoolUtil
 		{
 			return new ALERuntimeShader(shaderName, frag, vert);
 		} else {
-			debugPrint('Missing Shader: ' + shaderName, FlxColor.RED);
+			debugPrint('Missing Shader: ' + shaderName, ERROR);
 
 			return null;
 		}

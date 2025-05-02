@@ -48,8 +48,6 @@ class LuaCallbackHandler
                             break;
                         }
                     }
-                } else {
-                    trace('Type es Retrasado: ' + type);
                 }
             } else {
                 callFunc = last.callbacks.get(functionName);
@@ -75,7 +73,7 @@ class LuaCallbackHandler
 				return 1;
 			}
         } catch (error:Dynamic) {
-            debugPrint(error, FlxColor.RED);
+            debugPrint(error, ERROR);
 
             return 0;
         }

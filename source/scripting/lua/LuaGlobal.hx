@@ -3,6 +3,8 @@ package scripting.lua;
 import flixel.FlxBasic;
 import flixel.FlxObject;
 
+import core.enums.PrintType;
+
 class LuaGlobal extends LuaPresetBase
 {
     public function new(lua:LuaScript)
@@ -50,12 +52,17 @@ class LuaGlobal extends LuaPresetBase
             }
         );
 
-        set('debugPrint', function(text:Dynamic, ?color:FlxColor)
+        set('debugPrint', function(text:Dynamic, ?theType:PrintType = TRACE)
         {
             if (type == STATE)
-                ScriptState.instance.debugPrint(text, color);
+                ScriptState.instance.debugPrint(text, theType);
             else
-                ScriptSubState.instance.debugPrint(text, color);
+                ScriptSubState.instance.debugPrint(text, theType);
+        });
+
+        set('debugTrace', function debugTrace(text:Dynamic, ?theType:PrintType = TRACE)
+        {
+            CoolUtil.debugTrace(text, cast theType);
         });
 
         set('setObjectCameras', function(tag:String, cameras:Array<String>)

@@ -29,6 +29,7 @@ import core.config.ClientPrefs;
 
 import utils.CoolUtil;
 import utils.CoolUtil.debugPrint;
+import utils.CoolUtil.debugTrace;
 import utils.CoolVars;
 import utils.Paths;
 
