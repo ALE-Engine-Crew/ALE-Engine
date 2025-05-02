@@ -12,24 +12,26 @@ class ALEParserHelper
 		{
 			return cast json;
 		} else if (json.format == 'psych_v1') {
-			var newJson:PsychSong = cast json;
-
+			var daJson = json;
+			
 			formattedJson = {
-				song: newJson.song ?? 'test',
-				needsVoices: json.needsVoices ?? true,
-				speed: newJson.speed ?? 1,
-				stage: newJson.stage ?? 'stage',
+				song: daJson.song == null ? 'test' : json.song,
+				needsVoices: json.needsVoices == null ? true : json.needsVoices,
+				speed: daJson.speed == 0 ? 1 : daJson.speed,
+				stage: daJson.stage == null ? 'stage' : daJson.stage,
 				
 				grids: new Array<Dynamic>(),
 				events: new Array<Dynamic>(),
 				metadata: {},
 
-				bpm: newJson.bpm ?? 100,
+				bpm: daJson.bpm == null ? 100 : daJson.bpm,
 				beats: 4,
 				steps: 4,
 
 				format: 'ale-format-v0.1',
 			}
+			
+			var newJson:PsychSong = cast json;
 
 			var sectionsOpponent:Array<Dynamic> = [];
 			var sectionsPlayer:Array<Dynamic> = [];
@@ -86,7 +88,7 @@ class ALEParserHelper
 				{
 					sections: new Array<Dynamic>(),
 
-					character: json.gfVersion ?? 'gf',
+					character: json.gfVersion == null ? 'gf' : json.gfVersion,
 					type: 'extra'
 				}
 			);
@@ -102,24 +104,26 @@ class ALEParserHelper
 				);
 			}
 		} else {
-			var newJson:PsychSong = json.song;
+			var daJson = json.song;
 
 			formattedJson = {
-				song: newJson.song,
+				song: daJson.song,
 				needsVoices: true,
-				speed: newJson.speed ?? 1,
-				stage: newJson.stage ?? 'stage',
+				speed: daJson.speed == null ? 1 : daJson.speed,
+				stage: daJson.stage != null ? daJson.stage : json.stage != null ? json.stage : 'stage',
 				
 				grids: new Array<Dynamic>(),
 				events: new Array<Dynamic>(),
 				metadata: {},
 
-				bpm: newJson.bpm,
+				bpm: daJson.bpm,
 				beats: 4,
 				steps: 4,
 
 				format: 'ale-format-v0.1',
 			}
+
+			var newJson:PsychSong = cast json.song;
 
 			var sectionsOpponent:Array<Dynamic> = [];
 			var sectionsPlayer:Array<Dynamic> = [];
@@ -180,7 +184,7 @@ class ALEParserHelper
 				{
 					sections: new Array<Dynamic>(),
 
-					character: json.song.gfVersion ?? 'gf',
+					character: json.song.gfVersion == null ? 'gf' : json.song.gfVersion,
 					type: 'extra'
 				}
 			);
@@ -208,7 +212,7 @@ class ALEParserHelper
 
             if (theJson.format == 'ale-format-v0.1')
             {
-                return theJson;
+                return cast theJson;
             } else {
                 var newAnims:Array<ALECharacterJSONAnimation> = [];
 
@@ -295,7 +299,7 @@ class ALEParserHelper
                     format: 'ale-format-v0.1',
     
                     cameraZoom: data.defaultZoom,
-                    cameraSpeed: data.camera_speed ?? 1
+                    cameraSpeed: data.camera_speed == null ? 1 : data.camera_speed
                 };
             }
         } else {
