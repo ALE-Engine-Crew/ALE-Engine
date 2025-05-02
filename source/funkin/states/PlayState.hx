@@ -8,6 +8,8 @@ import funkin.visuals.objects.StrumLine;
 import funkin.visuals.objects.Character;
 import funkin.visuals.objects.Bar;
 import funkin.visuals.objects.HealthIcon;
+import funkin.visuals.objects.CharactersGroup;
+import funkin.visuals.objects.StrumLinesGroup;
 
 #if mobile
 import funkin.visuals.objects.StrumControl;
@@ -34,9 +36,10 @@ class PlayState extends ScriptState
         scrollSpeed = value;
 
         if (strumLines != null)
-            for (strumLine in strumLines)
-                for (strum in strumLine.strums)
-                    strum.scrollSpeed = scrollSpeed;
+            for (strlGroup in [strumLines.opponents, strumLines.players, strumLines.extras])
+                for (strumLine in strlGroup)
+                    for (strum in strumLine.strums)
+                        strum.scrollSpeed = scrollSpeed;
 
         return scrollSpeed;
     }
@@ -48,9 +51,10 @@ class PlayState extends ScriptState
         botplay = value;
 
         if (strumLines != null)
-            for (strumLine in strumLines)
-                for (strum in strumLine.strums)
-                    strum.botplay = botplay;
+            for (strlGroup in [strumLines.opponents, strumLines.players, strumLines.extras])
+                for (strumLine in strlGroup)
+                    for (strum in strumLine.strums)
+                        strum.botplay = botplay;
 
 		if (botplay)
 			scoreTxt.text = 'BOTPLAY';
@@ -62,9 +66,9 @@ class PlayState extends ScriptState
 
     public var voices:FlxTypedGroup<FlxSound>;
 
-    public var strumLines:FlxTypedGroup<StrumLine>;
+    public var strumLines:StrumLinesGroup;
 
-    public var characters:FlxTypedGroup<Character>;
+    public var characters:CharactersGroup;
 
     public static var songRoute:String = '';
 
@@ -198,20 +202,24 @@ class PlayState extends ScriptState
 
         if (curBeat % 2 == 0)
         {
-            for (character in characters)
+            for (charGroup in [characters.players, characters.opponents, characters.extras])
             {
-                if (character.idleTimer >= 60 / Conductor.bpm)
+                for (character in charGroup)
                 {
-                    if (character.animation.exists('idle'))
-                        character.animation.play('idle', true);
-                    else if (character.animation.exists('danceLeft'))
-                        character.animation.play('danceLeft', true);
+                    if (character.idleTimer >= 60 / Conductor.bpm)
+                    {
+                        if (character.animation.exists('danceLeft'))
+                            character.animation.play('danceLeft', true);
+                        else if (character.animation.exists('idle'))
+                            character.animation.play('idle', true);
+                    }
                 }
             }
         } else if (curBeat % 2 == 1) {
-            for (character in characters)
-                if (character.animation.exists('danceRight') && character.idleTimer >= 60 / Conductor.bpm)
-                    character.animation.play('danceRight');
+            for (charGroup in [characters.players, characters.opponents, characters.extras])
+                for (character in charGroup)
+                    if (character.animation.exists('danceRight') && character.idleTimer >= 60 / Conductor.bpm)
+                        character.animation.play('danceRight');
         }
 
         callOnScripts('onBeatHit', [curBeat]);
@@ -315,28 +323,25 @@ class PlayState extends ScriptState
 
 	function hitNote(id:Int)
 	{
-		for (strumLine in strumLines)
-		{
-            if (strumLine.type == PLAYER)
+        for (strumLine in strumLines.players)
+        {
+            for (note in strumLine.notes)
             {
-                for (note in strumLine.notes)
-                {
-                    if (id == note.noteData && note.ableToHit && !note.isSustainNote)
-                    {
-                        note.hitFunction();
-        
-                        return;
-                    }
-                }
+                if (id != note.noteData || !note.ableToHit || note.isSustainNote)
+                    continue;
 
-                strumLine.strums.members[id].animation.play('pressed', true);
+                note.hitFunction();
+    
+                return;
             }
-		}
+
+            strumLine.strums.members[id].animation.play('pressed', true);
+        }
 	}
 
     function releaseNote(id:Int)
     {
-		for (strumLine in strumLines)
+		for (strumLine in strumLines.players)
             if (strumLine.type == PLAYER)
                 strumLine.strums.members[id].animation.play('idle', true);
     }
@@ -347,20 +352,12 @@ class PlayState extends ScriptState
 
     private function spawnGrids()
     {
-        characters = new FlxTypedGroup<Character>();
+        characters = new CharactersGroup();
         add(characters);
 
-        strumLines = new FlxTypedGroup<StrumLine>();
+        strumLines = new StrumLinesGroup();
         add(strumLines);
         strumLines.cameras = [camHUD];
-
-        var extras:Array<Character> = [];
-        var opponents:Array<Character> = [];
-        var players:Array<Character> = [];
-
-        var extraStrums:Array<StrumLine> = [];
-        var opponentStrums:Array<StrumLine> = [];
-        var playerStrums:Array<StrumLine> = [];
 
         var camMaps:Map<Int, Character> = [];
 
@@ -369,9 +366,12 @@ class PlayState extends ScriptState
             var character = new Character(grid.character, grid.type,
                 switch (grid.type)
                 {
-                    case OPPONENT: opponents.length;
-                    case PLAYER: players.length;
-                    case EXTRA: extras.length;
+                    case OPPONENT:
+                        characters.opponents.members.length;
+                    case PLAYER:
+                        characters.players.members.length;
+                    case EXTRA:
+                        characters.extras.members.length;
                 }
             );
 
@@ -398,72 +398,42 @@ class PlayState extends ScriptState
             switch (grid.type)
             {
                 case EXTRA:
-                    character.setPosition(STAGE.extrasPosition[extras.length][0], STAGE.extrasPosition[extras.length][1]);
+                    character.setPosition(STAGE.extrasPosition[characters.extras.members.length][0], STAGE.extrasPosition[characters.extras.members.length][1]);
 
-                    extras.push(character);
+                    characters.extras.add(character);
 
-                    extraStrums.push(strumLine);
+                    strumLines.extras.add(strumLine);
                 case OPPONENT:
-                    character.setPosition(STAGE.opponentsPosition[opponents.length][0], STAGE.opponentsPosition[opponents.length][1]);
+                    character.setPosition(STAGE.opponentsPosition[characters.opponents.members.length][0], STAGE.opponentsPosition[characters.opponents.members.length][1]);
 
-                    if (opponents.length == 0)
+                    if (characters.opponents.members.length == 0)
                     {
                         opponentIconName = character.icon;
 
                         opponentColor = character.barColor;
                     }
 
-                    opponents.push(character);
+                    characters.opponents.add(character);
                     
-                    opponentStrums.push(strumLine);
+                    strumLines.opponents.add(strumLine);
                 case PLAYER:
-                    character.setPosition(STAGE.playersPosition[players.length][0], STAGE.playersPosition[players.length][1]);
+                    character.setPosition(STAGE.playersPosition[characters.players.members.length][0], STAGE.playersPosition[characters.players.members.length][1]);
 
-                    if (players.length == 0)
+                    if (characters.players.members.length == 0)
                     {
                         playerIconName = character.icon;
 
                         playerColor = character.barColor;
                     }
 
-                    players.push(character);
+                    characters.players.add(character);
                     
-                    playerStrums.push(strumLine);
+                    strumLines.players.add(strumLine);
             }
         }
 
         for (i in 0...[for (k in camMaps.keys()) k].length)
             cameraSections.push(camMaps.get(i));
-
-        for (character in extras)
-            characters.add(character);
-
-        extras = [];
-
-        for (character in opponents)
-            characters.add(character);
-
-        opponents = [];
-
-        for (character in players)
-            characters.add(character);
-
-        players = [];
-
-        for (strum in extraStrums)
-            strumLines.add(strum);
-
-        extraStrums = [];
-
-        for (strum in opponentStrums)
-            strumLines.add(strum);
-
-        opponentStrums = [];
-
-        for (strum in playerStrums)
-            strumLines.add(strum);
-
-        playerStrums = [];
     }
 
 	private function resyncVoices():Void
@@ -487,12 +457,28 @@ class PlayState extends ScriptState
 
     function moveCamera()
     {
-        if (cameraSections[curSection] != null)
+        if (cameraSections[curSection] != null && characters != null)
         {
-            var curChar:Character = cameraSections[curSection];
+            var char:Character = cameraSections[curSection];
     
-            camPos.x = curChar.getMidpoint().x + curChar.cameraOffset[0];
-            camPos.y = curChar.getMidpoint().y + curChar.cameraOffset[1];
+            switch (char.type)
+            {
+                case OPPONENT:
+                    camPos.x = char.getMidpoint().x + 150;
+                    camPos.x += char.cameraOffset[0] + STAGE.opponentsCamera[characters.opponents.members.indexOf(char)][0];
+                    camPos.y = char.getMidpoint().y - 100;
+                    camPos.y += char.cameraOffset[1] + STAGE.opponentsCamera[characters.opponents.members.indexOf(char)][1];
+                case PLAYER:
+                    camPos.x = char.getMidpoint().x - 100;
+                    camPos.x -= char.cameraOffset[0] + STAGE.playersCamera[characters.players.members.indexOf(char)][0];
+                    camPos.y = char.getMidpoint().y - 100;
+                    camPos.y += char.cameraOffset[1] + STAGE.playersCamera[characters.players.members.indexOf(char)][1];
+                case EXTRA:
+                    camPos.x = char.getMidpoint().x - 100;
+                    camPos.x += char.cameraOffset[0] + STAGE.extrasCamera[characters.extras.members.indexOf(char)][0];
+                    camPos.y = char.getMidpoint().y;
+                    camPos.y += char.cameraOffset[1] + STAGE.extrasCamera[characters.extras.members.indexOf(char)][1];
+            }
         }
     }
 
@@ -608,19 +594,19 @@ class PlayState extends ScriptState
         
         var playerVoices:FlxSound = loadVoice('Player');
         if (playerVoices != null)
-            for (player in characters)
+            for (player in characters.players)
                 if (player.type == PLAYER)
                     player.voice = playerVoices;
         
         var extraVoices:FlxSound = loadVoice('Extra');
         if (extraVoices != null)
-            for (player in characters)
+            for (player in characters.extras)
                 if (player.type == EXTRA)
                     player.voice = extraVoices;
         
         var opponentVoices:FlxSound = loadVoice('Opponent');
         if (opponentVoices != null)
-            for (player in characters)
+            for (player in characters.opponents)
                 if (player.type == OPPONENT)
                     player.voice = opponentVoices;
 

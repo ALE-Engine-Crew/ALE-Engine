@@ -80,7 +80,7 @@ class HScript extends SScript
 		if (type == STATE)
 		{
 			instanceVariables = [
-				'game' => FlxG.state,
+				'this' => FlxG.state,
 				'add' => FlxG.state.add,
 				'insert' => FlxG.state.insert,
 				'controls' => ScriptState.instance.controls,
@@ -89,7 +89,7 @@ class HScript extends SScript
 			];
 		} else if (type == SUBSTATE) {
 			instanceVariables = [
-				'game' => FlxG.state.subState,
+				'this' => FlxG.state.subState,
 				'add' => FlxG.state.subState.add,
 				'insert' => FlxG.state.subState.insert,
 				'controls' => ScriptSubState.instance.controls,

@@ -118,7 +118,7 @@ class StrumLine extends FlxGroup
 	function sortByTime(Obj1:Dynamic, Obj2:Dynamic):Int
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.strumTime, Obj2.strumTime);
 
-    public var spawnTime:Float = 2000;
+    public var spawnTime:Float = 1500;
 
     override function update(elapsed:Float)
     {
@@ -126,10 +126,7 @@ class StrumLine extends FlxGroup
 
         if (unspawnNotes[0] != null)
         {
-            var time:Float = spawnTime;
-
-            if (PlayState.instance.scrollSpeed < 1)
-                time /= PlayState.instance.scrollSpeed;
+            var time:Float = spawnTime / PlayState.instance.scrollSpeed;
 
             while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
             {
