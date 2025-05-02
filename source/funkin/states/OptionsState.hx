@@ -218,6 +218,8 @@ class OptionsState extends MusicBeatState
             {
                 ClientPrefs.savePrefs();
 
+                ClientPrefs.loadPrefs();
+
                 spawnCategories();
     
                 canSelect.menus = true;
@@ -435,6 +437,13 @@ class OptionsState extends MusicBeatState
                         variable: 'discordRPC',
                         type: cast 'bool',
                         initialValue: true
+                    },
+                    {
+                        name: 'Open Console at Start Up',
+                        description: 'Automatically opens the Console at Game Startup.',
+                        variable: 'openConsoleOnStart',
+                        type: cast 'bool',
+                        initialValue: false
                     }
                 ]
             },

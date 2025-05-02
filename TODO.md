@@ -67,7 +67,7 @@
     - Gameplay Changers SubState
     - Reset Score SubState
     - Mods Menu SubState [x]
-    - Options State [x]
+    - Options State [ ]
 
 - Debug Field [ ]
     - FPS Field [x]

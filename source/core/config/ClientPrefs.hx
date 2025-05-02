@@ -48,6 +48,8 @@ import flixel.util.FlxSave;
 	public var discordRPC:Bool = true;
 
 	public var offset:Int = 0;
+
+	public var openConsoleOnStart:Bool = false;
 }
 
 class ClientPrefs
