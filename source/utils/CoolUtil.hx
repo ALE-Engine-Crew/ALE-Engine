@@ -235,13 +235,13 @@ class CoolUtil
 	 * @param name Song Name
 	 * @param difficulty Song Difficulty
 	 */
-	public static function loadSong(name:String, difficulty:String):Void
+	public static function loadSong(name:String, diff:String):Void
 	{
 		var jsonData:Dynamic = {};
 
 		name = formatSongPath(name);
 		
-		difficulty = formatSongPath(difficulty);
+		var difficulty:String = formatSongPath(diff);
 
 		var parentFolders:Array<String> = [Paths.modFolder(), 'assets'];
 
@@ -272,6 +272,7 @@ class CoolUtil
 		}
 
 		PlayState.SONG = ALEParserHelper.getALESong(jsonData);
+		PlayState.difficulty = diff;
 
 		switchState(new PlayState());
 	}
@@ -333,7 +334,7 @@ class CoolUtil
 			mainMenuState: 'MainMenuState',
 
 			pauseSubState: 'PauseSubState',
-			gameOverScreen: 'GameOverScreen',
+			gameOverScreen: 'GameOverSubState',
 			transition: 'FadeTransition',
 
 			title: 'Friday Night Funkin\': ALE Engine',

@@ -92,9 +92,6 @@ class PlayState extends ScriptState
 		if (value > 100)
 			value = 100;
 
-		if (value < 0)
-			value = 0;
-
 		health = value;
 
 		if (iconsAnimationFunction != null)
@@ -102,8 +99,29 @@ class PlayState extends ScriptState
 		
 		healthBar.percent = health;
 
-		return value;
+        if (health <= 0)
+        {
+            pauseSong();
+
+            deathCounter++;
+
+            dead = true;
+
+            openSubState(new CustomSubState(CoolVars.data.gameOverScreen));
+            
+		    return health;
+        }
+
+		return health;
 	}
+
+    public var dead:Bool = false;
+
+    public static var deathCounter:Int = 0;
+    public var chartingMode:Bool = false;
+    public var practiceMode:Bool = false;
+
+    public static var difficulty:String = 'normal';
 
 	public var iconsZoomingFunction:Int -> Void;
 	public var iconsZoomLerpFunction:Void -> Void;
@@ -249,7 +267,7 @@ class PlayState extends ScriptState
         if (FlxG.keys.justPressed.B)
             botplay = !botplay;
 
-        if (FlxG.keys.justPressed.ENTER)
+        if (FlxG.keys.justPressed.ENTER && !dead)
         {
             pauseSong();
 
@@ -502,13 +520,14 @@ class PlayState extends ScriptState
             voice.resume();
     }
 
-    public function restartSong()
+    public function restartSong(skipIn:Bool = true, skipOut:Bool = true)
     {
         shouldClearMemory = false;
 
         pauseSong();
         
-        CoolVars.skipTransOut = true;
+        CoolVars.skipTransIn = skipIn;
+        CoolVars.skipTransOut = skipOut;
 
         FlxG.resetState();
     }

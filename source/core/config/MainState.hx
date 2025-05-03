@@ -11,7 +11,7 @@ import core.backend.Mods;
 /**
  * Used to configure and add the necessary elements before starting the game
  */
-class MainState extends MusicBeatState
+class MainState extends FlxState
 {
     public static var debugCounter:DebugCounter;
 

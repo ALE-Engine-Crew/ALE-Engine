@@ -9,26 +9,7 @@ import haxe.ds.StringMap;
  */
 class CoolVars
 {
-    public static var data:DataJson = {
-        developerMode: false,
-
-        initialState: 'IntroState',
-        freeplayState: 'FreeplayState',
-        storyMenuState: 'StoryMenuState',
-        masterEditorMenu: 'MasterEditorMenu',
-        mainMenuState: 'MainMenuState',
-
-        pauseSubState: 'PauseSubState',
-        gameOverScreen: 'GameOverScreen',
-        transition: 'FadeTransition',
-
-        title: 'Friday Night Funkin\': ALE Engine',
-        icon: 'appIcon',
-
-        bpm: 102,
-
-        discordID: '1309982575368077416',
-    };
+    public static var data:DataJson = null;
 
     /**
      * Contains whether the Engine is outdated or not
