@@ -159,7 +159,7 @@ class OptionsState extends MusicBeatState
         } else if (canSelect.options) {
             if ((controls.UI_DOWN_P || controls.UI_UP_P || controls.MOUSE_WHEEL) && !FlxG.keys.pressed.SHIFT)
             {
-                if (controls.UI_DOWN_P || controls.MOUSE_WHEEL_DOWN)
+                if (controls.UI_DOWN_P || controls.MOUSE_P)
                 {
                     if (selInt.options >= optSprites.members.length - 1)
                         selInt.options = 0;
@@ -167,7 +167,7 @@ class OptionsState extends MusicBeatState
                         selInt.options++;
                 }
                 
-                if (controls.UI_UP_P || controls.MOUSE_WHEEL_UP)
+                if (controls.UI_UP_P || controls.MOUSE_WHEEL_DOWN)
                 {
                     if (selInt.options <= 0)
                         selInt.options = optSprites.members.length - 1;
