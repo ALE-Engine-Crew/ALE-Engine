@@ -7,13 +7,15 @@ enum abstract PrintType(String)
     var TRACE = 'trace';
     var HSCRIPT = 'hscript';
     var LUA = 'lua';
+    var MISSING_FILE = 'missing_file';
 
     private static var dataMap:Map<PrintType, Array<Dynamic>> = [
         ERROR => ['ERROR', 0xFFFF5555],
         WARNING => ['WARNING', 0xFFFFA500],
         TRACE => ['TRACE', 0xFFFFFFFF],
         HSCRIPT => ['HSCRIPT', 0xFF88CC44],
-        LUA => ['LUA', 0xFF4466DD]
+        LUA => ['LUA', 0xFF4466DD],
+        MISSING_FILE => ['MISSING FILE', 0xFFFF7F00]
     ];
 
     public static function typeToString(type:PrintType):String

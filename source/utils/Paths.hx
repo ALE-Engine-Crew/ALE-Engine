@@ -55,7 +55,7 @@ class Paths
                 return returnValue;
         }
 
-        debugTrace('Missing File: ' + path, WARNING);
+        debugTrace(path, MISSING_FILE);
 
         return null;
     }
@@ -128,7 +128,7 @@ class Paths
                 return returnValue;
         }
 
-        debugTrace('Missing File: ' + path, WARNING);
+        debugTrace(path, MISSING_FILE);
 
         return null;
     }
@@ -160,7 +160,7 @@ class Paths
 
         if (!fileExists(path))
         {
-            debugTrace('Missing XML: ' + path, WARNING);
+            debugTrace(path, MISSING_FILE);
             return null;
         }
 
@@ -194,7 +194,7 @@ class Paths
 
         if (!fileExists(path))
         {
-            debugTrace('Missing Font: ' + path, WARNING);
+            debugTrace(path, MISSING_FILE);
             return null;
         }
 
@@ -216,7 +216,7 @@ class Paths
         if (fileExists(file, ASSETS))
             return 'assets/' + file;
 
-        debugTrace('Missing File: ' + file, WARNING);
+        debugTrace(file, MISSING_FILE);
 
         return null;
     }

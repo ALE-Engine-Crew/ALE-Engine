@@ -266,7 +266,7 @@ class CoolUtil
 
 		if (jsonData == null || Reflect.fields(jsonData).length <= 0)
 		{
-			debugTrace('Missing File: songs/' + name + '/charts/' + difficulty + '.json', ERROR);
+			debugTrace('songs/' + name + '/charts/' + difficulty + '.json', MISSING_FILE);
 
 			return;
 		}
@@ -383,7 +383,7 @@ class CoolUtil
             if (Paths.fileExists('scripts/states/' + custom.scriptName + '.hx') || Paths.fileExists('scripts/states/' + custom.scriptName + '.lua'))
                 transitionSwitch(state, skipTransIn, skipTransOut);
             else
-                debugPrint('Custom State called "' + custom.scriptName + '" doesn\'t Exist', ERROR);
+                debugPrint('Custom State called "' + custom.scriptName + '" doesn\'t Exist', MISSING_FILE);
         } else {
 			transitionSwitch(state, skipTransIn, skipTransOut);
 		}
@@ -421,7 +421,7 @@ class CoolUtil
             if (Paths.fileExists('scripts/substates/' + custom.scriptName + '.hx') || Paths.fileExists('scripts/substates/' + custom.scriptName + '.lua'))
                 FlxG.state.openSubState(subState);
             else
-                debugPrint('Custom SubState called "' + custom.scriptName + '" doesn\'t Exist', ERROR);
+                debugPrint('Custom SubState called "' + custom.scriptName + '" doesn\'t Exist', MISSING_FILE);
 
             return;
         }
@@ -484,7 +484,7 @@ class CoolUtil
 		{
 			return new ALERuntimeShader(shaderName, frag, vert);
 		} else {
-			debugPrint('Missing Shader: ' + shaderName, ERROR);
+			debugPrint('Missing Shader: ' + shaderName, MISSING_FILE);
 
 			return null;
 		}

@@ -91,7 +91,7 @@ class ScriptState extends MusicBeatState
                 } else {
                     hScripts.push(script);
 
-                    debugTrace('Haxe Script "' + path + '" has been successfully loaded', HSCRIPT);
+                    debugTrace('"' + path + '.hx" has been Successfully Loaded', HSCRIPT);
                 }
             } catch (error) {
                 debugPrint('Error: ' + error.message, ERROR);
@@ -111,7 +111,7 @@ class ScriptState extends MusicBeatState
             {
                 luaScripts.push(script);
 
-                debugTrace('Lua Script "' + path + '" has been successfully loaded', LUA);
+                debugTrace('"' + path + '.lua" has been Successfully Loaded', LUA);
             } catch(error) {
                 debugPrint('Error: ' + error, ERROR);
             }
