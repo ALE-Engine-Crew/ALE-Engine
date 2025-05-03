@@ -7,4 +7,18 @@ enum abstract PrintType(String)
     var TRACE = 'trace';
     var HSCRIPT = 'hscript';
     var LUA = 'lua';
+
+    private static var dataMap:Map<PrintType, Array<Dynamic>> = [
+        ERROR => ['ERROR', 0xFFFF5555],
+        WARNING => ['WARNING', 0xFFFFA500],
+        TRACE => ['TRACE', 0xFFFFFFFF],
+        HSCRIPT => ['HSCRIPT', 0xFF88CC44],
+        LUA => ['LUA', 0xFF4466DD]
+    ];
+
+    public static function typeToString(type:PrintType):String
+        return dataMap.get(type)[0];
+
+    public static function typeToColor(type:PrintType):FlxColor
+        return dataMap.get(type)[1];
 }

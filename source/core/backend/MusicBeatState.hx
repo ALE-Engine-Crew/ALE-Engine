@@ -54,27 +54,13 @@ class MusicBeatState extends FlxState
 
     public inline function debugPrint(text:Dynamic, ?type:PrintType = TRACE) 
     {
-        var color:FlxColor = switch (type)
-        {
-            case ERROR:
-                0xFFFF5555;
-            case WARNING:
-                0xFFFFA500;
-            case TRACE:
-                0xFFFFFFFF;
-            case HSCRIPT:
-                0xFF88CC44;
-            case LUA:
-                0xFF4466DD;
-        };
-
         text = Std.string(text);
 
         if (debugTexts != null)
         {
             var newText:DebugText = debugTexts.recycle(DebugText);
-            newText.text = text;
-            newText.color = color;
+            newText.text = PrintType.typeToString(type) + ' | ' + text;
+            newText.color = PrintType.typeToColor(type);
             newText.disableTime = 6;
             newText.alpha = 1;
             newText.setPosition(10, 8 - newText.height);

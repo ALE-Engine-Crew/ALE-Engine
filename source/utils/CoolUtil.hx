@@ -443,21 +443,13 @@ class CoolUtil
 	{
 		text = Std.string(text);
 
-		var dataMap:Map<PrintType, Array<Dynamic>> = [
-			ERROR => ['ERROR', 31],
-			WARNING => ['WARNING', 33],
-			TRACE => ['TRACE', 38],
-			HSCRIPT => ['HSCRIPT', 32],
-			LUA => ['LUA', 34]
-		];
-
-		var theText:String = colorConsoleText(dataMap.get(type)[0], dataMap.get(type)[1]) + colorConsoleText(' | ' + Date.now().toString().split(' ')[1] + ' | ', 90) + (pos == null ? '' : colorConsoleText(pos.fileName + ': ', 37)) + text;
+		var theText:String = ansiColorString(PrintType.typeToString(type), PrintType.typeToColor(type)) + ansiColorString(' | ' + Date.now().toString().split(' ')[1] + ' | ', 0xFF505050) + (pos == null ? '' : ansiColorString(pos.fileName + ': ', 0xFF888888)) + text;
 
 		Sys.println(theText);
 	}
 
-	public static function colorConsoleText(text:String, num:Int)
-		return '\x1b[' + num + 'm' + text + '\x1b[97m';
+	public static function ansiColorString(text:String, color:FlxColor):String
+		return '\x1b[38;2;' + color.red + ';' + color.green + ';' + color.blue + 'm' + text + '\x1b[0m';
 
 	public static function createRuntimeShader(shaderName:String):ALERuntimeShader
 	{
