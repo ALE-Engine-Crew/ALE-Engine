@@ -31,15 +31,15 @@ class MusicBeatSubState extends flixel.FlxSubState
         super.create();
     }
 
-    public inline function debugPrint(text:Dynamic, ?type:PrintType = TRACE) 
+    public inline function debugPrint(text:Dynamic, ?type:Null<PrintType> = TRACE, ?customType:String = '', ?customColor:FlxColor = FlxColor.GRAY) 
     {
         text = Std.string(text);
 
         if (debugTexts != null)
         {
             var newText:DebugText = debugTexts.recycle(DebugText);
-            newText.text = PrintType.typeToString(type) + ' | ' + text;
-            newText.color = PrintType.typeToColor(type);
+            newText.text = (type == CUSTOM ? customType : PrintType.typeToString(type)) + ' | ' + text;
+            newText.color = (type == CUSTOM ? customColor : PrintType.typeToColor(type));
             newText.disableTime = 6;
             newText.alpha = 1;
             newText.setPosition(10, 8 - newText.height);
@@ -57,7 +57,7 @@ class MusicBeatSubState extends flixel.FlxSubState
             debugTexts.add(newText);
         }
 
-        debugTrace(text, type);
+        debugTrace(text, type, customType, customColor);
     }
 
     override public function destroy()

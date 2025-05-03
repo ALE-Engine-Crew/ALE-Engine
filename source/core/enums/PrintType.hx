@@ -8,6 +8,7 @@ enum abstract PrintType(String)
     var HSCRIPT = 'hscript';
     var LUA = 'lua';
     var MISSING_FILE = 'missing_file';
+    var CUSTOM = 'custom';
 
     private static var dataMap:Map<PrintType, Array<Dynamic>> = [
         ERROR => ['ERROR', 0xFFFF5555],

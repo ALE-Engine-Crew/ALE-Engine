@@ -430,21 +430,21 @@ class CoolUtil
 		FlxG.state.openSubState(subState);
 	}
 
-	public static function debugPrint(text:Dynamic, ?type:PrintType = TRACE)
+	public static function debugPrint(text:Dynamic, ?type:PrintType = TRACE, ?customType:String = '', ?customColor:FlxColor = FlxColor.GRAY)
 	{
 		if (MusicBeatSubState.instance != null)
-			MusicBeatSubState.instance.debugPrint(text, type);
+			MusicBeatSubState.instance.debugPrint(text, type, customType, customColor);
 		else if (MusicBeatState.instance != null)
-			MusicBeatState.instance.debugPrint(text, type);
+			MusicBeatState.instance.debugPrint(text, type, customType, customColor);
 		else
-			debugTrace(text);
+			debugTrace(text, type, customType, customColor);
 	}
 
-	public static function debugTrace(text:Dynamic, ?type:PrintType = TRACE, ?pos:haxe.PosInfos)
+	public static function debugTrace(text:Dynamic, ?type:PrintType = TRACE, ?customType:String = '', ?customColor:FlxColor = FlxColor.GRAY, ?pos:haxe.PosInfos)
 	{
 		text = Std.string(text);
 
-		var theText:String = ansiColorString(PrintType.typeToString(type), PrintType.typeToColor(type)) + ansiColorString(' | ' + Date.now().toString().split(' ')[1] + ' | ', 0xFF505050) + (pos == null ? '' : ansiColorString(pos.fileName + ': ', 0xFF888888)) + text;
+		var theText:String = ansiColorString(type == CUSTOM ? customType : PrintType.typeToString(type), type == CUSTOM ? customColor : PrintType.typeToColor(type)) + ansiColorString(' | ' + Date.now().toString().split(' ')[1] + ' | ', 0xFF505050) + (pos == null ? '' : ansiColorString(pos.fileName + ': ', 0xFF888888)) + text;
 
 		Sys.println(theText);
 	}

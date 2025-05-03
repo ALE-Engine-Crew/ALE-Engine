@@ -52,18 +52,15 @@ class LuaGlobal extends LuaPresetBase
             }
         );
 
-        set('debugPrint', function(text:Dynamic, ?theType:PrintType = TRACE)
+        set('debugPrint', function(text:Dynamic, ?theType:PrintType = TRACE, ?customType:String = 'CUSTOM', ?customColor:FlxColor = FlxColor.GRAY)
         {
             if (type == STATE)
-                ScriptState.instance.debugPrint(text, theType);
+                ScriptState.instance.debugPrint(text, theType, customType, customColor);
             else
-                ScriptSubState.instance.debugPrint(text, theType);
+                ScriptSubState.instance.debugPrint(text, theType, customType, customColor);
         });
 
-        set('debugTrace', function debugTrace(text:Dynamic, ?theType:PrintType = TRACE)
-        {
-            CoolUtil.debugTrace(text, cast theType);
-        });
+        set('debugTrace', CoolUtil.debugTrace);
 
         set('setObjectCameras', function(tag:String, cameras:Array<String>)
             {
