@@ -34,8 +34,13 @@ class Note extends FlxSprite
 	public var spawned:Bool = false;
 	public var noteGroup:FlxTypedGroup<FlxSprite> = null;
 
+	public var scrollSpeed(get, never):Float;
+	function get_scrollSpeed():Float
+		return strum.scrollSpeed;
+
 	@:isVar public var hitOffset(get, never):Float;
-	function get_hitOffset():Float return 75 * strum.scrollSpeed;
+	function get_hitOffset():Float
+		return 75 * scrollSpeed;
 
 	public var ableToHit(get, never):Bool;
 	function get_ableToHit():Bool
@@ -128,7 +133,7 @@ class Note extends FlxSprite
 	function get_direction():Float return strum == null ? 90 : strum.direction * Math.PI / 180;
 
 	public var distance(get, never):Float;
-	function get_distance():Float return 0.45 * (Conductor.songPosition - strumTime) * strum.scrollSpeed * (ClientPrefs.data.downScroll ? 1 : -1);
+	function get_distance():Float return 0.45 * (Conductor.songPosition - strumTime) * scrollSpeed * (ClientPrefs.data.downScroll ? 1 : -1);
 
 	public var distanceX(get, never):Float;
 	function get_distanceX():Float
@@ -144,6 +149,9 @@ class Note extends FlxSprite
 
 		if (strum != null && state != HIT && spawned)
 		{
+			if (cameras != strum.cameras)
+				cameras = strum.cameras;
+
 			angle = strum.angle;
 
             scale.x = strum.scale.x;
@@ -166,12 +174,14 @@ class Note extends FlxSprite
 			if (Conductor.songPosition >= strumTime && state == NEUTRAL && (type != PLAYER || strum.botplay))
 			{
 				hitFunction();
+
 				return;
 			}
 
 			if (Conductor.songPosition >= strumTime && !ableToHit && state == NEUTRAL && !strum.botplay)
 			{
 				loseFunction();
+
 				return;
 			}
 

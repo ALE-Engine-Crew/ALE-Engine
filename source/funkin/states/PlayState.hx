@@ -107,7 +107,7 @@ class PlayState extends ScriptState
 
             dead = true;
 
-            openSubState(new CustomSubState(CoolVars.data.gameOverScreen));
+            CoolUtil.openSubState(new CustomSubState(CoolVars.data.gameOverScreen));
             
 		    return health;
         }

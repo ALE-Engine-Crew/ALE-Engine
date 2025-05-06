@@ -2,38 +2,46 @@ package other;
 
 import utils.ALEParserHelper;
 
+import funkin.visuals.objects.Character;
+
 import core.structures.ALESong;
 
 class ChartState extends ScriptState
 {
-    public var strumLines:FlxTypedGroup<StrumLine> = new FlxTypedGroup<StrumLine>();
+    public var strumLines:StrumLinesGroup = new StrumLinesGroup();
+
+    var SONG:ALESong;
 
     override function create()
     {
         super.create();
+        
+        loadScript('script');
 
+        callOnScripts('onCreate');
+        
         add(strumLines);
 
         FlxG.sound.playMusic(Paths.getPath('songs/Stress/song/Voices.ogg'));
         
-        var json:ALESong = ALEParserHelper.getALESong(Json.parse(File.getContent(Paths.getPath('songs/Stress/charts/hard.json'))));
+        var SONG = ALEParserHelper.getALESong(Json.parse(File.getContent(Paths.getPath('songs/Stress/charts/hard.json'))));
 
-        for (grid in json.grids)
+        for (grid in SONG.grids)
         {
-            if (grid.type == EXTRA)
-                continue;
+            var strl:StrumLine = new StrumLine(new Character(grid.character, grid.type, SONG.grids.indexOf(grid)), grid.sections);
 
-            var strl:StrumLine = new StrumLine(grid.type, grid.sections);
-            strumLines.add(strl);
+            switch (grid.type)
+            {
+                case PLAYER:
+                    strumLines.players.add(strl);
+                case OPPONENT:
+                    strumLines.opponents.add(strl);
+                case EXTRA:
+                    strumLines.extras.add(strl);
+            }
         }
 
-        for (strl in strumLines)
-            for (str in strl.strums)
-                str.scrollSpeed = json.speed;
-
-        loadScript('script');
-
-        callOnScripts('onCreate');
+        callOnScripts('onCreatePost');
     }
 
     override function update(elapsed:Float)
@@ -41,5 +49,7 @@ class ChartState extends ScriptState
         super.update(elapsed);
 
         callOnScripts('onUpdate', [elapsed]);
+
+        callOnScripts('onUpdatePost', [elapsed]);
     }
 }

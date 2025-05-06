@@ -94,4 +94,12 @@ class Splash extends AttachedSprite
             yAdd = strum.height / 2 - height / 2;
         }
     }
+
+    override public function update(elapsed:Float)
+    {
+        super.update(elapsed);
+        
+        if (cameras != strum.cameras)
+            cameras = strum.cameras;
+    }
 }

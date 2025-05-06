@@ -2,6 +2,9 @@ package other;
 
 import flixel.group.FlxGroup;
 import flixel.util.FlxSort;
+import flixel.math.FlxRect;
+
+import funkin.visuals.objects.Character;
 
 import core.enums.ALECharacterType;
 
@@ -9,83 +12,215 @@ import core.structures.ALESection;
 
 class StrumLine extends FlxGroup
 {
-    public var type:ALECharacterType;
+    public var strums:FlxTypedGroup<Strum>;
+    public var sustains:FlxTypedGroup<Note>;
+    public var notes:FlxTypedGroup<Note>;
+    public var allNotes:FlxTypedGroup<Note>;
 
-    public var strums:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
-
-    public var notes:NoteGroup = new NoteGroup();
-
+    public var unspawnIndex:Int = 0;
     public var unspawnNotes:Array<Note> = [];
 
-    public var sections:Array<ALESection> = [];
-    
-    override public function new(type:ALECharacterType, sections:Array<ALESection>)
+    // public var splashes:FlxTypedGroup<Splash>;
+
+    public var downscroll:Bool = false;
+
+    public var scrollSpeed:Float = 1;
+    public var scrollTween:FlxTween;
+
+    public var botplay:Bool = false;
+
+    public var character:Character;
+
+    public function new(character:Character, sections:Array<ALESection>, startPosition:Float = 0)
     {
         super();
 
-        this.type = type;
+        this.character = character;
 
-        this.sections = sections;
+        allNotes = new FlxTypedGroup<Note>();
 
-        add(strums);
+        add(strums = new FlxTypedGroup<Strum>());
+        add(sustains = new FlxTypedGroup<Note>());
+        add(notes = new FlxTypedGroup<Note>());
+        // add(splashes = new FlxTypedGroup<Splash>());
 
         for (i in 0...4)
         {
-            var strum:StrumNote = new StrumNote(type, i);
+            var strum:Strum = new Strum(i, character.type);
             strums.add(strum);
         }
 
-        add(notes);
-
-        spawnNotes();
-    }
-
-    private function spawnNotes()
-    {
         for (section in sections)
         {
-            for (noteArray in section.notes)
+            for (note in section.notes)
             {
-                var strumTime:Float = noteArray[0];
-                var noteData:Int = noteArray[1];
-                var sustainLength:Float = noteArray[2];
-                var strum:StrumNote = strums.members[noteData];
+                if (note[0] < startPosition)
+                    continue;
 
-                var note:Note = new Note(noteData, strumTime, strum);
-
-                unspawnNotes.push(note);
+                unspawnNotes.push(new Note(note[0], note[1], note[2], character.type, NORMAL, strums.members[note[1]]));
             }
         }
-
-        unspawnNotes.sort(sortByTime);
     }
-    
-	function sortByTime(Obj1:Dynamic, Obj2:Dynamic):Int
-		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.strumTime, Obj2.strumTime);
 
-    public var spawnTime:Float = 2000;
+    public var spawnTime:Int = 2000;
 
-    override function update(elapsed:Float)
+    public var despawnTime:Int = 300;
+
+    override public function update(elapsed:Float)
     {
         super.update(elapsed);
 
-        if (unspawnNotes[0] != null)
+        if (unspawnIndex < unspawnNotes.length)
         {
-            var time:Float = spawnTime;
+            var uNote:Note = unspawnNotes[unspawnIndex];
 
-            while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
+            if (uNote.strumTime - Conductor.songPosition <= spawnTime / scrollSpeed)
             {
-                var note:Note = unspawnNotes[0];
-                notes.add(note);
-                note.spawned = true;
-                note.updatePosition();
+                uNote.y = FlxG.height * 4;
+                uNote.spawned = true;
 
-                note.customKillFunction = () -> {
-                    notes.remove(note, true);
-                };
+                addNote(uNote);
 
-                unspawnNotes.splice(unspawnNotes.indexOf(note), 1);
+                unspawnIndex++;
             }
         }
+
+        for (strum in strums)
+        {
+            if (character.type == PLAYER)
+            {
+
+            }
+        }
+
+        for (sustain in sustains)
+        {
+            
+        }
+
+        for (note in allNotes)
+        {
+            if (Conductor.songPosition >= note.strumTime + note.noteLenght + Conductor.crochet + despawnTime / scrollSpeed)
+            {
+                if (note.state == NEUTRAL)
+                    onNoteMiss(note);
+                
+                note.clipRect = null;
+                removeNote(note);
+                note.destroy();
+                
+                continue;
+            }
+
+            note.updateHitbox();
+        }
+
+        for (note in notes)
+        {
+            var strum:Strum = strums.members[note.data];
+
+            Note.setNotePosition(note, strum, strum.direction, 0, (note.strumTime - Conductor.songPosition) * scrollSpeed * 0.45);
+
+            for (sustain in note.children)
+            {
+
+            }
+
+            if (character.type == PLAYER)
+            {
+                if (Conductor.songPosition >= note.strumTime && note.state == NEUTRAL)
+                    onNoteMiss(note);
+            } else {
+                if (note.strumTime - Conductor.songPosition <= 0 && note.state == NEUTRAL)
+                    checkNoteHit(note);
+            }
+        }
+
+        for (sustain in sustains)
+        {
+            var parent = sustain.parentNote;
+
+            if (parent != null)
+            {
+                var strum:Strum = strums.members[sustain.data];
+
+                if (parent.state == HELD)
+                {
+                    sustain.state = HELD;
+
+                    sustain.sustainHitLenght = Conductor.songPosition - sustain.strumTime;
+
+                    var rect = new FlxRect(0, 0, sustain.frameWidth, sustain.frameHeight);
+
+                    var minSize:Float = sustain.sustainHitLenght - (Conductor.crochet);
+                    var maxSize:Float = Conductor.crochet;
+
+                    if (minSize > maxSize)
+                        minSize = maxSize;
+
+                    if (minSize > 0)
+                        rect.y = (minSize / maxSize) * sustain.frameHeight;
+
+                    sustain.clipRect = rect;
+
+                    var holdPercent:Float = (sustain.sustainHitLenght / parent.noteLenght);
+
+                    if (sustain.state == NEUTRAL || holdPercent >= 1)
+                    {
+                        sustain.state = RELEASED;
+
+                        if (holdPercent > 0.3)
+                        {
+                            if (sustain.noteType == SUSTAIN_END)
+                                onNoteHit(sustain);
+
+                            sustain.state = HIT;
+                        }
+                    } else {
+                        onNoteMiss(sustain);
+                    }
+                }
+
+                if (parent.state == LOST && sustain.state != LOST)
+                    onNoteMiss(sustain);
+            }
+        }
+    }
+
+    public function onNoteMiss(note:Note)
+    {
+
+    }
+
+    public function checkNoteHit(note:Note)
+    {
+
+    }
+
+    public function onNoteHit(note:Note)
+    {
+
+    }
+
+    public function addNote(note:Note)
+    {
+		//debugPrint('oso', CUSTOM, 'SPAWN NOTE', FlxColor.CYAN);
+
+        allNotes.add(note);
+
+        if (note.noteType == NORMAL)
+            notes.add(note);
+        else
+            sustains.remove(note);
+    }
+
+    public function removeNote(note:Note)
+    {
+        allNotes.remove(note);
+
+        if (note.noteType == NORMAL)
+            notes.remove(note);
+        else
+            sustains.remove(note);
     }
 }

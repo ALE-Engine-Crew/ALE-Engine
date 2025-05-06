@@ -18,6 +18,10 @@ class Conductor
     static function get_stepCrochet():Float
         return crochet / 4;
 
+    public static var sectionCrochet(get, never):Float;
+    static function get_sectionCrochet():Float
+        return crochet * 4;
+
     public static var songLength(get, never):Float;
     private static function get_songLength():Float
         return FlxG.sound.music == null ? 0 : FlxG.sound.music.length;

@@ -126,9 +126,7 @@ class StrumLine extends FlxGroup
 
         if (unspawnNotes[0] != null)
         {
-            var time:Float = spawnTime / PlayState.instance.scrollSpeed;
-
-            while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
+            if (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < spawnTime / unspawnNotes[0].scrollSpeed)
             {
                 var note:Note = unspawnNotes[0];
                 notes.add(note);
