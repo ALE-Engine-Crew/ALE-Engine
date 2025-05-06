@@ -20,11 +20,12 @@ class StrumLine extends FlxGroup
     public var unspawnIndex:Int = 0;
     public var unspawnNotes:Array<Note> = [];
 
-    // public var splashes:FlxTypedGroup<Splash>;
+    public var splashes:FlxTypedGroup<Splash>;
 
     public var downscroll:Bool = false;
 
     public var scrollSpeed:Float = 1;
+
     public var scrollTween:FlxTween;
 
     public var botplay:Bool = false;
@@ -42,12 +43,21 @@ class StrumLine extends FlxGroup
         add(strums = new FlxTypedGroup<Strum>());
         add(sustains = new FlxTypedGroup<Note>());
         add(notes = new FlxTypedGroup<Note>());
-        // add(splashes = new FlxTypedGroup<Splash>());
+
+        if (character.type == PLAYER)
+            add(splashes = new FlxTypedGroup<Splash>());
 
         for (i in 0...4)
         {
             var strum:Strum = new Strum(i, character.type);
             strums.add(strum);
+
+            if (character.type == PLAYER)
+            {
+                var splash:Splash = new Splash(i);
+                splashes.add(splash);
+                splash.strum = strum;
+            }
         }
 
         for (section in sections)
@@ -57,7 +67,7 @@ class StrumLine extends FlxGroup
                 if (note[0] < startPosition)
                     continue;
 
-                unspawnNotes.push(new Note(note[0], note[1], note[2], character.type, NORMAL, strums.members[note[1]]));
+                unspawnNotes.push(new Note(note[0], note[1], note[2], character.type, NORMAL));
             }
         }
     }
@@ -74,7 +84,12 @@ class StrumLine extends FlxGroup
         {
             var uNote:Note = unspawnNotes[unspawnIndex];
 
-            if (uNote.strumTime - Conductor.songPosition <= spawnTime / scrollSpeed)
+            var spawnT:Float = spawnTime;
+
+            if (scrollSpeed < 1)
+                spawnT /= scrollSpeed;
+
+            if (uNote.strumTime - Conductor.songPosition <= spawnT)
             {
                 uNote.y = FlxG.height * 4;
                 uNote.spawned = true;
@@ -106,8 +121,8 @@ class StrumLine extends FlxGroup
                     onNoteMiss(note);
                 
                 note.clipRect = null;
+
                 removeNote(note);
-                note.destroy();
                 
                 continue;
             }
@@ -132,7 +147,7 @@ class StrumLine extends FlxGroup
                     onNoteMiss(note);
             } else {
                 if (note.strumTime - Conductor.songPosition <= 0 && note.state == NEUTRAL)
-                    checkNoteHit(note);
+                    onNoteHit(note);
             }
         }
 
@@ -199,13 +214,16 @@ class StrumLine extends FlxGroup
 
     public function onNoteHit(note:Note)
     {
-
+        removeNote(note);
+        
+        strums.members[note.data].animation.play('hit', true);
+        
+        if (character.type == PLAYER)
+            splashes.members[note.data].animation.play('splash', true);
     }
 
     public function addNote(note:Note)
     {
-		//debugPrint('oso', CUSTOM, 'SPAWN NOTE', FlxColor.CYAN);
-
         allNotes.add(note);
 
         if (note.noteType == NORMAL)
@@ -216,11 +234,11 @@ class StrumLine extends FlxGroup
 
     public function removeNote(note:Note)
     {
-        allNotes.remove(note);
+        allNotes.remove(note, true);
 
         if (note.noteType == NORMAL)
-            notes.remove(note);
+            notes.remove(note, true);
         else
-            sustains.remove(note);
+            sustains.remove(note, true);
     }
 }

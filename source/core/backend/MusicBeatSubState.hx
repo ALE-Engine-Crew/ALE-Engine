@@ -56,8 +56,6 @@ class MusicBeatSubState extends flixel.FlxSubState
     
             debugTexts.add(newText);
         }
-
-        debugTrace(text, type, customType, customColor);
     }
 
     override public function destroy()

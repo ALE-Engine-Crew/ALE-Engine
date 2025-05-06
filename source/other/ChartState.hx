@@ -10,6 +10,19 @@ class ChartState extends ScriptState
 {
     public var strumLines:StrumLinesGroup = new StrumLinesGroup();
 
+    public var scrollSpeed(default, set):Float = 1;
+    public function set_scrollSpeed(value:Float):Float
+    {
+        scrollSpeed = value;
+
+        if (strumLines != null)
+            for (grp in strumLines.getGroups())
+                for (strl in grp)
+                    strl.scrollSpeed = scrollSpeed;
+
+        return scrollSpeed;
+    }
+
     var SONG:ALESong;
 
     override function create()
@@ -40,6 +53,8 @@ class ChartState extends ScriptState
                     strumLines.extras.add(strl);
             }
         }
+
+        scrollSpeed = SONG.speed;
 
         callOnScripts('onCreatePost');
     }

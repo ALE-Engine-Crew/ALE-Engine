@@ -17,7 +17,7 @@ class Strum extends FlxSprite
 
     public var scrollSpeed:Float = 1;
 
-    public var texture(default, set):String = 'note';
+    public var texture(default, set):String;
     public function set_texture(value:String):String
     {
         texture = value;
@@ -40,7 +40,6 @@ class Strum extends FlxSprite
 		animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
             centerOffsets();
             centerOrigin();
-            updateHitbox();
 
 			if (shaderRef != null)
 				shaderRef.enabled = name != 'idle';

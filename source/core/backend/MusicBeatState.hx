@@ -77,8 +77,6 @@ class MusicBeatState extends FlxState
     
             debugTexts.add(newText);
         }
-
-        debugTrace(text, type, customType, customColor);
     }
 
     public var shouldClearMemory:Bool = true;

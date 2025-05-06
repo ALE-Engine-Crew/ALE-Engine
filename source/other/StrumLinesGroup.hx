@@ -19,4 +19,7 @@ class StrumLinesGroup extends FlxTypedGroup<FlxTypedGroup<StrumLine>>
         players = new FlxTypedGroup<StrumLine>();
         add(players);
     }
+
+    public function getGroups()
+        return [extras, players, opponents];
 }

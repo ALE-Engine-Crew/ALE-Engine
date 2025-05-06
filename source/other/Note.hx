@@ -11,8 +11,6 @@ import flixel.math.FlxAngle;
 
 class Note extends FlxSprite
 {
-    public var strum:Strum;
-
 	public var data:Int;
     
     public var strumTime:Float = 0;
@@ -42,7 +40,7 @@ class Note extends FlxSprite
 			default: '';
 		};
 
-    public var texture(default, set):String = 'note';
+    public var texture(default, set):String;
     public function set_texture(value:String):String
     {
         texture = value;
@@ -84,11 +82,9 @@ class Note extends FlxSprite
         return texture;
     }
 
-    public function new(strumTime:Float, data:Int, noteLenght:Float, type:ALECharacterType, noteType:NoteType, strum:Strum, texture:String = 'note')
+    public function new(strumTime:Float, data:Int, noteLenght:Float, type:ALECharacterType, noteType:NoteType, texture:String = 'note')
     {
 		super();
-
-		this.strum = strum;
 
 		this.strumTime = strumTime;
 		this.data = data;
@@ -109,8 +105,6 @@ class Note extends FlxSprite
 		flipY = noteType == SUSTAIN_END && ClientPrefs.data.downScroll;
 
 		antialiasing = ClientPrefs.data.antialiasing;
-        
-        super();
     }
 
 	public function resetNote()
