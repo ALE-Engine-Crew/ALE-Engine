@@ -88,9 +88,4 @@ class ALECamera extends FlxCamera
 		scroll.x += (_scrollTarget.x - scroll.x) * mult;
 		scroll.y += (_scrollTarget.y - scroll.y) * mult;
 	}
-
-	override function set_followLerp(value:Float)
-	{
-		return followLerp = value;
-	}
 }

@@ -85,7 +85,6 @@
 	<icon path="art/icon64.png" size='64' />
 	<icon path="art/iconOG.png" />
 
-	<!-- OpenAL Config -->
 	<section if="desktop">
 		<assets path="alsoft.txt" rename="plugins/alsoft.ini" type="text" if="windows"/>
 		<assets path="alsoft.txt" rename="plugins/alsoft.conf" type="text" unless="windows"/>

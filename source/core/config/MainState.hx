@@ -45,13 +45,14 @@ class MainState extends MusicBeatState
 
         #if cpp
         debugCounter = new DebugCounter();
+        
         FlxG.stage.addChild(debugCounter);
 
         if (ClientPrefs.data.openConsoleOnStart)
             cpp.WindowsTerminalCPP.allocConsole();
         #end
 
-        CoolUtil.switchState(new CustomState(CoolVars.data.initialState), true, true);
+        CoolUtil.switchState(() -> new CustomState(CoolVars.data.initialState), true, true);
     }
 
     function openalFix()

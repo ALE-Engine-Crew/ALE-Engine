@@ -89,7 +89,7 @@ class LuaGlobal extends LuaPresetBase
 
         set('switchToCustomState', function(name:String)
 		{
-			CoolUtil.switchState(new CustomState(name));
+			CoolUtil.switchState(() -> new CustomState(name));
 		});
 
         if (type == STATE)

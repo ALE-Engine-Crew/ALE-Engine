@@ -4,14 +4,13 @@ import lime.app.Application;
 
 import flixel.FlxSprite;
 import flixel.system.scaleModes.RatioScaleMode;
+import flixel.util.typeLimit.NextState;
 
 import funkin.visuals.ALECamera;
 
 import funkin.visuals.shaders.ALERuntimeShader;
 
 import funkin.substates.CustomTransition;
-
-import core.structures.*;
 
 import openfl.system.Capabilities;
 import openfl.filters.ShaderFilter;
@@ -23,7 +22,10 @@ import core.backend.Mods;
 
 import core.enums.PrintType;
 
+import core.structures.*;
+
 import utils.ALEParserHelper;
+
 
 /**
  * It contains functions that can be quite useful
@@ -274,7 +276,7 @@ class CoolUtil
 		PlayState.SONG = ALEParserHelper.getALESong(jsonData);
 		PlayState.difficulty = diff;
 
-		switchState(new PlayState());
+		switchState(() -> new PlayState());
 	}
 
 	public static function resizeGame(width:Int, height:Int)
@@ -372,25 +374,22 @@ class CoolUtil
         FlxG.stage.window.title = CoolVars.data.title;
 	}
 
-    public static inline function switchState(state:flixel.FlxState = null, skipTransIn:Bool = null, skipTransOut:Bool = null)
+    public static inline function switchState(state:NextState, skipTransIn:Bool = null, skipTransOut:Bool = null)
     {
-        if (state == null)
-            FlxG.resetState();
-
         if (state is CustomState)
         {
-            var custom:CustomState = Std.downcast(state, CustomState);
-            
-            if (Paths.fileExists('scripts/states/' + custom.scriptName + '.hx') || Paths.fileExists('scripts/states/' + custom.scriptName + '.lua'))
+			var scriptName = cast(state, CustomState).scriptName;
+			
+            if (Paths.fileExists('scripts/states/' + scriptName + '.hx') || Paths.fileExists('scripts/states/' + scriptName + '.lua'))
                 transitionSwitch(state, skipTransIn, skipTransOut);
             else
-                debugPrint('Custom State called "' + custom.scriptName + '" doesn\'t Exist', MISSING_FILE);
+                debugPrint('Custom State called "' + scriptName + '" doesn\'t Exist', MISSING_FILE);
         } else {
 			transitionSwitch(state, skipTransIn, skipTransOut);
 		}
     }
 
-	private static function transitionSwitch(state:flixel.FlxState, skipTransIn, skipTransOut)
+	private static function transitionSwitch(state:NextState, skipTransIn, skipTransOut)
 	{
 		if (skipTransIn != null)
 			CoolVars.skipTransIn = skipTransIn;

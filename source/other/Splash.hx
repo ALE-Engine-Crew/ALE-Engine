@@ -41,16 +41,16 @@ class Splash extends AttachedSprite
                 animation.addByPrefix('splash', 'note splash red 1', 24, false);
         }
 
-        animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
+        animation.onFrameChange.add((name:String, frameNumber:Int, frameIndex:Int) -> {
             centerOffsets();
             centerOrigin();
             
             visible = true;
-        }
+        });
 
-        animation.finishCallback = (name:String) -> {
+        animation.onFinish.add((name:String) -> {
             visible = false;
-        }
+        });
 
         centerOffsets();
         centerOrigin();

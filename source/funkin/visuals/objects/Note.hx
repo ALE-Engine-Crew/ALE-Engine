@@ -213,10 +213,9 @@ class Note extends FlxSprite
 
 			if (type != PLAYER || strum.botplay)
 			{
-				strum.animation.finishCallback = (name:String) -> {
+				strum.animation.onFinish.add((name:String) -> {
 					strum.animation.play('idle');
-					strum.animation.finishCallback = null;
-				}
+				});
 			}
 
 			kill();

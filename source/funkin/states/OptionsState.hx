@@ -132,7 +132,7 @@ class OptionsState extends MusicBeatState
                             CoolUtil.openSubState(Type.createInstance(Type.resolveClass(curMenu.stateData.subState), []));
                     } else if (curMenu.stateData.state != null) {
                         if (curMenu.stateData.script)
-                            CoolUtil.switchState(new CustomState(curMenu.stateData.state));
+                            CoolUtil.switchState(() -> new CustomState(curMenu.stateData.state));
                         else
                             CoolUtil.switchState(Type.createInstance(Type.resolveClass(curMenu.stateData.state), []));
                     }
@@ -145,11 +145,11 @@ class OptionsState extends MusicBeatState
 
                 if (inPlayState)
                 {
-                    CoolUtil.switchState(new funkin.states.PlayState());
+                    CoolUtil.switchState(() -> new funkin.states.PlayState());
 
                     shouldClearMemory = false;
                 } else {
-                    CoolUtil.switchState(new CustomState(CoolVars.data.mainMenuState));
+                    CoolUtil.switchState(() -> new CustomState(CoolVars.data.mainMenuState));
                 }
 
                 FlxG.sound.play(Paths.sound('cancelMenu'));

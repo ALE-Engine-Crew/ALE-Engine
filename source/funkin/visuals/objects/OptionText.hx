@@ -85,7 +85,7 @@ class OptionText extends FlxSpriteGroup
                 checkBox.animation.addByPrefix('true', 'true', 24, false);
                 checkBox.animation.addByPrefix('false', 'false', 24, false);
                 checkBox.antialiasing = ClientPrefs.data.antialiasing;
-                checkBox.animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
+                checkBox.animation.onFrameChange.add((name:String, frameNumber:Int, frameIndex:Int) -> {
                     switch (name)
                     {
                         case 'start':
@@ -98,8 +98,8 @@ class OptionText extends FlxSpriteGroup
                             checkBox.offset.set(5, 1);
                         default:
                     }
-                }
-                checkBox.animation.finishCallback = (name:String) -> {
+                });
+                checkBox.animation.onFinish.add((name:String) -> {
                     switch (name)
                     {
                         case 'true':
@@ -108,7 +108,7 @@ class OptionText extends FlxSpriteGroup
                             checkBox.animation.play('finish');
                         default:
                     }
-                }
+                });
                 checkBox.centerOffsets();
                 checkBox.x = text.width + 5;
                 checkBox.y = text.height / 2 - checkBox.height / 2;

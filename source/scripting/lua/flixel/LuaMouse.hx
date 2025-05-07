@@ -76,10 +76,10 @@ class LuaMouse extends LuaPresetBase
                         FlxG.mouse.x;
                     case 'y':
                         FlxG.mouse.y;
-                    case 'screenX':
-                        FlxG.mouse.screenX;
-                    case 'screenY':
-                        FlxG.mouse.screenY;
+                    case 'viewX':
+                        FlxG.mouse.viewX;
+                    case 'viewY':
+                        FlxG.mouse.viewY;
                     default:
                         0;
                 }
@@ -98,14 +98,14 @@ class LuaMouse extends LuaPresetBase
             }
         );
 
-        set('getMouseScreenPosition', function(type:String, ?camera:String = ''):Float
+        set('getMouseViewPosition', function(type:String, ?camera:String = ''):Float
             {
                 return switch (type)
                 {
                     case 'y':
-                        FlxG.mouse.getScreenPosition(cameraFromString(lua, camera)).y;
+                        FlxG.mouse.getViewPosition(cameraFromString(lua, camera)).y;
                     default:
-                        FlxG.mouse.getScreenPosition(cameraFromString(lua, camera)).x;
+                        FlxG.mouse.getViewPosition(cameraFromString(lua, camera)).x;
                 }
             }
         );

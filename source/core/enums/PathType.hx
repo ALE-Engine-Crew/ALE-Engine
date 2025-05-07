@@ -1,6 +1,6 @@
 package core.enums;
 
-@:enum abstract PathType(String)
+enum abstract PathType(String)
 {
     var ASSETS = 'assets';
     var MODS = 'mods';

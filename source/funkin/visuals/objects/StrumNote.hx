@@ -12,20 +12,10 @@ class StrumNote extends FlxSprite
 	{
 		botplay = value;
 
-		if (type == PLAYER)
-		{
-			if (botplay)
-			{
-				animation.finishCallback = (name:String) -> {
-					animation.play('idle');
-				}
-			}
-			else
-			{
-				animation.play('idle', true);
-				animation.finishCallback = (name:String) -> {}
-			}
-		}
+		animation.onFinish.add((name:String) -> {
+			if (botplay || type != PLAYER)
+				animation.play('idle');
+		});
 
 		return botplay;
 	}
@@ -100,18 +90,18 @@ class StrumNote extends FlxSprite
 		animation.addByPrefix('pressed', animToPlay + ' press', 24, false);
 		animation.addByPrefix('hit', animToPlay + ' confirm', 24, false);
 
-		animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
+		animation.onFrameChange.add((name:String, frameNumber:Int, frameIndex:Int) -> {
 			centerOffsets();
 			centerOrigin();
 
 			if (shaderRef != null)
 				shaderRef.enabled = name != 'idle';
-		}
+		});
 
-		animation.finishCallback = (name:String) -> {
+		animation.onFinish.add((name:String) -> {
 			if (name == 'hit' && type != PLAYER)
 				animation.play('idle');
-		}
+		});
 
 		scale.x = scale.y = 0.7;
 

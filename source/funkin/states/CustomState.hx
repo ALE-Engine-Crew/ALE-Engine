@@ -110,6 +110,6 @@ class CustomState extends ScriptState
     {
         shouldClearMemory = false;
 
-        CoolUtil.switchState(new CustomState(scriptName), true, true);
+        CoolUtil.switchState(() -> new CustomState(scriptName), true, true);
     }
 }

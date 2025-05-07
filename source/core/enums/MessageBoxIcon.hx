@@ -1,6 +1,6 @@
 package core.enums;
 
-@:enum abstract MessageBoxIcon(Int)
+enum abstract MessageBoxIcon(Int)
 {
 	var ERROR = 0x00000010;
 	var QUESTION = 0x00000020;

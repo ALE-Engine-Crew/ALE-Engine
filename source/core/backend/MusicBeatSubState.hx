@@ -98,10 +98,4 @@ class MusicBeatSubState extends flixel.FlxSubState
     public function beatHit(curBeat:Int) {}
 
     public function sectionHit(curSection:Int) {}
-
-    public static function switchState(state:flixel.FlxState = null)
-    {
-        if (state == null) FlxG.resetState();
-        else FlxG.switchState(state);
-    }
 }

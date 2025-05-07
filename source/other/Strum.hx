@@ -37,18 +37,18 @@ class Strum extends FlxSprite
 		animation.addByPrefix('pressed', animToPlay + ' press', 24, false);
 		animation.addByPrefix('hit', animToPlay + ' confirm', 24, false);
 
-		animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
+		animation.onFrameChange.add((name:String, frameNumber:Int, frameIndex:Int) -> {
             centerOffsets();
             centerOrigin();
 
 			if (shaderRef != null)
 				shaderRef.enabled = name != 'idle';
-		}
+		});
 
-		animation.finishCallback = (name:String) -> {
+		animation.onFinish.add((name:String) -> {
 			if (name == 'hit' && type != PLAYER)
 				animation.play('idle');
-		}
+		});
 
 		scale.set(0.7, 0.7);
 

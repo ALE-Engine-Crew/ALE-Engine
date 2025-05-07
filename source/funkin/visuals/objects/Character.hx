@@ -66,14 +66,14 @@ class Character extends FlxSprite
             offsetsMap.set(animation.animation, offsets);
         }
 
-        animation.callback = (name:String, frameNumber:Int, frameIndex:Int) -> {
+        animation.onFrameChange.add((name:String, frameNumber:Int, frameIndex:Int) -> {
             if (offsetsMap.exists(name))
             {
                 var offsets:Array<Float> = offsetsMap.get(name);
 
                 offset.set(offsets[0], offsets[1]);
             }
-        }
+        });
 
         antialiasing = data.antialiasing;
 

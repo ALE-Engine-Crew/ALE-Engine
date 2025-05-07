@@ -1,6 +1,6 @@
 package core.enums;
 
-@:enum abstract ScriptType(String)
+enum abstract ScriptType(String)
 {
     var STATE = 'state';
     var SUBSTATE = 'substate';
