@@ -45,9 +45,6 @@ class Note extends FlxSprite
     {
         texture = value;
 
-		if (noteType != NORMAL && prevNote != null)
-			this.parentNote = prevNote.noteType != NORMAL ? prevNote.parentNote : prevNote;
-
 		frames = Paths.getSparrowAtlas('notes/' + texture);
 
         switch (noteType)

@@ -8,15 +8,19 @@ import haxe.io.Path;
 
 import core.backend.Mods;
 
+import other.ChartState;
+
 /**
  * Used to configure and add the necessary elements before starting the game
  */
-class MainState extends FlxState
+class MainState extends MusicBeatState
 {
     public static var debugCounter:DebugCounter;
 
     override function create()
     {
+        CoolVars.skipTransOut = true;
+
         super.create();
         
         openalFix();
@@ -47,9 +51,7 @@ class MainState extends FlxState
             cpp.WindowsTerminalCPP.allocConsole();
         #end
 
-        // CoolUtil.switchState(new CustomState(CoolVars.data.initialState), true, true);
-
-        CoolUtil.switchState(new other.ChartState(), true, true);
+        CoolUtil.switchState(new CustomState(CoolVars.data.initialState), true, true);
     }
 
     function openalFix()

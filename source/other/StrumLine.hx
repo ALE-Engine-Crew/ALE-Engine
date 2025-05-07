@@ -62,12 +62,39 @@ class StrumLine extends FlxGroup
 
         for (section in sections)
         {
-            for (note in section.notes)
+            for (chartNote in section.notes)
             {
-                if (note[0] < startPosition)
+                if (chartNote[0] < startPosition)
                     continue;
 
-                unspawnNotes.push(new Note(note[0], note[1], note[2], character.type, NORMAL));
+                var note:Note = new Note(chartNote[0], chartNote[1], chartNote[2], character.type, NORMAL);
+
+                var length:Float = chartNote[2];
+
+                if (length > 0)
+                {
+                    var parent:Note = note;
+
+                    var rawLoop:Float = length / Conductor.stepCrochet;
+
+                    var susLoop:Int = rawLoop - Math.floor(rawLoop) <= 0.8 ? Math.floor(rawLoop) : Math.round(rawLoop);
+
+                    if (susLoop <= 0)
+                        susLoop = 1;
+
+                    for (i in 0...susLoop + 1)
+                    {
+                        var sustain:Note = new Note(chartNote[0], chartNote[1], chartNote[2], character.type, i == susLoop ? SUSTAIN_END : SUSTAIN);
+
+                        unspawnNotes.push(sustain);
+
+                        note.children.push(sustain);
+
+                        parent = sustain;
+                    }
+                }
+
+                unspawnNotes.push(note);
             }
         }
     }
@@ -115,7 +142,7 @@ class StrumLine extends FlxGroup
 
         for (note in allNotes)
         {
-            if (Conductor.songPosition >= note.strumTime + note.noteLenght + Conductor.crochet + despawnTime / scrollSpeed)
+            if (Conductor.songPosition >= note.strumTime + note.noteLenght + Conductor.stepCrochet + despawnTime / scrollSpeed)
             {
                 if (note.state == NEUTRAL)
                     onNoteMiss(note);
@@ -137,9 +164,7 @@ class StrumLine extends FlxGroup
             Note.setNotePosition(note, strum, strum.direction, 0, (note.strumTime - Conductor.songPosition) * scrollSpeed * 0.45);
 
             for (sustain in note.children)
-            {
-
-            }
+                Note.setNotePosition(sustain, note, strum.direction, 0, Conductor.stepCrochet * scrollSpeed * 0.45 * note.children.indexOf(sustain));
 
             if (character.type == PLAYER)
             {
@@ -167,8 +192,8 @@ class StrumLine extends FlxGroup
 
                     var rect = new FlxRect(0, 0, sustain.frameWidth, sustain.frameHeight);
 
-                    var minSize:Float = sustain.sustainHitLenght - (Conductor.crochet);
-                    var maxSize:Float = Conductor.crochet;
+                    var minSize:Float = sustain.sustainHitLenght - (Conductor.stepCrochet);
+                    var maxSize:Float = Conductor.stepCrochet;
 
                     if (minSize > maxSize)
                         minSize = maxSize;
