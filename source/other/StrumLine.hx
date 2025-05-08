@@ -4,8 +4,6 @@ import flixel.group.FlxGroup;
 import flixel.util.FlxSort;
 import flixel.math.FlxRect;
 
-import funkin.visuals.objects.Character;
-
 import core.enums.ALECharacterType;
 
 import core.structures.ALESection;
@@ -32,11 +30,17 @@ class StrumLine extends FlxGroup
 
     public var character:Character;
 
+    private var characterTimer:FlxTimer = new FlxTimer();
+
     public function new(character:Character, sections:Array<ALESection>, startPosition:Float = 0)
     {
         super();
 
         this.character = character;
+
+        characterTimer.onComplete = (_) -> {
+            character.finishedIdleTimer = true;
+        };
 
         allNotes = new FlxTypedGroup<Note>();
 
@@ -171,9 +175,13 @@ class StrumLine extends FlxGroup
                 if (Conductor.songPosition >= note.strumTime && note.state == NEUTRAL)
                     onNoteMiss(note);
             } else {
-                if (note.strumTime - Conductor.songPosition <= 0 && note.state == NEUTRAL)
-                    onNoteHit(note);
+            if (note.strumTime - Conductor.songPosition <= 0 && note.state == NEUTRAL)
+                onNoteHit(note);
             }
+            /*
+            if (note.strumTime - Conductor.songPosition <= 0 && note.state == NEUTRAL)
+                onNoteHit(note);
+                */
         }
 
         for (sustain in sustains)
@@ -229,7 +237,25 @@ class StrumLine extends FlxGroup
 
     public function onNoteMiss(note:Note)
     {
+        character.finishedIdleTimer = false;
+        
+        characterTimer.reset(60 / Conductor.bpm);
 
+        character.animation.play('sing' + (switch (note.data)
+            {
+                case 0:
+                    'LEFT';
+                case 1:
+                    'DOWN';
+                case 2:
+                    'UP';
+                case 3:
+                    'RIGHT';
+                default:
+                    '';
+            }) + 'miss',
+            true
+        );
     }
 
     public function checkNoteHit(note:Note)
@@ -245,6 +271,26 @@ class StrumLine extends FlxGroup
         
         if (character.type == PLAYER)
             splashes.members[note.data].animation.play('splash', true);
+        
+        character.finishedIdleTimer = false;
+        
+        characterTimer.reset(60 / Conductor.bpm);
+
+        character.animation.play('sing' + switch (note.data)
+            {
+                case 0:
+                    'LEFT';
+                case 1:
+                    'DOWN';
+                case 2:
+                    'UP';
+                case 3:
+                    'RIGHT';
+                default:
+                    '';
+            },
+            true
+        );
     }
 
     public function addNote(note:Note)

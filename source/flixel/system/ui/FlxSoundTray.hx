@@ -93,6 +93,17 @@ class FlxSoundTray extends Sprite
 
 		y = -height;
 		visible = false;
+
+		Lib.application.window.onClose.add(function()
+			{
+				if (FlxG.save.isBound)
+				{
+					FlxG.save.data.mute = FlxG.sound.muted;
+					FlxG.save.data.volume = FlxG.sound.volume;
+					FlxG.save.flush();
+				}
+			}
+		);
 	}
 	
 	public function update(elapsed:Float):Void

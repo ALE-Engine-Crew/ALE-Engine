@@ -52,7 +52,9 @@ class MainState extends MusicBeatState
             cpp.WindowsTerminalCPP.allocConsole();
         #end
 
-        CoolUtil.switchState(() -> new CustomState(CoolVars.data.initialState), true, true);
+        //CoolUtil.switchState(() -> new CustomState(CoolVars.data.initialState), true, true);
+
+        CoolUtil.switchState(() -> new other.ChartState());
     }
 
     function openalFix()
