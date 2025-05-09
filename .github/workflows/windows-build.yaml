@@ -19,11 +19,28 @@ jobs:
         with:
           haxe-version: 4.3.6
 
+      - name: Restore Haxe and build cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            .haxelib/
+            export/windows/obj/
+          key: build-cache-${{ hashFiles('project.xml', 'setup/install-haxelibs.bat') }}
+          restore-keys: build-cache-
+
       - name: Installing Libraries
         run: setup/install-haxelibs.bat
 
       - name: Build ALE Engine for Windows
         run: haxelib run lime build windows
+
+      - name: Save Haxe and build cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            .haxelib/
+            export/windows/obj/
+          key: build-cache-${{ hashFiles('project.xml', 'setup/install-haxelibs.bat') }}
 
       - name: Upload Build Folder as Artifact
         uses: actions/upload-artifact@v4
