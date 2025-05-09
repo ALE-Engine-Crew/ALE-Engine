@@ -1,0 +1,35 @@
+name: ALE Engine - Windows Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Windows Build
+    permissions: write-all
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.2.5
+
+      - name: Install/update libraries (ALE Engine)
+        run: setup/install-haxelibs.bat
+
+      - name: Build ALE Engine for Windows
+        run: haxelib run lime build windows
+
+      - name: Create ZIP from build folder
+        run: Compress-Archive -Path export/windows/bin/* -DestinationPath ALEEngine.zip
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ALE Engine - Windows Build
+          path: ALEEngine.zip
