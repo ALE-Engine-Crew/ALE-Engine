@@ -15,6 +15,4 @@ haxelib git flixel 6.1.0
 haxelib install flixel-addons 3.3.2
 haxelib install extension-androidtools 2.1.1 --skip-dependencies
 haxelib install hxdiscord_rpc 1.2.4 --skip-dependencies
-haxelib install ale-ui --skip-dependencies
-
-haxelib install setup/sscript.zip
+haxelib git ale-ui https://github.com/ALE-Engine-Crew/ALE-UI --skip-dependencies

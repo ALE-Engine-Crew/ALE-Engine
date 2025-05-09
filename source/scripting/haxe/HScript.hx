@@ -5,8 +5,8 @@ import cpp.*;
 
 import haxe.ds.StringMap;
 
-import tea.SScript;
-import tea.SScript.TeaCall;
+import scripting.sscript.tea.SScript;
+import scripting.sscript.tea.SScript.TeaCall;
 
 import core.enums.ScriptType;
 

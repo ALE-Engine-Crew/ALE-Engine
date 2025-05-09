@@ -19,16 +19,16 @@ jobs:
         with:
           haxe-version: 4.3.6
 
-      - name: Install/update libraries (ALE Engine)
+      - name: Installing Libraries
         run: setup/install-haxelibs.bat
 
       - name: Build ALE Engine for Windows
         run: haxelib run lime build windows
 
-      - name: Create ZIP from build folder
-        run: Compress-Archive -Path export/windows/bin/* -DestinationPath ALEEngine.zip
+      - name: Create ZIP from Build Folder
+        run: Compress-Archive -Path export/windows/bin -DestinationPath ALEEngine.zip
 
-      - name: Upload ZIP artifact
+      - name: Upload ZIP Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ALE Engine - Windows Build
