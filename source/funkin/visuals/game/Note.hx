@@ -1,4 +1,4 @@
-package other;
+package funkin.visuals.game;
 
 import core.enums.ALECharacterType;
 import core.enums.NoteState;

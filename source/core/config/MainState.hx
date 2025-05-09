@@ -8,8 +8,6 @@ import haxe.io.Path;
 
 import core.backend.Mods;
 
-import other.ChartState;
-
 /**
  * Used to configure and add the necessary elements before starting the game
  */
@@ -52,9 +50,7 @@ class MainState extends MusicBeatState
             cpp.WindowsTerminalCPP.allocConsole();
         #end
 
-        //CoolUtil.switchState(() -> new CustomState(CoolVars.data.initialState), true, true);
-
-        CoolUtil.switchState(() -> new other.ChartState());
+        CoolUtil.switchState(() -> new CustomState(CoolVars.data.initialState), true, true);
     }
 
     function openalFix()

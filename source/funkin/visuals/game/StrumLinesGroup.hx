@@ -1,4 +1,4 @@
-package funkin.visuals.objects;
+package funkin.visuals.game;
 
 class StrumLinesGroup extends FlxTypedGroup<FlxTypedGroup<StrumLine>>
 {
@@ -19,4 +19,7 @@ class StrumLinesGroup extends FlxTypedGroup<FlxTypedGroup<StrumLine>>
         players = new FlxTypedGroup<StrumLine>();
         add(players);
     }
+
+    public function getGroups()
+        return [extras, players, opponents];
 }

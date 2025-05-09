@@ -45,7 +45,7 @@ class ScriptState extends MusicBeatState
         super.destroy();
     }
 
-    public inline function loadScript(path:String)
+    public function loadScript(path:String)
     {
         #if HSCRIPT_ALLOWED
         if (path.endsWith('.hx'))
@@ -74,7 +74,7 @@ class ScriptState extends MusicBeatState
         #end
     }
 
-    public inline function loadHScript(path:String)
+    public function loadHScript(path:String)
     {
         #if HSCRIPT_ALLOWED
         if (Paths.fileExists(path + '.hx'))
@@ -100,7 +100,7 @@ class ScriptState extends MusicBeatState
         #end
     }
 
-    public inline function loadLuaScript(path:String)
+    public function loadLuaScript(path:String)
     {
         #if LUA_ALLOWED
         if (Paths.fileExists(path + '.lua'))
@@ -119,7 +119,7 @@ class ScriptState extends MusicBeatState
         #end
     }
 
-    public inline function setOnScripts(name:String, value:Dynamic)
+    public function setOnScripts(name:String, value:Dynamic)
     {
         #if HSCRIPT_ALLOWED
         setOnHScripts(name, value);
@@ -130,7 +130,7 @@ class ScriptState extends MusicBeatState
         #end
     }
 
-    public inline function setOnHScripts(name:String, value:Dynamic)
+    public function setOnHScripts(name:String, value:Dynamic)
     {
         #if HSCRIPT_ALLOWED
         if (hScripts.length > 0)
@@ -139,7 +139,7 @@ class ScriptState extends MusicBeatState
         #end
     }
 
-    public inline function setOnLuaScripts(name:String, value:Dynamic)
+    public function setOnLuaScripts(name:String, value:Dynamic)
     {
         #if LUA_ALLOWED
         if (luaScripts.length > 0)
@@ -155,7 +155,7 @@ class ScriptState extends MusicBeatState
         #end
     }
 
-    public inline function callOnScripts(callback:String, ?arguments:Array<Dynamic> = null)
+    public function callOnScripts(callback:String, ?arguments:Array<Dynamic> = null)
     {
         #if HSCRIPT_ALLOWED
         callOnHScripts(callback, arguments);
@@ -204,7 +204,7 @@ class ScriptState extends MusicBeatState
         #end
     }
 
-    public inline function destroyScripts()
+    public function destroyScripts()
     {
         #if HSCRIPT_ALLOWED
         destroyHScripts();
@@ -215,7 +215,7 @@ class ScriptState extends MusicBeatState
         #end
     }
 
-    public inline function destroyHScripts()
+    public function destroyHScripts()
     {
         #if HSCRIPT_ALLOWED
         if (hScripts.length > 0)
@@ -230,7 +230,7 @@ class ScriptState extends MusicBeatState
         #end
     }
 
-    public inline function destroyLuaScripts()
+    public function destroyLuaScripts()
     {
         #if LUA_ALLOWED
         if (luaScripts.length > 0)

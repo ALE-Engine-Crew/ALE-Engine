@@ -1,4 +1,4 @@
-package funkin.visuals.objects;
+package funkin.visuals.game;
 
 class CharactersGroup extends FlxTypedGroup<FlxTypedGroup<Character>>
 {
@@ -19,4 +19,7 @@ class CharactersGroup extends FlxTypedGroup<FlxTypedGroup<Character>>
         players = new FlxTypedGroup<Character>();
         add(players);
     }
+
+    public function getGroups():Array<FlxTypedGroup<Character>>
+        return [extras, opponents, players];
 }

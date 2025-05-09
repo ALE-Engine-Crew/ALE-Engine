@@ -1,4 +1,4 @@
-package other;
+package funkin.visuals.game;
 
 import utils.ALEParserHelper;
 
@@ -14,7 +14,12 @@ class Character extends FlxSprite
 
     public var type:ALECharacterType;
 
-    public var finishedIdleTimer:Bool = true;
+    public var idleTimer:Float = 0;
+
+    public var finishedIdleTimer(get, never):Bool;
+    public function get_finishedIdleTimer():Bool
+        return idleTimer >= 60 / Conductor.bpm;
+
     public var allowIdle:Bool = true;
 
     public var name(default, set):String;
@@ -69,6 +74,13 @@ class Character extends FlxSprite
                 offsetsCallback(name);
         });
 
+        flipX = data.flipX == (type != PLAYER);
+
+        if (animation.exists('idle'))
+            animation.play('idle', true);
+        else if (animation.exists('danceLeft'))
+            animation.play('danceLeft', true);
+
         return texture;
     }
 
@@ -81,7 +93,13 @@ class Character extends FlxSprite
         this.type = type;
 
         this.name = name;
+    }
 
-        animation.play('idle');
+    override public function update(elapsed:Float)
+    {
+        super.update(elapsed);
+
+        if (!finishedIdleTimer)
+            idleTimer += elapsed;
     }
 }

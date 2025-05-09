@@ -1,4 +1,4 @@
-package other;
+package funkin.visuals.game;
 
 import flixel.group.FlxGroup;
 import flixel.util.FlxSort;
@@ -30,17 +30,11 @@ class StrumLine extends FlxGroup
 
     public var character:Character;
 
-    private var characterTimer:FlxTimer = new FlxTimer();
-
     public function new(character:Character, sections:Array<ALESection>, startPosition:Float = 0)
     {
         super();
 
         this.character = character;
-
-        characterTimer.onComplete = (_) -> {
-            character.finishedIdleTimer = true;
-        };
 
         allNotes = new FlxTypedGroup<Note>();
 
@@ -237,9 +231,8 @@ class StrumLine extends FlxGroup
 
     public function onNoteMiss(note:Note)
     {
-        character.finishedIdleTimer = false;
-        
-        characterTimer.reset(60 / Conductor.bpm);
+        /*
+        character.idleTimer = 0;
 
         character.animation.play('sing' + (switch (note.data)
             {
@@ -256,6 +249,7 @@ class StrumLine extends FlxGroup
             }) + 'miss',
             true
         );
+        */
     }
 
     public function checkNoteHit(note:Note)
@@ -272,10 +266,8 @@ class StrumLine extends FlxGroup
         if (character.type == PLAYER)
             splashes.members[note.data].animation.play('splash', true);
         
-        character.finishedIdleTimer = false;
+        character.idleTimer = 0;
         
-        characterTimer.reset(60 / Conductor.bpm);
-
         character.animation.play('sing' + switch (note.data)
             {
                 case 0:

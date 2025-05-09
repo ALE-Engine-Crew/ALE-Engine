@@ -97,11 +97,11 @@ class Paths
 		return newGraphic;
 	}
 
-    public static function inst():Sound
-        return returnSound(PlayState.songRoute + '/song/Inst');
+    public static function inst(songRoute:String):Sound
+        return returnSound(songRoute + '/song/Inst');
 
-    public static function voices(?prefix:String = ''):Sound
-        return returnSound(PlayState.songRoute + '/song/' + prefix + 'Voices');
+    public static function voices(songRoute:String, ?prefix:String = ''):Sound
+        return returnSound(songRoute + '/song/' + prefix + 'Voices');
 
     public static function music(file:String):Sound
         return returnSound('music/' + file);

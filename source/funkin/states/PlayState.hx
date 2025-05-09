@@ -1,217 +1,73 @@
 package funkin.states;
 
-import flixel.FlxObject;
-
-import core.structures.*;
-
-import funkin.visuals.objects.StrumLine;
-import funkin.visuals.objects.Character;
-import funkin.visuals.objects.Bar;
-import funkin.visuals.objects.HealthIcon;
-import funkin.visuals.objects.CharactersGroup;
-import funkin.visuals.objects.StrumLinesGroup;
-
-#if mobile
-import funkin.visuals.objects.StrumControl;
-#end
-
-import openfl.events.KeyboardEvent;
-
 import utils.ALEParserHelper;
+
+import core.enums.ALECharacterType;
+
+import core.structures.ALESong;
+import core.structures.ALEStage;
+
+import scripting.haxe.HScript;
+import scripting.lua.LuaScript;
+
+import funkin.visuals.game.*;
 
 class PlayState extends ScriptState
 {
     public static var instance:PlayState;
-    
-    public static var SONG:ALESong;
 
-    public var STAGE:ALEStage;
+    public var strumLines:StrumLinesGroup = new StrumLinesGroup();
 
-    public static var startPosition:Float = 0;
+    public var characters:CharactersGroup = new CharactersGroup();
 
     public var scrollSpeed(default, set):Float = 1;
-
-    function set_scrollSpeed(value:Float):Float
+    public function set_scrollSpeed(value:Float):Float
     {
         scrollSpeed = value;
 
         if (strumLines != null)
-            for (strlGroup in [strumLines.opponents, strumLines.players, strumLines.extras])
-                for (strumLine in strlGroup)
-                    for (strum in strumLine.strums)
-                        strum.scrollSpeed = scrollSpeed;
+            for (grp in strumLines.getGroups())
+                for (strl in grp)
+                    strl.scrollSpeed = scrollSpeed;
 
         return scrollSpeed;
     }
 
-    public var botplay(default, set):Bool = false;
+    public static var SONG:ALESong = null;
+    public static var STAGE:ALEStage = null;
 
-    function set_botplay(value:Bool):Bool
-    {
-        botplay = value;
+    public static var difficulty:String = null;
 
-        if (strumLines != null)
-            for (strlGroup in [strumLines.opponents, strumLines.players, strumLines.extras])
-                for (strumLine in strlGroup)
-                    for (strum in strumLine.strums)
-                        strum.botplay = botplay;
-
-		if (botplay)
-			scoreTxt.text = 'BOTPLAY';
-		else
-			scoreTxt.text = 'Disabled BOTPLAY';
-
-        return botplay;
-    }
-
-    public var voices:FlxTypedGroup<FlxSound>;
-
-    public var strumLines:StrumLinesGroup;
-
-    public var characters:CharactersGroup;
-
-    public static var songRoute:String = '';
-
-	var camPos:FlxObject;
-
-    private var cameraSections:Array<Character> = [];
-
-    public var cameraZoom:Float = 1;
-
-    #if mobile
-    private var mobileControlsCamera:FlxCamera;
-    #end
-
-	var opponentIcon:HealthIcon;
-	var playerIcon:HealthIcon;
-
-	public var health(default, set):Float = 50;
-
-	public function set_health(value:Float):Float
-	{
-		if (value > 100)
-			value = 100;
-
-		health = value;
-
-		if (iconsAnimationFunction != null)
-			iconsAnimationFunction();
-		
-		healthBar.percent = health;
-
-        if (health <= 0)
-        {
-            pauseSong();
-
-            deathCounter++;
-
-            dead = true;
-
-            CoolUtil.openSubState(new CustomSubState(CoolVars.data.gameOverScreen));
-            
-		    return health;
-        }
-
-		return health;
-	}
-
-    public var dead:Bool = false;
-
-    public static var deathCounter:Int = 0;
-    public var chartingMode:Bool = false;
-    public var practiceMode:Bool = false;
-
-    public static var difficulty:String = 'normal';
-
-	public var iconsZoomingFunction:Int -> Void;
-	public var iconsZoomLerpFunction:Void -> Void;
-	public var iconsPositionFunction:Void -> Void;
-	public var iconsAnimationFunction:Void -> Void;
-    public var cameraZoomingFunction:Int -> Void;
-    public var cameraZoomLerpFunction:Void -> Void;
-
-    private var opponentIconName:String = '';
-    private var playerIconName:String = '';
-
-    private var opponentColor:FlxColor;
-    private var playerColor:FlxColor;
-
-	public var healthBar:Bar;
-
-	public var scoreTxt:FlxText;
-
-    public var paused:Bool = false;
+    public static var songRoute:String = null;
 
     override function create()
     {
         super.create();
 
-        chacheAssets();
-
         instance = this;
 
         initScripts();
-
-        setOnScripts('camGame', camGame);
-        setOnScripts('camHUD', camHUD);
         
         callOnScripts('onCreate');
-
-		camPos = new FlxObject(0, 0, 1, 1);
-		add(camPos);
-		
-		camGame.target = camPos;
-		camGame.followLerp = 2.4 * STAGE.cameraSpeed;
-        cameraZoom = STAGE.cameraZoom;
-
-        spawnGrids();
-
+        
+        FlxG.sound.playMusic(Paths.voices(songRoute));
+        
+        initStrums();
+        
         Conductor.bpm = SONG.bpm;
 
         scrollSpeed = SONG.speed;
 
-        moveCamera();
-
-        initAudios();
-
-        #if desktop
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
-        #elseif mobile
-		mobileControlsCamera = new FlxCamera();
-		mobileControlsCamera.bgColor = FlxColor.TRANSPARENT;
-        
-		FlxG.cameras.add(mobileControlsCamera, false);
-
-        for (i in 0...4)
-        {
-            var ctrl:StrumControl = new StrumControl(i, hitNote, releaseNote);
-            add(ctrl);
-            ctrl.cameras = [mobileControlsCamera];
-        }
-        #end
-
-        initHUD();
-
-        initCustomizableFunctions();
-
         callOnScripts('onCreatePost');
     }
-	
-	override function stepHit(curStep:Int)
-	{
-		super.stepHit(curStep);
 
-        if (cameraZoomingFunction != null)
-            cameraZoomingFunction(curStep);
+    override function update(elapsed:Float)
+    {
+        super.update(elapsed);
 
-        if (iconsZoomingFunction != null)
-            iconsZoomingFunction(curStep);
+        callOnScripts('onUpdate', [elapsed]);
 
-		if (SONG.needsVoices /* && FlxG.sound.music.time >= -ClientPrefs.data.noteOffset*/)
-			resyncVoices();
-
-		callOnScripts('onStepHit', [curStep]);
+        callOnScripts('onUpdatePost', [elapsed]);
     }
 
     override function beatHit(curBeat:Int)
@@ -220,531 +76,140 @@ class PlayState extends ScriptState
 
         if (curBeat % 2 == 0)
         {
-            for (charGroup in [characters.players, characters.opponents, characters.extras])
-            {
+            for (charGroup in characters.getGroups())
                 for (character in charGroup)
-                {
-                    if (character.idleTimer >= 60 / Conductor.bpm)
-                    {
-                        if (character.animation.exists('danceLeft'))
-                            character.animation.play('danceLeft', true);
-                        else if (character.animation.exists('idle'))
+                    if (character.finishedIdleTimer && character.allowIdle)
+                        if (character.animation.exists('idle'))
                             character.animation.play('idle', true);
-                    }
-                }
-            }
+                        else if (character.animation.exists('danceLeft'))
+                            character.animation.play('danceLeft', true);
         } else if (curBeat % 2 == 1) {
-            for (charGroup in [characters.players, characters.opponents, characters.extras])
+            for (charGroup in characters.getGroups())
                 for (character in charGroup)
-                    if (character.animation.exists('danceRight') && character.idleTimer >= 60 / Conductor.bpm)
-                        character.animation.play('danceRight');
+                    if (character.animation.exists('danceRight') && character.finishedIdleTimer && character.allowIdle)
+                        character.animation.play('danceRight', true);
         }
 
         callOnScripts('onBeatHit', [curBeat]);
     }
 
-    override function sectionHit(curSection:Int)
+    override function destroy()
     {
-        super.sectionHit(curSection);
-
-        moveCamera();
-
-        callOnScripts('onSectionHit', [curSection]);
-    }
-
-    override function update(elapsed:Float)
-    {
-        super.update(elapsed);
-        
-        callOnScripts('onUpdate', [elapsed]);
-
-        if (cameraZoomLerpFunction != null)
-            cameraZoomLerpFunction();
-
-        if (FlxG.keys.justPressed.R)
-            restartSong();
-
-        if (FlxG.keys.justPressed.B)
-            botplay = !botplay;
-
-        if (FlxG.keys.justPressed.ENTER && !dead)
-        {
-            pauseSong();
-
-            CoolUtil.openSubState(new CustomSubState(CoolVars.data.pauseSubState));
-        }
-
-        if (iconsZoomLerpFunction != null)
-            iconsZoomLerpFunction();
-
-        if (iconsPositionFunction != null)
-            iconsPositionFunction();
-
-        callOnScripts('onUpdatePost', [elapsed]);
-    }
-
-    override public function onFocus()
-    {
-        super.onFocus();
-
-        callOnScripts('onFocus');
-
-        if (!paused)
-        {
-            FlxG.sound.music.play();
-    
-            for (voice in voices)
-                voice.play();
-        }
-    }
-
-    override public function onFocusLost()
-    {
-        super.onFocusLost();
-
-        callOnScripts('onFocusLost');
-
-        if (!paused)
-        {
-            FlxG.sound.music.pause();
-    
-            for (voice in voices)
-                voice.pause();
-        }
-    }
-
-    override public function openSubState(substate:flixel.FlxSubState):Void
-    {
-        super.openSubState(substate);
-
-        callOnScripts('onOpenSubState', [substate]);
-    }
-
-    override public function closeSubState():Void
-    {
-        super.closeSubState();
-
-        callOnScripts('onCloseSubState');
-    }
-
-    override public function destroy()
-    {
-		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
-		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
-
-        callOnScripts('onDestroy');
-
-        destroyScripts();
+        instance = null;
 
         super.destroy();
     }
 
-	function hitNote(id:Int)
-	{
-        for (strumLine in strumLines.players)
-        {
-            for (note in strumLine.notes)
-            {
-                if (id != note.noteData || !note.ableToHit || note.isSustainNote)
-                    continue;
-
-                note.hitFunction();
-    
-                return;
-            }
-
-            strumLine.strums.members[id].animation.play('pressed', true);
-        }
-	}
-
-    function releaseNote(id:Int)
-    {
-		for (strumLine in strumLines.players)
-            if (strumLine.type == PLAYER)
-                strumLine.strums.members[id].animation.play('idle', true);
-    }
-
-    private function chacheAssets()
-    {
-    }
-
-    private function spawnGrids()
-    {
-        characters = new CharactersGroup();
-        add(characters);
-
-        strumLines = new StrumLinesGroup();
-        add(strumLines);
-        strumLines.cameras = [camHUD];
-
-        var camMaps:Map<Int, Character> = [];
-
-        for (num => grid in SONG.grids)
-        {
-            var character = new Character(grid.character, grid.type,
-                switch (grid.type)
-                {
-                    case OPPONENT:
-                        characters.opponents.members.length;
-                    case PLAYER:
-                        characters.players.members.length;
-                    case EXTRA:
-                        characters.extras.members.length;
-                }
-            );
-
-            if (character.voicePrefix != null && character.voicePrefix.split(' ').join('') != '')
-                character.voice = loadVoice(character.voicePrefix);
-
-            var strumLine:StrumLine = new StrumLine(grid.sections, grid.type, character,
-                function(_)
-                {
-                    if (grid.type == PLAYER)
-                        health += 1.5;
-                },
-                function (_)
-                {
-                    if (grid.type == PLAYER)
-                        health -= 2;
-                }
-            );
-
-            for (index => section in grid.sections)
-                if (section.cameraFocusThis)
-                    camMaps.set(index, character);
-
-            switch (grid.type)
-            {
-                case EXTRA:
-                    character.setPosition(STAGE.extrasPosition[characters.extras.members.length][0], STAGE.extrasPosition[characters.extras.members.length][1]);
-
-                    characters.extras.add(character);
-
-                    strumLines.extras.add(strumLine);
-                case OPPONENT:
-                    character.setPosition(STAGE.opponentsPosition[characters.opponents.members.length][0], STAGE.opponentsPosition[characters.opponents.members.length][1]);
-
-                    if (characters.opponents.members.length == 0)
-                    {
-                        opponentIconName = character.icon;
-
-                        opponentColor = character.barColor;
-                    }
-
-                    characters.opponents.add(character);
-                    
-                    strumLines.opponents.add(strumLine);
-                case PLAYER:
-                    character.setPosition(STAGE.playersPosition[characters.players.members.length][0], STAGE.playersPosition[characters.players.members.length][1]);
-
-                    if (characters.players.members.length == 0)
-                    {
-                        playerIconName = character.icon;
-
-                        playerColor = character.barColor;
-                    }
-
-                    characters.players.add(character);
-                    
-                    strumLines.players.add(strumLine);
-            }
-        }
-
-        for (i in 0...[for (k in camMaps.keys()) k].length)
-            cameraSections.push(camMaps.get(i));
-    }
-
-	private function resyncVoices():Void
-	{
-		var timeSub:Float = Conductor.songPosition /*- Conductor.offset*/;
-		var syncTime:Float = 10 /* * playbackRate*/;
-
-        for (voice in voices)
-        {
-            if (Math.abs(FlxG.sound.music.time - timeSub) > syncTime || (voice.length > 0 && Math.abs(voice.time - timeSub) > syncTime))
-            {
-                voice.pause();
-        
-                if (Conductor.songPosition <= voice.length)
-                    voice.time = Conductor.songPosition;
-        
-                voice.play();
-            }
-        }
-	}
-
-    function moveCamera()
-    {
-        if (cameraSections[curSection] != null && characters != null)
-        {
-            var char:Character = cameraSections[curSection];
-    
-            switch (char.type)
-            {
-                case OPPONENT:
-                    camPos.x = char.getMidpoint().x + 150;
-                    camPos.x += char.cameraOffset[0] + STAGE.opponentsCamera[characters.opponents.members.indexOf(char)][0];
-                    camPos.y = char.getMidpoint().y - 100;
-                    camPos.y += char.cameraOffset[1] + STAGE.opponentsCamera[characters.opponents.members.indexOf(char)][1];
-                case PLAYER:
-                    camPos.x = char.getMidpoint().x - 100;
-                    camPos.x -= char.cameraOffset[0] + STAGE.playersCamera[characters.players.members.indexOf(char)][0];
-                    camPos.y = char.getMidpoint().y - 100;
-                    camPos.y += char.cameraOffset[1] + STAGE.playersCamera[characters.players.members.indexOf(char)][1];
-                case EXTRA:
-                    camPos.x = char.getMidpoint().x - 100;
-                    camPos.x += char.cameraOffset[0] + STAGE.extrasCamera[characters.extras.members.indexOf(char)][0];
-                    camPos.y = char.getMidpoint().y;
-                    camPos.y += char.cameraOffset[1] + STAGE.extrasCamera[characters.extras.members.indexOf(char)][1];
-            }
-        }
-    }
-
-    public function pauseSong()
-    {
-        paused = true;
-
-        FlxG.sound.music.pause();
-
-        for (voice in voices)
-            voice.pause();
-    }
-
-    public function resumeSong()
-    {
-        paused = false;
-
-        FlxG.sound.music.resume();
-
-        for (voice in voices)
-            voice.resume();
-    }
-
-    public function restartSong(skipIn:Bool = true, skipOut:Bool = true)
-    {
-        shouldClearMemory = false;
-
-        pauseSong();
-        
-        CoolVars.skipTransIn = skipIn;
-        CoolVars.skipTransOut = skipOut;
-
-        FlxG.resetState();
-    }
-
-    private function loadVoice(?prefix:String = ''):FlxSound
-    {
-        if (Paths.voices(prefix) == null || !SONG.needsVoices)
-            return null;
-        
-        var sound:FlxSound = new FlxSound();
-        sound.loadEmbedded(Paths.voices(prefix));
-        sound.looped = false;
-
-        voices.add(sound);
-
-		FlxG.sound.list.add(sound);
-
-        return sound;
-    }
-
-	var keyPressed:Array<Int> = [];
-
-	function onKeyPress(event:KeyboardEvent)
-	{
-		if (botplay || keyPressed.contains(event.keyCode))
-			return;
-
-		switch (event.keyCode)
-		{
-			case 68:
-				hitNote(0);
-			case 70:
-				hitNote(1);
-			case 74:
-				hitNote(2);
-			case 75:
-				hitNote(3);
-		}
-
-		keyPressed.push(event.keyCode);
-	}
-
-	function onKeyRelease(event:KeyboardEvent)
-	{
-		if (botplay || !keyPressed.contains(event.keyCode))
-			return;
-
-		var allowedKeys:Array<Int> = [68, 70, 74, 75];
-
-		if (!allowedKeys.contains(event.keyCode))
-			return;
-        
-        releaseNote(allowedKeys.indexOf(event.keyCode));
-
-		keyPressed.remove(event.keyCode);
-	}
-
     private function initScripts()
     {
-        if (Paths.fileExists(songRoute + '/scripts'))
-            for (file in FileSystem.readDirectory(Paths.getPath(songRoute + '/scripts')))
-                loadScript(songRoute + '/scripts/' + file);
-
-        if (Paths.fileExists('scripts/songs'))
-            for (file in FileSystem.readDirectory(Paths.getPath('scripts/songs')))
-                loadScript('scripts/songs/' + file);
-
         STAGE = ALEParserHelper.getALEStage(SONG.stage);
 
         loadScript('stages/' + SONG.stage);
+
+        for (folder in ['scripts/songs', songRoute + '/scripts'])
+            if (Paths.fileExists(folder))
+                for (file in FileSystem.readDirectory(Paths.getPath(folder)))
+                    if (file.endsWith('.hx') || file.endsWith('.lua'))
+                        loadScript(folder + '/' + file);
     }
 
-    private function initAudios()
+    private function initStrums()
     {
-		FlxG.sound.playMusic(Paths.inst());
-        FlxG.sound.music.pause();
-        FlxG.sound.music.looped = false;
-		FlxG.sound.music.volume = 0.6;
-
-		voices = new FlxTypedGroup<FlxSound>();
-
-        loadVoice();
+        add(characters);
         
-        var playerVoices:FlxSound = loadVoice('Player');
-        if (playerVoices != null)
-            for (player in characters.players)
-                if (player.type == PLAYER)
-                    player.voice = playerVoices;
-        
-        var extraVoices:FlxSound = loadVoice('Extra');
-        if (extraVoices != null)
-            for (player in characters.extras)
-                if (player.type == EXTRA)
-                    player.voice = extraVoices;
-        
-        var opponentVoices:FlxSound = loadVoice('Opponent');
-        if (opponentVoices != null)
-            for (player in characters.opponents)
-                if (player.type == OPPONENT)
-                    player.voice = opponentVoices;
+        add(strumLines);
+        strumLines.cameras = [camHUD];
 
-		FlxG.sound.music.time = startPosition;
+        for (grid in SONG.grids)
+        {
+            var character = new Character(
+                switch (grid.type)
+                {
+                    case OPPONENT:
+                        STAGE.opponentsPosition[characters.opponents.members.length][0];
+                    case PLAYER:
+                        STAGE.playersPosition[characters.players.members.length][0];
+                    case EXTRA:
+                        STAGE.extrasPosition[characters.extras.members.length][0];
+                },
+                switch (grid.type)
+                {
+                    case OPPONENT:
+                        STAGE.opponentsPosition[characters.opponents.members.length][1];
+                    case PLAYER:
+                        STAGE.playersPosition[characters.players.members.length][1];
+                    case EXTRA:
+                        STAGE.extrasPosition[characters.extras.members.length][1];
+                },
+                grid.character, grid.type
+            );
 
-        for (voice in voices)
-            voice.time = startPosition;
+            var strl:StrumLine = new StrumLine(character, grid.sections);
 
-        FlxG.sound.music.play();
-        
-        for (voice in voices)
-            voice.play();
-
-        startPosition = 0;
-    }
-
-    private function initHUD()
-    {
-		healthBar = new Bar(null, ClientPrefs.data.downScroll ? 75 : FlxG.height - 70);
-		add(healthBar);
-		healthBar.cameras = [camHUD];
-		healthBar.x = FlxG.width / 2 - healthBar.width / 2;
-        healthBar.leftBar.color = opponentColor;
-        healthBar.rightBar.color = playerColor;
-        healthBar.orientation = RIGHT;
-
-		playerIcon = new HealthIcon(playerIconName);
-		add(playerIcon);
-		playerIcon.flipX = true;
-		playerIcon.cameras = [camHUD];
-		playerIcon.y = healthBar.y + healthBar.height / 2 - playerIcon.height / 2;
-
-		opponentIcon = new HealthIcon(opponentIconName);
-		add(opponentIcon);
-		opponentIcon.cameras = [camHUD];
-		opponentIcon.y = healthBar.y + healthBar.height / 2 - opponentIcon.height / 2;
-
-		scoreTxt = new FlxText(0, healthBar.y + healthBar.height + 20, FlxG.width, "", 16);
-		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, 'center');
-		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
-		scoreTxt.borderSize = 1;
-		scoreTxt.borderColor = FlxColor.BLACK;
-		scoreTxt.borderSize = 1.25;
-		add(scoreTxt);
-		scoreTxt.cameras = [camHUD];
-		scoreTxt.applyMarkup('Score: 0    Misses: 0    Rating: *[N/A]*', [new FlxTextFormatMarkerPair(new FlxTextFormat(CoolUtil.colorFromString('909090')), '*')]);
-    }
-
-    private function initCustomizableFunctions()
-    {
-        iconsZoomingFunction = (curStep) -> {
-            if (curStep % 4 == 0)
+            switch (grid.type)
             {
-                playerIcon.scale.set(1.2, 1.2);
-                playerIcon.updateHitbox();
-        
-                opponentIcon.scale.set(1.2, 1.2);
-                opponentIcon.updateHitbox();
-                
-                if (iconsPositionFunction != null)
-                    iconsPositionFunction();
+                case PLAYER:
+                    characters.players.add(character);
+
+                    strumLines.players.add(strl);
+                case OPPONENT:
+                    characters.opponents.add(character);
+
+                    strumLines.opponents.add(strl);
+                case EXTRA:
+                    characters.extras.add(character);
+
+                    strumLines.extras.add(strl);
             }
         }
+    }
 
-        iconsZoomLerpFunction = () -> {
-            playerIcon.scale.x = CoolUtil.fpsLerp(playerIcon.scale.x, 1, 0.33);
-            playerIcon.scale.y = CoolUtil.fpsLerp(playerIcon.scale.y, 1, 0.33);
-            playerIcon.updateHitbox();
-    
-            opponentIcon.scale.x = CoolUtil.fpsLerp(opponentIcon.scale.x, 1, 0.33);
-            opponentIcon.scale.y = CoolUtil.fpsLerp(opponentIcon.scale.y, 1, 0.33);
-            opponentIcon.updateHitbox();
-        }
-
-        iconsPositionFunction = () -> {
-            playerIcon.x = healthBar.x + healthBar.middlePoint - playerIcon.width / 10;
-    
-            opponentIcon.x = healthBar.x + healthBar.middlePoint - opponentIcon.width + opponentIcon.width / 10;
-        }
-
-		iconsAnimationFunction = () -> {
-			if (playerIcon != null && playerIcon.animation != null && playerIcon.animation.curAnim != null)
-			{
-				if (health < 20 && playerIcon.animation.curAnim.curFrame != 1)
-				{
-					playerIcon.animation.curAnim.curFrame = 1;
-				}
-	
-				if (health >= 20 && playerIcon.animation.curAnim.curFrame != 0)
-				{
-					playerIcon.animation.curAnim.curFrame = 0;
-				}
-			}
-	
-			if (opponentIcon != null && opponentIcon.animation != null && opponentIcon.animation.curAnim != null)
-			{
-				if (health > 80 && opponentIcon.animation.curAnim.curFrame != 1)
-				{
-					opponentIcon.animation.curAnim.curFrame = 1;
-				}
-	
-				if (health <= 80 && opponentIcon.animation.curAnim.curFrame != 0)
-				{
-					opponentIcon.animation.curAnim.curFrame = 0;
-				}
-			}
-		};
-
-        cameraZoomLerpFunction = () -> {
-            camGame.zoom = CoolUtil.fpsLerp(camGame.zoom, cameraZoom, 0.1);
-            camHUD.zoom = CoolUtil.fpsLerp(camHUD.zoom, 1, 0.1);
-        };
-
-        cameraZoomingFunction = (curStep) -> {
-            if (curStep % 16 == 0)
+    override public function loadHScript(path:String)
+    {
+        #if HSCRIPT_ALLOWED
+        if (Paths.fileExists(path + '.hx'))
+        {
+            try
             {
-                camGame.zoom += 0.03;
-                camHUD.zoom += 0.015;
+                var script:HScript = new HScript(Paths.getPath(path + '.hx'), STATE);
+    
+                if (script.parsingException != null)
+                {
+                    debugPrint('Error on Loading: ' + script.parsingException.message, ERROR);
+
+                    script.destroy();
+                } else {
+                    hScripts.push(script);
+
+                    new scripting.haxe.HaxePlayState(script);
+
+                    debugTrace('"' + path + '.hx" has been Successfully Loaded', HSCRIPT);
+                }
+            } catch (error) {
+                debugPrint('Error: ' + error.message, ERROR);
             }
-        };
+        }
+        #end
+    }
+
+    override public function loadLuaScript(path:String)
+    {
+        #if LUA_ALLOWED
+        if (Paths.fileExists(path + '.lua'))
+        {
+            var script:LuaScript = new LuaScript(Paths.getPath(path + '.lua'), STATE);
+
+            try
+            {
+                luaScripts.push(script);
+
+                new scripting.lua.LuaPlayState(script);
+
+                debugTrace('"' + path + '.lua" has been Successfully Loaded', LUA);
+            } catch(error) {
+                debugPrint('Error: ' + error, ERROR);
+            }
+        }
+        #end
     }
 }

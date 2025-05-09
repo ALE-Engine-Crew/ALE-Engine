@@ -1,4 +1,4 @@
-package other;
+package funkin.visuals.game;
 
 import core.enums.ALECharacterType;
 
@@ -56,6 +56,8 @@ class Strum extends FlxSprite
         centerOffsets();
 		centerOrigin();
 
+		animation.play('idle');
+
         return texture;
     }
 
@@ -87,7 +89,5 @@ class Strum extends FlxSprite
 		shaderRef.b = shaderArray[2];
 
 		antialiasing = ClientPrefs.data.antialiasing;
-
-		animation.play('idle');
     }
 }
