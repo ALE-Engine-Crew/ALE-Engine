@@ -25,11 +25,8 @@ jobs:
       - name: Build ALE Engine for Windows
         run: haxelib run lime build windows
 
-      - name: Create ZIP from Build Folder
-        run: Compress-Archive -Path export/windows/bin -DestinationPath ALEEngine.zip
-
-      - name: Upload ZIP Artifact
+      - name: Upload Build Folder as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ALE Engine - Windows Build
-          path: ALEEngine.zip
+          path: export/windows/bin
