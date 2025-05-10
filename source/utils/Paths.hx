@@ -12,9 +12,6 @@ import flixel.util.FlxColor;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
 
-import sys.FileSystem;
-import sys.io.File;
-
 import core.backend.Mods;
 
 import flash.media.Sound;

@@ -36,6 +36,8 @@ class Character extends FlxSprite
 
     public var offsetsMap:StringMap<Dynamic>;
 
+    public var cameraPosition:Array<Float>;
+
     public var texture(default, set):String;
     public function set_texture(value:String):String
     {
@@ -80,6 +82,8 @@ class Character extends FlxSprite
             animation.play('idle', true);
         else if (animation.exists('danceLeft'))
             animation.play('danceLeft', true);
+
+        cameraPosition = [data.cameraPosition[0] - offset.x, data.cameraPosition[0] - offset.y];
 
         return texture;
     }

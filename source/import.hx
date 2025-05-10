@@ -33,8 +33,12 @@ import utils.CoolUtil.debugTrace;
 import utils.CoolVars;
 import utils.Paths;
 
-import sys.io.File;
-import sys.FileSystem;
+#if sys
+import sys.*;
+import sys.io.*;
+#elseif js
+import js.html.*;
+#end
 
 import utils.ALEJson as Json;
 import utils.CoolUtil;

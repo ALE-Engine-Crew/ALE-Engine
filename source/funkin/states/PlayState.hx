@@ -13,6 +13,7 @@ import scripting.lua.LuaScript;
 import funkin.visuals.game.*;
 
 import flixel.sound.FlxSound;
+import flixel.FlxObject;
 
 class PlayState extends ScriptState
 {
@@ -45,6 +46,10 @@ class PlayState extends ScriptState
     public var instrumental:FlxSound;
     public var voices:FlxTypedGroup<FlxSound> = new FlxTypedGroup<FlxSound>();
 
+	public var camPosition:FlxObject;
+
+    public var cameraZoom:Float = 1;
+
     override function create()
     {
         super.create();
@@ -54,6 +59,13 @@ class PlayState extends ScriptState
         initScripts();
         
         callOnScripts('onCreate');
+
+		camPosition = new FlxObject(0, 0, 1, 1);
+		add(camPosition);
+		
+		camGame.target = camPosition;
+		camGame.followLerp = 2.4 * STAGE.cameraSpeed;
+        cameraZoom = STAGE.cameraZoom;
         
         cacheAssets();
 
@@ -62,6 +74,8 @@ class PlayState extends ScriptState
         initCharacters();
         
         initStrums();
+
+        moveCamera(0);
         
         Conductor.bpm = SONG.bpm;
 
@@ -75,6 +89,8 @@ class PlayState extends ScriptState
         super.update(elapsed);
 
         callOnScripts('onUpdate', [elapsed]);
+
+        camGame.zoom = CoolUtil.fpsLerp(camGame.zoom, cameraZoom, 0.1);
 
         callOnScripts('postUpdate', [elapsed]);
     }
@@ -134,6 +150,8 @@ class PlayState extends ScriptState
         super.sectionHit(curSection);
 
         callOnScripts('onSectionHit', [curSection]);
+
+        moveCamera(curSection);
 
         callOnScripts('postSectionHit', [curSection]);
     }
@@ -341,6 +359,33 @@ class PlayState extends ScriptState
 		FlxG.sound.list.add(sound);
 
         return sound;
+    }
+
+    private function moveCamera(section:Int)
+    {
+        if (SONG.sections[section] != null)
+        {
+            var char:Character = charactersArray[SONG.sections[section].focus];
+    
+            switch (char.type)
+            {
+                case OPPONENT:
+                    camPosition.x = char.getMidpoint().x + 150;
+                    camPosition.x += char.cameraPosition[0] + STAGE.opponentsCamera[characters.opponents.members.indexOf(char)][0];
+                    camPosition.y = char.getMidpoint().y - 100;
+                    camPosition.y += char.cameraPosition[1] + STAGE.opponentsCamera[characters.opponents.members.indexOf(char)][1];
+                case PLAYER:
+                    camPosition.x = char.getMidpoint().x - 100;
+                    camPosition.x -= char.cameraPosition[0] + STAGE.playersCamera[characters.players.members.indexOf(char)][0];
+                    camPosition.y = char.getMidpoint().y - 100;
+                    camPosition.y += char.cameraPosition[1] + STAGE.playersCamera[characters.players.members.indexOf(char)][1];
+                case EXTRA:
+                    camPosition.x = char.getMidpoint().x - 100;
+                    camPosition.x += char.cameraPosition[0] + STAGE.extrasCamera[characters.extras.members.indexOf(char)][0];
+                    camPosition.y = char.getMidpoint().y;
+                    camPosition.y += char.cameraPosition[1] + STAGE.extrasCamera[characters.extras.members.indexOf(char)][1];
+            }
+        }
     }
     
     override public function loadHScript(path:String)
