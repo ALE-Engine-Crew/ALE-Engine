@@ -6,11 +6,15 @@ class CustomState extends ScriptState
 
     public var scriptName:String = '';
 
-    override public function new(script:String)
+    public var arguments:Array<Dynamic>;
+
+    override public function new(script:String, ?arguments:Array<Dynamic>)
     {
         super();
 
         scriptName = script;
+
+        this.arguments = arguments;
     }
 
     override public function create()
@@ -20,41 +24,45 @@ class CustomState extends ScriptState
         instance = this;
 
         loadScripts();
+        
+        callOnScripts('onCreate');
+
+        setOnScripts('arguments', arguments);
+
+        setOnScripts('resetCustomState', resetCustomState);
+        
+        setOnHScripts('camGame', camGame);
+        setOnHScripts('camHUD', camHUD);
+
+        callOnScripts('postCreate');
     }
 
     public function loadScripts()
     {
         loadScript('scripts/states/' + scriptName);
         loadScript('scripts/states/global');
-
-        setOnScripts('resetCustomState', resetCustomState);
-        
-        setOnScripts('camGame', camGame);
-        setOnScripts('camHUD', camHUD);
-
-        callOnScripts('onCreate');
-
-        callOnScripts('onCreatePost');
     }
 
     override public function update(elapsed:Float)
     {
-        callOnScripts('onUpdate', [elapsed]);
-
         super.update(elapsed);
 
-        callOnScripts('onUpdatePost', [elapsed]);
+        callOnScripts('onUpdate', [elapsed]);
+
+        callOnScripts('postUpdate', [elapsed]);
     }
 
     override public function destroy()
     {
-        callOnScripts('onDestroy');
+        super.destroy();
 
-        destroyScripts();
+        callOnScripts('onDestroy');
 
         instance = null;
 
-        super.destroy();
+        callOnScripts('postDestroy');
+
+        destroyScripts();
     }
 
     override public function stepHit(curStep:Int)
@@ -62,6 +70,8 @@ class CustomState extends ScriptState
         super.stepHit(curStep);
 
         callOnScripts('onStepHit', [curStep]);
+
+        callOnScripts('postStepHit', [curStep]);
     }
 
     override public function beatHit(curBeat:Int)
@@ -69,6 +79,8 @@ class CustomState extends ScriptState
         super.beatHit(curBeat);
 
         callOnScripts('onBeatHit', [curBeat]);
+
+        callOnScripts('postBeatHit', [curBeat]);
     }
 
     override public function sectionHit(curSection:Int)
@@ -76,20 +88,26 @@ class CustomState extends ScriptState
         super.sectionHit(curSection);
 
         callOnScripts('onSectionHit', [curSection]);
+
+        callOnScripts('postSectionHit', [curSection]);
     }
 
     override public function onFocus()
     {
         super.onFocus();
 
-        callOnScripts('onFocus');
+        callOnScripts('onOnFocus');
+
+        callOnScripts('postOnFocus');
     }
 
     override public function onFocusLost()
     {
         super.onFocusLost();
 
-        callOnScripts('onFocusLost');
+        callOnScripts('onOnFocusLost');
+
+        callOnScripts('postOnFocusLost');
     }
 
     override public function openSubState(substate:flixel.FlxSubState):Void
@@ -97,6 +115,8 @@ class CustomState extends ScriptState
         super.openSubState(substate);
 
         callOnScripts('onOpenSubState', [substate]);
+
+        callOnScripts('postOpenSubState', [substate]);
     }
 
     override public function closeSubState():Void
@@ -104,6 +124,8 @@ class CustomState extends ScriptState
         super.closeSubState();
 
         callOnScripts('onCloseSubState');
+
+        callOnScripts('postCloseSubState');
     }
 
     public function resetCustomState()

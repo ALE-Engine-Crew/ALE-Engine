@@ -55,6 +55,149 @@ class PlayState extends ScriptState
         
         callOnScripts('onCreate');
         
+        cacheAssets();
+
+        initAudios();
+        
+        initStrums();
+        
+        Conductor.bpm = SONG.bpm;
+
+        scrollSpeed = SONG.speed;
+
+        callOnScripts('postCreate');
+    }
+
+    override public function update(elapsed:Float)
+    {
+        super.update(elapsed);
+
+        callOnScripts('onUpdate', [elapsed]);
+
+        callOnScripts('postUpdate', [elapsed]);
+    }
+
+    override public function destroy()
+    {
+        super.destroy();
+
+        callOnScripts('onDestroy');
+
+        instance = null;
+
+        callOnScripts('postDestroy');
+
+        destroyScripts();
+    }
+	
+	override function stepHit(curStep:Int)
+	{
+		super.stepHit(curStep);
+
+		callOnScripts('onStepHit', [curStep]);
+        
+		if (SONG.needsVoices /* && FlxG.sound.music.time >= -ClientPrefs.data.noteOffset*/)
+			resyncVoices();
+
+        callOnScripts('postStepHit', [curStep]);
+    }
+
+    override function beatHit(curBeat:Int)
+    {
+        super.beatHit(curBeat);
+
+        callOnScripts('onBeatHit', [curBeat]);
+
+        if (curBeat % 2 == 0)
+        {
+            for (charGroup in characters.getGroups())
+                for (character in charGroup)
+                    if (character.finishedIdleTimer && character.allowIdle)
+                        if (character.animation.exists('idle'))
+                            character.animation.play('idle', true);
+                        else if (character.animation.exists('danceLeft'))
+                            character.animation.play('danceLeft', true);
+        } else if (curBeat % 2 == 1) {
+            for (charGroup in characters.getGroups())
+                for (character in charGroup)
+                    if (character.animation.exists('danceRight') && character.finishedIdleTimer && character.allowIdle)
+                        character.animation.play('danceRight', true);
+        }
+
+        callOnScripts('postBeatHit', [curBeat]);
+    }
+
+    override public function sectionHit(curSection:Int)
+    {
+        super.sectionHit(curSection);
+
+        callOnScripts('onSectionHit', [curSection]);
+
+        callOnScripts('postSectionHit', [curSection]);
+    }
+
+    override public function onFocus()
+    {
+        super.onFocus();
+
+        callOnScripts('onOnFocus');
+
+        callOnScripts('postOnFocus');
+    }
+
+    override public function onFocusLost()
+    {
+        super.onFocusLost();
+
+        callOnScripts('onOnFocusLost');
+
+        callOnScripts('postOnFocusLost');
+    }
+
+    override public function openSubState(substate:flixel.FlxSubState):Void
+    {
+        super.openSubState(substate);
+
+        callOnScripts('onOpenSubState', [substate]);
+
+        callOnScripts('postOpenSubState', [substate]);
+    }
+
+    override public function closeSubState():Void
+    {
+        super.closeSubState();
+
+        callOnScripts('onCloseSubState');
+
+        callOnScripts('postCloseSubState');
+    }
+
+    private function initScripts()
+    {
+        STAGE = ALEParserHelper.getALEStage(SONG.stage);
+
+        loadScript('stages/' + SONG.stage);
+
+        for (folder in ['scripts/songs', songRoute + '/scripts'])
+            if (Paths.fileExists(folder))
+                for (file in FileSystem.readDirectory(Paths.getPath(folder)))
+                    if (file.endsWith('.hx') || file.endsWith('.lua'))
+                        loadScript(folder + '/' + file);
+    }
+
+    private function cacheAssets()
+    {
+        callOnScripts('onCacheAssets');
+
+        Paths.image('ui/alphabet');
+
+        callOnScripts('postCacheAssets');
+    }
+
+    private function initAudios()
+    {
+        callOnScripts('onInitAudios');
+        
 		instrumental = new FlxSound().loadEmbedded(Paths.inst(songRoute));
         instrumental.volume = 0.6;
 
@@ -74,84 +217,18 @@ class PlayState extends ScriptState
         for (voice in voices)
             voice.play();
         
-        initStrums();
-        
-        Conductor.bpm = SONG.bpm;
-
-        scrollSpeed = SONG.speed;
-
-        callOnScripts('onCreatePost');
-    }
-
-    override function update(elapsed:Float)
-    {
-        super.update(elapsed);
-
-        callOnScripts('onUpdate', [elapsed]);
-
-        callOnScripts('onUpdatePost', [elapsed]);
-    }
-	
-	override function stepHit(curStep:Int)
-	{
-		super.stepHit(curStep);
-        
-		if (SONG.needsVoices /* && FlxG.sound.music.time >= -ClientPrefs.data.noteOffset*/)
-			resyncVoices();
-
-		callOnScripts('onStepHit', [curStep]);
-    }
-
-    override function beatHit(curBeat:Int)
-    {
-        super.beatHit(curBeat);
-
-        if (curBeat % 2 == 0)
-        {
-            for (charGroup in characters.getGroups())
-                for (character in charGroup)
-                    if (character.finishedIdleTimer && character.allowIdle)
-                        if (character.animation.exists('idle'))
-                            character.animation.play('idle', true);
-                        else if (character.animation.exists('danceLeft'))
-                            character.animation.play('danceLeft', true);
-        } else if (curBeat % 2 == 1) {
-            for (charGroup in characters.getGroups())
-                for (character in charGroup)
-                    if (character.animation.exists('danceRight') && character.finishedIdleTimer && character.allowIdle)
-                        character.animation.play('danceRight', true);
-        }
-
-        callOnScripts('onBeatHit', [curBeat]);
-    }
-
-    override function destroy()
-    {
-        instance = null;
-
-        super.destroy();
-    }
-
-    private function initScripts()
-    {
-        STAGE = ALEParserHelper.getALEStage(SONG.stage);
-
-        loadScript('stages/' + SONG.stage);
-
-        for (folder in ['scripts/songs', songRoute + '/scripts'])
-            if (Paths.fileExists(folder))
-                for (file in FileSystem.readDirectory(Paths.getPath(folder)))
-                    if (file.endsWith('.hx') || file.endsWith('.lua'))
-                        loadScript(folder + '/' + file);
+        callOnScripts('postInitAudios');
     }
 
     private function initStrums()
     {
+        callOnScripts('onInitStrums');
+
         add(characters);
         
         add(strumLines);
         strumLines.cameras = [camHUD];
-
+        
         for (grid in SONG.grids)
         {
             var character = new Character(
@@ -194,7 +271,32 @@ class PlayState extends ScriptState
                     strumLines.extras.add(strl);
             }
         }
+        
+        callOnScripts('postInitStrums');
     }
+
+	private function resyncVoices():Void
+	{
+        callOnScripts('onResyncVoices');
+
+		var timeSub:Float = Conductor.songPosition /*- Conductor.offset*/;
+		var syncTime:Float = 10 /* * playbackRate*/;
+
+        for (voice in voices)
+        {
+            if (Math.abs(FlxG.sound.music.time - timeSub) > syncTime || (voice.length > 0 && Math.abs(voice.time - timeSub) > syncTime))
+            {
+                voice.pause();
+        
+                if (Conductor.songPosition <= voice.length)
+                    voice.time = Conductor.songPosition;
+        
+                voice.play();
+            }
+        }
+
+        callOnScripts('postResyncVoices');
+	}
 
     private function loadVoice(?prefix:String = ''):FlxSound
     {
@@ -211,25 +313,6 @@ class PlayState extends ScriptState
 
         return sound;
     }
-
-	private function resyncVoices():Void
-	{
-		var timeSub:Float = Conductor.songPosition /*- Conductor.offset*/;
-		var syncTime:Float = 10 /* * playbackRate*/;
-
-        for (voice in voices)
-        {
-            if (Math.abs(FlxG.sound.music.time - timeSub) > syncTime || (voice.length > 0 && Math.abs(voice.time - timeSub) > syncTime))
-            {
-                voice.pause();
-        
-                if (Conductor.songPosition <= voice.length)
-                    voice.time = Conductor.songPosition;
-        
-                voice.play();
-            }
-        }
-	}
     
     override public function loadHScript(path:String)
     {

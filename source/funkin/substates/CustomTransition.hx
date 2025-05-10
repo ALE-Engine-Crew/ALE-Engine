@@ -31,14 +31,10 @@ class CustomTransition extends CustomSubState
         loadScript('scripts/substates/' + scriptName);
         loadScript('scripts/substates/global');
         
-        setOnScripts('camGame', FlxG.camera);
+        setOnHScripts('camGame', FlxG.camera);
 
         setOnScripts('transIn', transIn);
         setOnScripts('transOut', transOut);
-
-        callOnScripts('onCreate');
-
-        callOnScripts('onCreatePost');
 
         setOnScripts('finishCallback', finishCallback);
     }
