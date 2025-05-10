@@ -58,6 +58,8 @@ class PlayState extends ScriptState
         cacheAssets();
 
         initAudios();
+
+        initCharacters();
         
         initStrums();
         
@@ -220,19 +222,20 @@ class PlayState extends ScriptState
         callOnScripts('postInitAudios');
     }
 
-    private function initStrums()
+    private var charactersArray:Array<Character> = [];
+
+    private function initCharacters()
     {
-        callOnScripts('onInitStrums');
+        callOnScripts('onInitCharacters');
 
         add(characters);
-        
-        add(strumLines);
-        strumLines.cameras = [camHUD];
-        
-        for (grid in SONG.grids)
+
+        for (character in SONG.characters)
         {
-            var character = new Character(
-                switch (grid.type)
+            var type:ALECharacterType = cast character[1];
+
+            var object = new Character(
+                switch (type)
                 {
                     case OPPONENT:
                         STAGE.opponentsPosition[characters.opponents.members.length][0];
@@ -241,7 +244,7 @@ class PlayState extends ScriptState
                     case EXTRA:
                         STAGE.extrasPosition[characters.extras.members.length][0];
                 },
-                switch (grid.type)
+                switch (type)
                 {
                     case OPPONENT:
                         STAGE.opponentsPosition[characters.opponents.members.length][1];
@@ -250,24 +253,50 @@ class PlayState extends ScriptState
                     case EXTRA:
                         STAGE.extrasPosition[characters.extras.members.length][1];
                 },
-                grid.character, grid.type
+                character[0], cast character[1]
             );
 
-            var strl:StrumLine = new StrumLine(character, grid.sections);
-
-            switch (grid.type)
+            charactersArray.push(object);
+                
+            switch (type)
             {
                 case PLAYER:
-                    characters.players.add(character);
+                    characters.players.add(object);
+                case OPPONENT:
+                    characters.opponents.add(object);
+                case EXTRA:
+                    characters.extras.add(object);
+            }
+        }
 
+        callOnScripts('postInitCharacters');
+    }
+
+    private function initStrums()
+    {
+        callOnScripts('onInitStrums');
+        
+        add(strumLines);
+        strumLines.cameras = [camHUD];
+        
+        for (index => character in charactersArray)
+        {
+            var notes:Array<Array<Dynamic>> = [];
+
+            for (section in SONG.sections)
+                for (note in section.notes)
+                    if (note[4] == index)
+                        notes.push(note);
+
+            var strl:StrumLine = new StrumLine(character, notes);
+
+            switch (character.type)
+            {
+                case PLAYER:
                     strumLines.players.add(strl);
                 case OPPONENT:
-                    characters.opponents.add(character);
-
                     strumLines.opponents.add(strl);
                 case EXTRA:
-                    characters.extras.add(character);
-
                     strumLines.extras.add(strl);
             }
         }

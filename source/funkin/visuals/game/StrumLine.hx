@@ -30,7 +30,7 @@ class StrumLine extends FlxGroup
 
     public var character:Character;
 
-    public function new(character:Character, sections:Array<ALESection>, startPosition:Float = 0)
+    public function new(character:Character, chartNotes:Array<Array<Dynamic>>, startPosition:Float = 0)
     {
         super();
 
@@ -58,42 +58,39 @@ class StrumLine extends FlxGroup
             }
         }
 
-        for (section in sections)
+        for (chartNote in chartNotes)
         {
-            for (chartNote in section.notes)
+            if (chartNote[0] < startPosition)
+                continue;
+
+            var note:Note = new Note(chartNote[0], chartNote[1], chartNote[2], character.type, NORMAL);
+
+            var length:Float = chartNote[2];
+
+            if (length > 0)
             {
-                if (chartNote[0] < startPosition)
-                    continue;
+                var parent:Note = note;
 
-                var note:Note = new Note(chartNote[0], chartNote[1], chartNote[2], character.type, NORMAL);
+                var rawLoop:Float = length / Conductor.stepCrochet;
 
-                var length:Float = chartNote[2];
+                var susLoop:Int = rawLoop - Math.floor(rawLoop) <= 0.8 ? Math.floor(rawLoop) : Math.round(rawLoop);
 
-                if (length > 0)
+                if (susLoop <= 0)
+                    susLoop = 1;
+
+                for (i in 0...susLoop + 1)
                 {
-                    var parent:Note = note;
+                    var sustain:Note = new Note(chartNote[0], chartNote[1], chartNote[2], character.type, i == susLoop ? SUSTAIN_END : SUSTAIN);
 
-                    var rawLoop:Float = length / Conductor.stepCrochet;
+                    unspawnNotes.push(sustain);
 
-                    var susLoop:Int = rawLoop - Math.floor(rawLoop) <= 0.8 ? Math.floor(rawLoop) : Math.round(rawLoop);
+                    note.children.push(sustain);
 
-                    if (susLoop <= 0)
-                        susLoop = 1;
-
-                    for (i in 0...susLoop + 1)
-                    {
-                        var sustain:Note = new Note(chartNote[0], chartNote[1], chartNote[2], character.type, i == susLoop ? SUSTAIN_END : SUSTAIN);
-
-                        unspawnNotes.push(sustain);
-
-                        note.children.push(sustain);
-
-                        parent = sustain;
-                    }
+                    parent = sustain;
                 }
-
-                unspawnNotes.push(note);
             }
+
+            unspawnNotes.push(note);
         }
     }
 

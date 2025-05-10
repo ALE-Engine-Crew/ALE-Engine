@@ -9,9 +9,12 @@ typedef ALESong =
     var beats:Int;
     var steps:Int;
     
-    var grids:Array<ALEGrid>;
+    var characters:Array<Array<String>>;
+
+    var sections:Array<ALESection>;
 
     var events:Array<Dynamic>;
+    
     var speed:Float;
 
     var stage:String;

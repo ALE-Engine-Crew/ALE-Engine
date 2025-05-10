@@ -4,204 +4,68 @@ import core.structures.*;
 
 class ALEParserHelper 
 {
-	public static function getALESong(json:Dynamic):ALESong
+	public static function getALESong(songJson:Dynamic):ALESong
 	{
-		var formattedJson:Dynamic = {};
+		if (songJson.format == 'ale-format-v0.1')
+			return cast songJson;
 
-		if (json.format == 'ale-format-v0.1')
-		{
-			return cast json;
-		} else if (json.format == 'psych_v1') {
-			var daJson = json;
-			
-			formattedJson = {
-				song: daJson.song == null ? 'test' : json.song,
-				needsVoices: json.needsVoices == null ? true : json.needsVoices,
-				speed: daJson.speed == 0 ? 1 : daJson.speed,
-				stage: daJson.stage == null ? 'stage' : daJson.stage,
-				
-				grids: new Array<Dynamic>(),
-				events: new Array<Dynamic>(),
-				metadata: {},
+		var json:Dynamic = songJson;
 
-				bpm: daJson.bpm == null ? 100 : daJson.bpm,
-				beats: 4,
-				steps: 4,
+		if (json.format == null || json.format != 'psych_v1')
+			json = json.song;
 
-				format: 'ale-format-v0.1',
-			}
-			
-			var newJson:PsychSong = cast json;
+		var psychJson:PsychSong = cast json;
 
-			var sectionsOpponent:Array<Dynamic> = [];
-			var sectionsPlayer:Array<Dynamic> = [];
+		var formattedJson:ALESong = {
+            characters: [
+                [json.player3 == null ? (json.gfVersion == null ? 'gf' : json.gfVersion) : json.player3, 'extra'],
+                [json.player2 == null ? 'dad' : json.player2, 'opponent'],
+                [json.player1 == null ? 'bf' : json.player1, 'player']
+            ],
 
-			for (section in newJson.notes)
-			{
-				var notesPlayer:Array<Dynamic> = [];
-				var notesOpponent:Array<Dynamic> = [];
+			sections: [],
 
-				for (noteArray in section.sectionNotes)
-				{
-					if ((section.mustHitSection && noteArray[1] <= 3) || (!section.mustHitSection && noteArray[1] >= 4))
-						notesPlayer.push(noteArray);
-					else
-						notesOpponent.push(noteArray);
-				}
+            events: [],
 
-				sectionsOpponent.push(
-					{
-						notes: notesOpponent,
+			song: json.song,
+			stage: json.stage == null ? (songJson.stage == null ? 'stage' : songJson.stage) : json.stage,
 
-						cameraFocusThis: !section.mustHitSection
-					}
-				);
+			metadata: {},
 
-				sectionsPlayer.push(
-					{
-						notes: notesPlayer,
+			needsVoices: json.needsVoices == null ? true : json.needsVoices,
+			speed: json.speed == 0 ? 1 : json.speed,
 
-						cameraFocusThis: section.mustHitSection
-					}
-				);
-			}
+			bpm: json.bpm == null ? 100 : json.bpm,
+			beats: 4,
+			steps: 4,
 
-			formattedJson.grids.push(
-				{
-					sections: sectionsOpponent,
-					
-					character: json.player2,
-					type: 'opponent'
-				}
-			);
-
-			formattedJson.grids.push(
-				{
-					sections: sectionsPlayer,
-					
-					character: json.player1,
-					type: 'player'
-				}
-			);
-
-			formattedJson.grids.push(
-				{
-					sections: new Array<Dynamic>(),
-
-					character: json.gfVersion == null ? 'gf' : json.gfVersion,
-					type: 'extra'
-				}
-			);
-
-			for (_ in 0...sectionsOpponent.length - 1)
-			{
-				formattedJson.grids[2].sections.push(
-					{
-						notes: new Array<Int>(),
-		
-						cameraFocusThis: false
-					}
-				);
-			}
-		} else {
-			var daJson = json.song;
-
-			formattedJson = {
-				song: daJson.song,
-				needsVoices: true,
-				speed: daJson.speed == null ? 1 : daJson.speed,
-				stage: daJson.stage != null ? daJson.stage : json.stage != null ? json.stage : 'stage',
-				
-				grids: new Array<Dynamic>(),
-				events: new Array<Dynamic>(),
-				metadata: {},
-
-				bpm: daJson.bpm,
-				beats: 4,
-				steps: 4,
-
-				format: 'ale-format-v0.1',
-			}
-
-			var newJson:PsychSong = cast json.song;
-
-			var sectionsOpponent:Array<Dynamic> = [];
-			var sectionsPlayer:Array<Dynamic> = [];
-
-			for (section in newJson.notes)
-			{
-				var notesPlayer:Array<Dynamic> = [];
-				var notesOpponent:Array<Dynamic> = [];
-
-				for (noteArray in section.sectionNotes)
-				{
-					if ((section.mustHitSection && noteArray[1] <= 3) || (!section.mustHitSection && noteArray[1] >= 4))
-					{
-						noteArray[1] = noteArray[1] % 4;
-						notesPlayer.push(noteArray);
-					} else {
-						noteArray[1] = noteArray[1] % 4;
-						notesOpponent.push(noteArray);
-					}
-				}
-
-				sectionsOpponent.push(
-					{
-						notes: notesOpponent,
-
-						cameraFocusThis: !section.mustHitSection
-					}
-				);
-
-				sectionsPlayer.push(
-					{
-						notes: notesPlayer,
-
-						cameraFocusThis: section.mustHitSection
-					}
-				);
-			}
-
-			formattedJson.grids.push(
-				{
-					sections: sectionsOpponent,
-					
-					character: json.song.player2,
-					type: 'opponent'
-				}
-			);
-
-			formattedJson.grids.push(
-				{
-					sections: sectionsPlayer,
-					
-					character: json.song.player1,
-					type: 'player'
-				}
-			);
-
-			formattedJson.grids.push(
-				{
-					sections: new Array<Dynamic>(),
-
-					character: json.song.gfVersion == null ? 'gf' : json.song.gfVersion,
-					type: 'extra'
-				}
-			);
-
-			for (_ in 0...sectionsOpponent.length - 1)
-			{
-				formattedJson.grids[2].sections.push(
-					{
-						notes: new Array<Int>(),
-		
-						cameraFocusThis: false
-					}
-				);
-			}
+			format: 'ale-format-v0.1'
 		}
 
-		return formattedJson;
+		for (section in psychJson.notes)
+		{
+			var newSection = {
+				notes: [],
+				focus: section.mustHitSection ? 2 : 1
+			};
+
+			for (note in section.sectionNotes)
+			{
+				newSection.notes.push(   
+					[
+						note[0],
+						note[1] % 4,
+						note[2],
+						note[3],
+						(section.mustHitSection && note[1] <= 3) || (!section.mustHitSection && note[1] >= 4) ? 2 : 1
+					]
+				);
+			}
+
+			formattedJson.sections.push(newSection);
+		}
+		
+		return cast formattedJson;
 	}
 
     public static function getALECharacter(path:String):ALECharacter
