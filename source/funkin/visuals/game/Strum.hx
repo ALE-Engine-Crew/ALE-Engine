@@ -56,7 +56,7 @@ class Strum extends FlxSprite
         centerOffsets();
 		centerOrigin();
 
-		animation.play('idle');
+		animation.play('idle', true);
 
         return texture;
     }
@@ -89,5 +89,7 @@ class Strum extends FlxSprite
 		shaderRef.b = shaderArray[2];
 
 		antialiasing = ClientPrefs.data.antialiasing;
+
+		animation.play('idle', true);
     }
 }

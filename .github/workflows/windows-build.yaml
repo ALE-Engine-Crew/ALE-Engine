@@ -11,8 +11,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Pulling the New Commit
         uses: actions/checkout@v2
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.3.6
         
       - name: Restore Build Cache
         uses: actions/cache@v3
@@ -25,24 +30,19 @@ jobs:
           restore-keys: |
             cache-build-windows
 
-      - name: Setup Haxe
-        uses: krdlab/setup-haxe@v1
-        with:
-          haxe-version: 4.3.6
-
       - name: Installing Libraries
         run: setup/install-haxelibs.bat
 
       - name: Build for Windows
         run: haxelib run lime build windows
 
-      - name: Upload Build Folder as Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ALE Engine - Windows Build
           path: export/windows/bin
 
-      - name: Clearing Existing Cache
+      - name: Clear Existing Cache
         uses: actions/github-script@v6
         with:
           script: |

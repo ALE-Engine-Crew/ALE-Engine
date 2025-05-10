@@ -59,7 +59,7 @@ class Note extends FlxSprite
         
         scale.set(0.7, 0.7);
 
-		animation.play('idle');
+		animation.play('idle', true);
 
 		if (noteType == NORMAL)
 		{
@@ -102,6 +102,8 @@ class Note extends FlxSprite
 		flipY = noteType == SUSTAIN_END && ClientPrefs.data.downScroll;
 
 		antialiasing = ClientPrefs.data.antialiasing;
+
+		animation.play('idle', true);
     }
 
 	public function resetNote()
