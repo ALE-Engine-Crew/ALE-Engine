@@ -17,6 +17,8 @@ class Strum extends FlxSprite
 
     public var scrollSpeed:Float = 1;
 
+	public var strumLine:StrumLine;
+
     public var texture(default, set):String;
     public function set_texture(value:String):String
     {
@@ -46,7 +48,7 @@ class Strum extends FlxSprite
 		});
 
 		animation.onFinish.add((name:String) -> {
-			if (name == 'hit' && type != PLAYER)
+			if (name == 'hit' && strumLine.botplay)
 				animation.play('idle');
 		});
 
@@ -61,11 +63,13 @@ class Strum extends FlxSprite
         return texture;
     }
 
-    override public function new(data:Int, type:ALECharacterType, texture:String = 'note')
+    override public function new(data:Int, type:ALECharacterType, strumLine:StrumLine, texture:String = 'note')
     {
         super();
 
         this.data = data;
+
+		this.strumLine = strumLine;
 
         this.texture = texture;
 

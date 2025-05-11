@@ -102,7 +102,7 @@ class PlayState extends ScriptState
         super.destroy();
 
         callOnScripts('onDestroy');
-
+        
         instance = null;
 
         callOnScripts('postDestroy');
@@ -199,7 +199,7 @@ class PlayState extends ScriptState
 
         callOnScripts('postCloseSubState');
     }
-
+    
     private function initScripts()
     {
         STAGE = ALEParserHelper.getALEStage(SONG.stage);

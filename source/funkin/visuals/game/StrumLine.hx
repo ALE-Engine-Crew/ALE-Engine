@@ -26,7 +26,7 @@ class StrumLine extends FlxGroup
 
     public var scrollTween:FlxTween;
 
-    public var botplay:Bool = false;
+    public var botplay:Bool;
 
     public var character:Character;
 
@@ -35,6 +35,8 @@ class StrumLine extends FlxGroup
         super();
 
         this.character = character;
+
+        botplay = this.character.type != PLAYER;
 
         allNotes = new FlxTypedGroup<Note>();
 
@@ -47,7 +49,7 @@ class StrumLine extends FlxGroup
 
         for (i in 0...4)
         {
-            var strum:Strum = new Strum(i, character.type);
+            var strum:Strum = new Strum(i, character.type, this);
             strums.add(strum);
 
             if (character.type == PLAYER)
@@ -65,6 +67,7 @@ class StrumLine extends FlxGroup
 
             var note:Note = new Note(chartNote[0], chartNote[1], chartNote[2], character.type, NORMAL);
 
+            /*
             var length:Float = chartNote[2];
 
             if (length > 0)
@@ -89,6 +92,7 @@ class StrumLine extends FlxGroup
                     parent = sustain;
                 }
             }
+            */
 
             unspawnNotes.push(note);
         }
@@ -122,19 +126,6 @@ class StrumLine extends FlxGroup
             }
         }
 
-        for (strum in strums)
-        {
-            if (character.type == PLAYER)
-            {
-
-            }
-        }
-
-        for (sustain in sustains)
-        {
-            
-        }
-
         for (note in allNotes)
         {
             if (Conductor.songPosition >= note.strumTime + note.noteLenght + Conductor.stepCrochet + despawnTime / scrollSpeed)
@@ -160,20 +151,13 @@ class StrumLine extends FlxGroup
 
             for (sustain in note.children)
                 Note.setNotePosition(sustain, note, strum.direction, 0, Conductor.stepCrochet * scrollSpeed * 0.45 * note.children.indexOf(sustain));
-
-            if (character.type == PLAYER)
-            {
-                if (Conductor.songPosition >= note.strumTime && note.state == NEUTRAL)
-                    onNoteMiss(note);
-            } else {
-            if (note.strumTime - Conductor.songPosition <= 0 && note.state == NEUTRAL)
+        
+            if (botplay && Conductor.songPosition >= note.strumTime && note.state == NEUTRAL)
                 onNoteHit(note);
-            }
-            /*
-            if (note.strumTime - Conductor.songPosition <= 0 && note.state == NEUTRAL)
-                onNoteHit(note);
-                */
         }
+
+        if (!botplay)
+            useKeys();
 
         for (sustain in sustains)
         {
@@ -223,6 +207,44 @@ class StrumLine extends FlxGroup
                 if (parent.state == LOST && sustain.state != LOST)
                     onNoteMiss(sustain);
             }
+        }
+    }
+
+    function useKeys():Void
+    {
+        var keysJustPressed:Array<Bool> = [
+            FlxG.keys.justPressed.D,
+            FlxG.keys.justPressed.F,
+            FlxG.keys.justPressed.J,
+            FlxG.keys.justPressed.K
+        ];
+
+        var keysJustReleased:Array<Bool> = [
+            FlxG.keys.justReleased.D,
+            FlxG.keys.justReleased.F,
+            FlxG.keys.justReleased.J,
+            FlxG.keys.justReleased.K
+        ];
+        
+        var pressedData:Int = -1;
+
+        for (note in notes)
+            if (keysJustPressed[note.data] && note.state == NEUTRAL && note.ableToHit)
+            {
+                pressedData = note.data;
+
+                onNoteHit(note);
+
+                break;
+            }
+        
+        for (strum in strums)
+        {
+            if (keysJustPressed[strum.data] && strum.data != pressedData)
+                strum.animation.play('pressed', true);
+
+            if (keysJustReleased[strum.data])
+                strum.animation.play('idle', true);
         }
     }
 
@@ -284,10 +306,10 @@ class StrumLine extends FlxGroup
 
     public function addNote(note:Note)
     {
-        allNotes.insert(0, note);
+        allNotes.add(note);
 
         if (note.noteType == NORMAL)
-            notes.insert(0, note);
+            notes.add(note);
         else
             sustains.remove(note);
     }

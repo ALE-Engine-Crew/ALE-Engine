@@ -29,7 +29,11 @@ class Note extends FlxSprite
 
 	public var prevNote:Note;
 	public var parentNote:Note;
-	
+
+	public var ableToHit(get, never):Bool;
+	function get_ableToHit():Bool
+		return state == NEUTRAL && Math.abs(strumTime - Conductor.songPosition) < 175;
+
 	var noteAnim(get, never):String;
 	function get_noteAnim():String
 		return switch (data) {

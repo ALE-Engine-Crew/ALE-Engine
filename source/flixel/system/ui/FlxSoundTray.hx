@@ -135,7 +135,7 @@ class FlxSoundTray extends Sprite
 		visible = active = Math.floor(y) >= -height;
 	}
 	
-	public function showAnim(volume:Float, duration = 1.5, label = 'VOLUME')
+	public function showAnim(volume:Float, duration = 1.25, label = 'VOLUME')
 	{
 		if (!silent)
 			FlxG.sound.play(Paths.sound('tick'), 0.75);
@@ -144,7 +144,7 @@ class FlxSoundTray extends Sprite
 
 		_y = 0;
 
-		_alpha = 1.5;
+		_alpha = 1;
 
 		visible = true;
 
