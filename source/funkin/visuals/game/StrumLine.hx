@@ -21,7 +21,7 @@ class StrumLine extends FlxGroup
 
     public var splashes:FlxTypedGroup<Splash>;
 
-    public var downscroll:Bool = false;
+    public var downScroll:Bool = false;
 
     public var scrollSpeed:Float = 1;
 
@@ -39,6 +39,8 @@ class StrumLine extends FlxGroup
         super();
 
         this.character = character;
+
+        this.downScroll = ClientPrefs.data.downScroll;
 
         botplay = this.character.type != PLAYER;
 
@@ -147,10 +149,10 @@ class StrumLine extends FlxGroup
         {
             var strum:Strum = strums.members[note.data];
 
-            Note.setNotePosition(note, strum, strum.direction, 0, (note.strumTime - Conductor.songPosition) * scrollSpeed * 0.45);
+            Note.setNotePosition(note, strum, strum.direction, 0, (note.strumTime - Conductor.songPosition) * scrollSpeed * 0.45 * (ClientPrefs.data.downScroll ? -1 : 1));
 
             for (sustain in note.children)
-                Note.setNotePosition(sustain, note, strum.direction, 0, Conductor.stepCrochet * scrollSpeed * 0.45 * note.children.indexOf(sustain));
+                Note.setNotePosition(sustain, note, strum.direction, 0, Conductor.stepCrochet * scrollSpeed * 0.45 * note.children.indexOf(sustain) * (ClientPrefs.data.downScroll ? -1 : 1));
         
             if (botplay)
             {

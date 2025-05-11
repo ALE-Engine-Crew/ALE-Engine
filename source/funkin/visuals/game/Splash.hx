@@ -86,9 +86,6 @@ class Splash extends AttachedSprite
 
         texture = texture;
 
-        animation.play('splash');
-        visible = false;
-
         antialiasing = ClientPrefs.data.antialiasing;
 
         alphaMult = ClientPrefs.data.splashAlpha / 100;

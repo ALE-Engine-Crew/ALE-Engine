@@ -80,7 +80,7 @@ class Strum extends FlxSprite
 		else
 			x += FlxG.width - (160 * 0.7 * 5) + 50;
 
-        y = 50;
+		y = ClientPrefs.data.downScroll ? FlxG.height - 150 : 50;
 
 		var rgbPalette = new RGBPalette();
 
