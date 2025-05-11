@@ -79,6 +79,9 @@ class Main extends Sprite
 		#if (windows && cpp)
 		untyped __cpp__("SetProcessDPIAware();");
 
+		FlxG.stage.window.borderless = true;
+		FlxG.stage.window.borderless = false;
+
 		Application.current.window.x = Std.int((Application.current.window.display.bounds.width - Application.current.window.width) / 2);
 		Application.current.window.y = Std.int((Application.current.window.display.bounds.height - Application.current.window.height) / 2);
 		#end
@@ -136,8 +139,9 @@ class Main extends Sprite
 
 		#if html5
 		FlxG.autoPause = false;
-		FlxG.mouse.visible = false;
 		#end
+
+		FlxG.mouse.useSystemCursor = true;
 
 		FlxG.signals.gameResized.add(function (width:Float, height:Float)
 			{

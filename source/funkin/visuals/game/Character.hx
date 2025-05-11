@@ -97,6 +97,8 @@ class Character extends FlxSprite
         this.type = type;
 
         this.name = name;
+
+        this.antialiasing = ClientPrefs.data.antialiasing;
     }
 
     override public function update(elapsed:Float)

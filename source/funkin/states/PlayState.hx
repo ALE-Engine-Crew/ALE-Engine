@@ -49,6 +49,7 @@ class PlayState extends ScriptState
 	public var camPosition:FlxObject;
 
     public var cameraZoom:Float = 1;
+    public var hudZoom:Float = 1;
 
     override function create()
     {
@@ -90,7 +91,8 @@ class PlayState extends ScriptState
 
         callOnScripts('onUpdate', [elapsed]);
 
-        camGame.zoom = CoolUtil.fpsLerp(camGame.zoom, cameraZoom, 0.1);
+        camGame.zoom = CoolUtil.fpsLerp(camGame.zoom, cameraZoom, 0.05);
+        camHUD.zoom = CoolUtil.fpsLerp(camHUD.zoom, hudZoom, 0.05);
 
         callOnScripts('postUpdate', [elapsed]);
     }
@@ -140,6 +142,12 @@ class PlayState extends ScriptState
                 for (character in charGroup)
                     if (character.animation.exists('danceRight') && character.finishedIdleTimer && character.allowIdle)
                         character.animation.play('danceRight', true);
+        }
+
+        if (curBeat % 4 == 0)
+        {
+            camGame.zoom += 0.015;
+            camHUD.zoom += 0.03;
         }
 
         callOnScripts('postBeatHit', [curBeat]);
@@ -195,6 +203,8 @@ class PlayState extends ScriptState
     private function initScripts()
     {
         STAGE = ALEParserHelper.getALEStage(SONG.stage);
+
+        cameraZoom = STAGE.cameraZoom;
 
         loadScript('stages/' + SONG.stage);
 
