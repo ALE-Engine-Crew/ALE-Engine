@@ -5,6 +5,7 @@ import flixel.util.FlxSort;
 import flixel.math.FlxRect;
 
 import core.enums.ALECharacterType;
+import core.enums.Rating;
 
 import core.structures.ALESection;
 
@@ -30,6 +31,9 @@ class StrumLine extends FlxGroup
 
     public var character:Character;
 
+    public var noteHitCallback:(Note, Rating) -> Void;
+    public var noteMissCallback:Note -> Void;
+
     public function new(character:Character, chartNotes:Array<Array<Dynamic>>, startPosition:Float = 0)
     {
         super();
@@ -44,20 +48,16 @@ class StrumLine extends FlxGroup
         add(sustains = new FlxTypedGroup<Note>());
         add(notes = new FlxTypedGroup<Note>());
 
-        if (character.type == PLAYER)
-            add(splashes = new FlxTypedGroup<Splash>());
+        add(splashes = new FlxTypedGroup<Splash>());
 
         for (i in 0...4)
         {
             var strum:Strum = new Strum(i, character.type, this);
             strums.add(strum);
 
-            if (character.type == PLAYER)
-            {
-                var splash:Splash = new Splash(i);
-                splashes.add(splash);
-                splash.strum = strum;
-            }
+            var splash:Splash = new Splash(i);
+            splashes.add(splash);
+            splash.strum = strum;
         }
 
         for (chartNote in chartNotes)
@@ -152,13 +152,20 @@ class StrumLine extends FlxGroup
             for (sustain in note.children)
                 Note.setNotePosition(sustain, note, strum.direction, 0, Conductor.stepCrochet * scrollSpeed * 0.45 * note.children.indexOf(sustain));
         
-            if (botplay && Conductor.songPosition >= note.strumTime && note.state == NEUTRAL)
-                onNoteHit(note);
+            if (botplay)
+            {
+                if (Conductor.songPosition >= note.strumTime && note.state == NEUTRAL)
+                    onNoteHit(note);
+            } else {
+                if (Conductor.songPosition - note.strumTime > 175 && note.state == NEUTRAL)
+                    onNoteMiss(note);
+            }
         }
 
         if (!botplay)
             useKeys();
 
+        /*
         for (sustain in sustains)
         {
             var parent = sustain.parentNote;
@@ -208,6 +215,7 @@ class StrumLine extends FlxGroup
                     onNoteMiss(sustain);
             }
         }
+        */
     }
 
     function useKeys():Void
@@ -233,7 +241,20 @@ class StrumLine extends FlxGroup
             {
                 pressedData = note.data;
 
-                onNoteHit(note);
+                var difference = Math.abs(note.strumTime - Conductor.songPosition + 22.5);
+
+                var rating:Rating = null;
+
+                if (difference <= 50)
+                    rating = SICK;
+                else if (difference <= 95)
+                    rating = GOOD;
+                else if (difference <= 140)
+                    rating = BAD;
+                else if (difference <= 175)
+                    rating = SHIT;
+
+                onNoteHit(note, rating);
 
                 break;
             }
@@ -250,7 +271,11 @@ class StrumLine extends FlxGroup
 
     public function onNoteMiss(note:Note)
     {
-        /*
+        note.state = LOST;
+
+        if (noteMissCallback != null)
+            noteMissCallback(note);
+
         character.idleTimer = 0;
 
         character.animation.play('sing' + (switch (note.data)
@@ -268,21 +293,18 @@ class StrumLine extends FlxGroup
             }) + 'miss',
             true
         );
-        */
     }
 
-    public function checkNoteHit(note:Note)
+    public function onNoteHit(note:Note, ?rating:Rating)
     {
+        if (noteHitCallback != null)
+            noteHitCallback(note, rating);
 
-    }
-
-    public function onNoteHit(note:Note)
-    {
         removeNote(note);
         
         strums.members[note.data].animation.play('hit', true);
         
-        if (character.type == PLAYER)
+        if (!botplay && rating == SICK)
             splashes.members[note.data].animation.play('splash', true);
         
         character.idleTimer = 0;

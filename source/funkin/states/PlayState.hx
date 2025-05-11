@@ -3,6 +3,7 @@ package funkin.states;
 import utils.ALEParserHelper;
 
 import core.enums.ALECharacterType;
+import core.enums.Rating;
 
 import core.structures.ALESong;
 import core.structures.ALEStage;
@@ -51,6 +52,10 @@ class PlayState extends ScriptState
     public var cameraZoom:Float = 1;
     public var hudZoom:Float = 1;
 
+    public var noteCombo:Int = 0;
+
+    public var comboGroup:FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
+
     override function create()
     {
         super.create();
@@ -75,6 +80,8 @@ class PlayState extends ScriptState
         initCharacters();
         
         initStrums();
+
+        initHUD();
 
         moveCamera(0);
         
@@ -219,8 +226,13 @@ class PlayState extends ScriptState
     {
         callOnScripts('onCacheAssets');
 
-        Paths.image('ui/alphabet');
+        var images:Array<String> = [
+            'ui/alphabet'
+        ];
 
+        for (image in images)
+            Paths.image(image);
+        
         callOnScripts('postCacheAssets');
     }
 
@@ -317,6 +329,18 @@ class PlayState extends ScriptState
                         notes.push(note);
 
             var strl:StrumLine = new StrumLine(character, notes);
+            strl.noteHitCallback = function(note:Note, rating:Rating)
+            {
+                showRatings(rating);
+                
+                callOnScripts('onNoteHit', [note, rating]);
+            }
+            strl.noteMissCallback = function(note:Note)
+            {
+                callOnScripts('onNoteMiss', [note]);
+
+                noteCombo = 0;
+            }
 
             switch (character.type)
             {
@@ -330,6 +354,115 @@ class PlayState extends ScriptState
         }
         
         callOnScripts('postInitStrums');
+    }
+
+    private function initHUD()
+    {
+        callOnScripts('onInitHUD');
+
+        comboGroup.cameras = [this.camHUD];
+        add(comboGroup);
+        
+        var popup:FlxSprite = new FlxSprite();
+        popup.frames = Paths.getSparrowAtlas('ratings/default/ratings');
+        for (anim in ['sick', 'good', 'bad', 'shit'])
+            popup.animation.addByPrefix(anim, anim, 1, false);
+        popup.alpha = 0;
+        popup.scale.set(0.75, 0.75);
+        popup.updateHitbox();
+        popup.animation.onFrameChange.add(
+            function(name:String, frameNumber:Int, frameIndex:Int)
+            {
+                popup.centerOffsets();
+                popup.centerOrigin();
+            }
+        );
+        popup.antialiasing = ClientPrefs.data.antialiasing;
+        comboGroup.add(popup);
+
+        for (i in 0...3)
+        {
+            var number:FlxSprite = new FlxSprite();
+            number.frames = Paths.getSparrowAtlas('ratings/default/numbers');
+            for (i in 0...10)
+                number.animation.addByPrefix(Std.string(i), Std.string(i), 1, false);
+            number.alpha = 0;
+            number.scale.set(0.45, 0.45);
+            number.updateHitbox();
+            number.animation.onFrameChange.add(
+                function(name:String, frameNumber:Int, frameIndex:Int)
+                {
+                    number.centerOffsets();
+                    number.centerOrigin();
+                }
+            );
+            number.antialiasing = ClientPrefs.data.antialiasing;
+
+            comboGroup.add(number);
+        }
+
+        callOnScripts('postInitHUD');
+    }
+
+    public dynamic function showRatings(rating:Rating)
+    {
+        if (rating != null)
+        {
+            if (noteCombo >= 999)
+                noteCombo = 0;
+
+            noteCombo++;
+
+            var popup:FlxSprite = comboGroup.members[0];
+            popup.animation.play(
+                switch(rating)
+                {
+                    case SICK:
+                        'sick';
+                    case GOOD:
+                        'good';
+                    case BAD:
+                        'bad';
+                    case SHIT:
+                        'shit';
+                }
+            );
+            popup.updateHitbox();
+
+            FlxTween.cancelTweensOf(popup);
+
+            popup.x = 425;
+            popup.y = 250;
+            popup.alpha = 1;
+
+            FlxTween.tween(popup, {y: popup.y - 20}, 0.3, {
+                ease: FlxEase.cubeOut,
+                onComplete: (_) -> {
+                    FlxTween.tween(popup, {y: popup.y + 40}, 0.3, {ease: FlxEase.cubeIn});
+                    FlxTween.tween(popup, {alpha: 0}, 0.3);
+                }
+            });
+
+            for (i in 0...3)
+            {
+                var number:FlxSprite = comboGroup.members[i + 1];
+
+                FlxTween.cancelTweensOf(number);
+
+                number.alpha = 1;
+                number.x = popup.x + 42.5 * i - number.width / 2;
+                number.y = popup.y + 100;
+                number.animation.play(Std.string(noteCombo).lpad('0', 3).split('')[i]);
+
+                FlxTween.tween(number, {y: number.y - 20}, 0.3 + FlxG.random.float(0, 0.3), {
+                    ease: FlxEase.cubeOut,
+                    onComplete: (_) -> {
+                        FlxTween.tween(number, {y: number.y + 40}, 0.3 + FlxG.random.float(0, 0.1), {ease: FlxEase.cubeIn});
+                        FlxTween.tween(number, {alpha: 0}, 0.3);
+                    }
+                });
+            }
+        }
     }
 
 	private function resyncVoices():Void

@@ -55,7 +55,7 @@ class Splash extends AttachedSprite
         centerOffsets();
         centerOrigin();
 
-        scale.set(0.75, 0.75);
+        scale.set(0.85, 0.85);
 
         updateHitbox();
 
@@ -85,6 +85,9 @@ class Splash extends AttachedSprite
         shaderRef.b = shaderArray[2];
 
         texture = texture;
+
+        animation.play('splash');
+        visible = false;
 
         antialiasing = ClientPrefs.data.antialiasing;
 
