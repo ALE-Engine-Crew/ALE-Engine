@@ -104,6 +104,17 @@ class FlxSoundTray extends Sprite
 				}
 			}
 		);
+
+		Lib.application.window.onClose.add(function()
+			{
+				if (FlxG.save.isBound)
+				{
+					FlxG.save.data.mute = FlxG.sound.muted;
+					FlxG.save.data.volume = FlxG.sound.volume;
+					FlxG.save.flush();
+				}
+			}
+		);
 	}
 	
 	public function update(elapsed:Float):Void
@@ -124,7 +135,7 @@ class FlxSoundTray extends Sprite
 		visible = active = Math.floor(y) >= -height;
 	}
 	
-	public function showAnim(volume:Float, duration = 1.0, label = 'VOLUME')
+	public function showAnim(volume:Float, duration = 1.5, label = 'VOLUME')
 	{
 		if (!silent)
 			FlxG.sound.play(Paths.sound('tick'), 0.75);
@@ -132,6 +143,8 @@ class FlxSoundTray extends Sprite
 		_timer = duration;
 
 		_y = 0;
+
+		_alpha = 1.5;
 
 		visible = true;
 
@@ -166,7 +179,7 @@ class FlxSoundTray extends Sprite
 		scaleX = _defaultScale;
 		scaleY = _defaultScale;
 
-		x = (0.5 * (Lib.current.stage.stageWidth - _bg.width * _defaultScale) - FlxG.game.x);
+		x = 0.5 * (Lib.current.stage.stageWidth - _bg.width * _defaultScale) - FlxG.game.x;
 	}
 	
 	function updateSize()
