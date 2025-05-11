@@ -186,7 +186,7 @@ class DebugCounter extends Sprite implements IFlxDestroyable
         if (pushCategory)
             categories.push(sprite);
 
-        sprite.updateField();
+        sprite.updateField(0);
 
         spriteOffset += sprite.text.height + sprite.text.y - sprite.title.y + y * 2;
 	}
@@ -209,13 +209,4 @@ class DebugCounter extends Sprite implements IFlxDestroyable
         
         instance = null;
     }
-
-    /*
-    override function __enterFrame(elapsed:Float)
-    {
-        super.__enterFrame(elapsed);
-        
-        if (keysPressed)
-    }
-    */
 }

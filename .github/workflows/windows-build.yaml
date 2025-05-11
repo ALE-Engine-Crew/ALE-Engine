@@ -11,64 +11,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Pulling the New Commit
+      - name: Pull the New Commit
         uses: actions/checkout@v2
 
       - name: Setup Haxe
         uses: krdlab/setup-haxe@v1
         with:
           haxe-version: 4.3.6
-        
-      - name: Restore Build Cache
-        uses: actions/cache@v3
-        with:
-          key: cache-build-windows
-          path: |
-            .haxelib/
-            export/windows/haxe/
-            export/windows/obj/
-          restore-keys: |
-            cache-build-windows
 
-      - name: Installing Libraries
+      - name: Install Libraries
         run: setup/install-haxelibs.bat
 
       - name: Build for Windows
         run: haxelib run lime build windows
 
-      - name: Upload Artifact
+      - name: Upload Game
         uses: actions/upload-artifact@v4
         with:
           name: ALE Engine - Windows Build
           path: export/windows/bin
-
-      - name: Clear Existing Cache
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const caches = await github.rest.actions.getActionsCacheList({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            })
-            for (const cache of caches.data.actions_caches) {
-              if (cache.key == "cache-build-windows") {
-                console.log('Clearing ' + cache.key + '...')
-                await github.rest.actions.deleteActionsCacheById({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  cache_id: cache.id,
-                })
-                console.log("Cache cleared")
-              }
-            }
-
-      - name: Upload New Cache
-        uses: actions/cache@v3
-        with:
-          key: cache-build-windows
-          path: |
-            .haxelib/
-            export/windows/haxe/
-            export/windows/obj/
-          restore-keys: |
-            cache-build-windows

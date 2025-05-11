@@ -9,6 +9,8 @@ import openfl.text.TextField;
 
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
+import openfl.events.Event;
+
 class DebugField extends Sprite implements IFlxDestroyable
 {
     public var title:TextField;
@@ -51,7 +53,14 @@ class DebugField extends Sprite implements IFlxDestroyable
 
         alpha = 0;
         x = -20;
+        
+        FlxG.stage.addEventListener(Event.ACTIVATE, onFocus);
+        FlxG.stage.addEventListener(Event.DEACTIVATE, onUnfocus);
     }
+
+    var focused:Bool = true;
+
+    var timer:Float = 0;
 
     override function __enterFrame(time:#if linux Float #else Int #end)
     {
@@ -63,14 +72,24 @@ class DebugField extends Sprite implements IFlxDestroyable
 
         if (alpha <= 0.05)
             return;
+        
+        if (focused)
+        {
+            if (timer > 50)
+            {
+                updateField(time);
 
-        updateField();
+                timer = 0;
+            } else {
+                timer += time;
+            }
+        }
 
         bg.scaleX = Math.max(title.width, text.width) + DebugCounter.instance.x * 2;
         bg.scaleY = text.height + text.y - title.y + DebugCounter.instance.y * 2;
     }
 
-    public function updateField():Void {};
+    public function updateField(elapsed:Float):Void {};
 
     public function destroy()
     {
@@ -93,5 +112,14 @@ class DebugField extends Sprite implements IFlxDestroyable
 
         title = null;
         text = null;
+        
+        FlxG.stage.removeEventListener(Event.ACTIVATE, onFocus);
+        FlxG.stage.removeEventListener(Event.DEACTIVATE, onUnfocus);
     }
+    
+    function onFocus(_)
+        focused = true;
+
+    function onUnfocus(_)
+        focused = false;
 }

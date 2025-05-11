@@ -284,10 +284,10 @@ class StrumLine extends FlxGroup
 
     public function addNote(note:Note)
     {
-        allNotes.add(note);
+        allNotes.insert(0, note);
 
         if (note.noteType == NORMAL)
-            notes.add(note);
+            notes.insert(0, note);
         else
             sustains.remove(note);
     }

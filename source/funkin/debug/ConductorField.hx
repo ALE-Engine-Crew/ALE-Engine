@@ -9,7 +9,7 @@ class ConductorField extends DebugField
 
     var theText:String = '';
 
-    override function updateField()
+    override function updateField(elapsed:Float)
     {
         theText = 'Song Position: ' + Conductor.songPosition;
         theText += '\n - Step: ' + Conductor.curStep;

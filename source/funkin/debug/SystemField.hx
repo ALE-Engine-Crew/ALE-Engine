@@ -11,7 +11,7 @@ class SystemField extends DebugField
 
     var theText:String = '';
 
-    override function updateField()
+    override function updateField(elapsed:Float)
     {
         theText = 'Operating System: ' + Capabilities.os;
         theText += '\nScreen Resolution: ' + Capabilities.screenResolutionX + ' x ' + Capabilities.screenResolutionY;

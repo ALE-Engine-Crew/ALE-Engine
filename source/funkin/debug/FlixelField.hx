@@ -9,7 +9,7 @@ class FlixelField extends DebugField
 
     var theText:String = '';
 
-    override function updateField()
+    override function updateField(elapsed:Float)
     {
         var totalBitmaps:Int = 0;
 
