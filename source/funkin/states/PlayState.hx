@@ -52,6 +52,25 @@ class PlayState extends ScriptState
     public var cameraZoom:Float = 1;
     public var hudZoom:Float = 1;
 
+    public var health(default, set):Float = 50;
+    public function set_health(value:Float):Float
+    {
+        health = value;
+
+        if (health < 0)
+            health = 0;
+
+        if (health > 100)
+            health = 100;
+
+        /*
+        if (health == 0)
+            CoolUtil.openSubState();
+        */
+
+        return health;
+    }
+
     public var noteCombo:Int = 0;
 
     public var comboGroup:FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();

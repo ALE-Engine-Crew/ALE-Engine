@@ -46,6 +46,9 @@ class Splash extends AttachedSprite
             centerOrigin();
             
             visible = true;
+
+            x = strum.x + strum.width / 2 - width / 2;
+            y = strum.y + strum.width / 2 - width / 2;
         });
 
         animation.onFinish.add((name:String) -> {

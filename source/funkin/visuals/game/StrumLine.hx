@@ -98,6 +98,8 @@ class StrumLine extends FlxGroup
 
             unspawnNotes.push(note);
         }
+
+        unspawnNotes.sort(sortByTime);
     }
 
     public var spawnTime:Int = 2000;
@@ -219,6 +221,9 @@ class StrumLine extends FlxGroup
         }
         */
     }
+
+    function sortByTime(obj1:Note, obj2:Note):Int
+        return FlxSort.byValues(FlxSort.ASCENDING, obj1.strumTime, obj2.strumTime);
 
     function useKeys():Void
     {
