@@ -4,6 +4,7 @@ import utils.ALEParserHelper;
 
 import core.enums.ALECharacterType;
 import core.enums.Rating;
+import core.enums.Rank;
 
 import core.structures.ALESong;
 import core.structures.ALEStage;
@@ -13,12 +14,17 @@ import scripting.lua.LuaScript;
 
 import funkin.visuals.game.*;
 
+import funkin.visuals.objects.Bar;
+import funkin.visuals.objects.HealthIcon;
+
 import flixel.sound.FlxSound;
 import flixel.FlxObject;
 
 class PlayState extends ScriptState
 {
     public static var instance:PlayState;
+
+    public static var startPosition:Float = 0;
 
     public var strumLines:StrumLinesGroup = new StrumLinesGroup();
 
@@ -55,25 +61,126 @@ class PlayState extends ScriptState
     public var health(default, set):Float = 50;
     public function set_health(value:Float):Float
     {
+        if (value < 0)
+            value = 0;
+
+        if (value > 100)
+            value = 100;
+
         health = value;
 
-        if (health < 0)
-            health = 0;
+        iconsAnimationFunction();
+		
+		healthBar.percent = health;
 
-        if (health > 100)
-            health = 100;
-
-        /*
-        if (health == 0)
-            CoolUtil.openSubState();
-        */
+		scoreTxt.applyMarkup('Score: ' + score + '    Misses: ' + misses + '    Rating: *' + rankToString(rank) + '*' + (rank == null ? '' : ' - ' + CoolUtil.floorDecimal(accuracy, 2) + '%'), [new FlxTextFormatMarkerPair(new FlxTextFormat(rankToColor(rank)), '*')]);
 
         return health;
     }
 
     public var noteCombo:Int = 0;
+    public var misses:Int = 0;
+    public var sicks:Int = 0;
+    public var goods:Int = 0;
+    public var bads:Int = 0;
+    public var shits:Int = 0;
+
+    public var score(get, never):Int;
+    public function get_score():Int
+        return sicks * 350 + goods * 200 + bads * 100 + misses * -100;
+
+    public var accuracy(get, never):Float;
+    public function get_accuracy():Float
+    {
+        var total:Int = sicks + goods + bads + shits + misses;
+        var maxScore:Int = total * 100;
+        var score:Int = sicks * 100 + goods * 75 + bads * 40 + shits * 20;
+        
+        return total == 0 ? 0 : score / total;
+    }
+
+    public var rank(get, never):Null<Rank>;
+    public function get_rank():Null<Rank>
+    {
+        if (accuracy <= 0)
+            return null;
+
+        if (accuracy < 40)
+            return LOSS;
+        else if (accuracy < 55)
+            return GOOD;
+        else if (accuracy < 70)
+            return GREAT;
+        else if (accuracy < 85)
+            return EXCELLENT;
+        else if (accuracy < 100)
+            return SICK;
+        else
+            return PERFECT;
+    }
+
+    public function rankToString(rank:Null<Rank>):String
+    {
+        return switch(rank)
+        {
+            case null:
+                '[N/A]';
+            case LOSS:
+                'L';
+            case GOOD:
+                'G';
+            case GREAT:
+                'G+';
+            case EXCELLENT:
+                'E';
+            case SICK:
+                'S';
+            case PERFECT:
+                'S++';
+        }
+    }
+
+    public function rankToColor(rank:Null<Rank>):FlxColor
+    {
+        return switch(rank)
+        {
+            case null:
+                0xFF909090;
+            case LOSS:
+                0xFFFF0000;
+            case GOOD:
+                0xFFFFAE00;
+            case GREAT:
+                0xFFFFFF00;
+            case EXCELLENT:
+                0xFF66FF66;
+            case SICK:
+                0xFF00FFFF;
+            case PERFECT:
+                0xFFFF00FF;
+        }
+    }
 
     public var comboGroup:FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
+
+    public var opponentIcon:HealthIcon;
+    public var playerIcon:HealthIcon;
+
+    private var opponentIconName:String = '';
+    private var playerIconName:String = '';
+
+    private var opponentColor:FlxColor;
+    private var playerColor:FlxColor;
+
+	public var healthBar:Bar;
+
+	public var scoreTxt:FlxText;
+
+    public static var deathCounter:Int = 0;
+
+    public var dead:Bool = false;
+
+    public var paused:Bool = false;
 
     override function create()
     {
@@ -119,6 +226,16 @@ class PlayState extends ScriptState
 
         camGame.zoom = CoolUtil.fpsLerp(camGame.zoom, cameraZoom, 0.05);
         camHUD.zoom = CoolUtil.fpsLerp(camHUD.zoom, hudZoom, 0.05);
+
+        iconsZoomLerpFunction();
+        iconsPositionFunction();
+
+        if (FlxG.keys.justPressed.ENTER && !dead)
+        {
+            pauseSong();
+
+            CoolUtil.openSubState(new CustomSubState(CoolVars.data.pauseSubState));
+        }
 
         callOnScripts('postUpdate', [elapsed]);
     }
@@ -176,6 +293,8 @@ class PlayState extends ScriptState
             camHUD.zoom += 0.03;
         }
 
+        iconsZoomingFunction();
+
         callOnScripts('postBeatHit', [curBeat]);
     }
 
@@ -224,6 +343,38 @@ class PlayState extends ScriptState
         callOnScripts('onCloseSubState');
 
         callOnScripts('postCloseSubState');
+    }
+
+    public function pauseSong()
+    {
+        paused = true;
+
+        FlxG.sound.music.pause();
+
+        for (voice in voices)
+            voice.pause();
+    }
+
+    public function resumeSong()
+    {
+        paused = false;
+
+        FlxG.sound.music.resume();
+
+        for (voice in voices)
+            voice.resume();
+    }
+
+    public function restartSong(skipIn:Bool = true, skipOut:Bool = true)
+    {
+        shouldClearMemory = false;
+
+        pauseSong();
+        
+        CoolVars.skipTransIn = skipIn;
+        CoolVars.skipTransOut = skipOut;
+
+        FlxG.resetState();
     }
     
     private function initScripts()
@@ -274,9 +425,19 @@ class PlayState extends ScriptState
         
 		@:privateAccess FlxG.sound.playMusic(instrumental._sound, 1, false);
         FlxG.sound.music.volume = 0.6;
+        FlxG.sound.pause();
+
+		FlxG.sound.music.time = startPosition;
 
         for (voice in voices)
+            voice.time = startPosition;
+
+        FlxG.sound.music.play();
+        
+        for (voice in voices)
             voice.play();
+
+        startPosition = 0;
         
         callOnScripts('postInitAudios');
     }
@@ -316,12 +477,26 @@ class PlayState extends ScriptState
             );
 
             charactersArray.push(object);
+
+            var objectColor:Array<Int> = object.data.barColor;
                 
             switch (type)
             {
                 case PLAYER:
+                    if (characters.players.members.length <= 0)
+                    {
+                        playerIconName = object.data.icon;
+                        playerColor = FlxColor.fromRGB(objectColor[0], objectColor[1], objectColor[2]);
+                    }
+
                     characters.players.add(object);
                 case OPPONENT:
+                    if (characters.opponents.members.length <= 0)
+                    {
+                        opponentIconName = object.data.icon;
+                        opponentColor = FlxColor.fromRGB(objectColor[0], objectColor[1], objectColor[2]);
+                    }
+
                     characters.opponents.add(object);
                 case EXTRA:
                     characters.extras.add(object);
@@ -352,13 +527,48 @@ class PlayState extends ScriptState
             {
                 showRatings(rating);
                 
+                if (strl.character.type == PLAYER)
+                {
+                    if (rating != null)
+                    {
+                        if (rating == SICK)
+                            sicks++;
+                        else if (rating == GOOD)
+                            goods++;
+                        else if (rating == BAD)
+                            bads++;
+                        else if (rating == SHIT)
+                            shits++;
+                    }
+
+                    health += 1.5;
+                }
+                
                 callOnScripts('onNoteHit', [note, rating]);
             }
             strl.noteMissCallback = function(note:Note)
             {
-                callOnScripts('onNoteMiss', [note]);
-
                 noteCombo = 0;
+
+                if (strl.character.type == PLAYER)
+                {
+                    misses++;
+
+                    health -= 2.5;
+                }
+
+                if (health <= 0)
+                {
+                    pauseSong();
+
+                    dead = true;
+
+                    deathCounter++;
+
+                    CoolUtil.openSubState(new CustomSubState(CoolVars.data.gameOverScreen));
+                }
+                
+                callOnScripts('onNoteMiss', [note]);
             }
 
             switch (character.type)
@@ -419,6 +629,35 @@ class PlayState extends ScriptState
 
             comboGroup.add(number);
         }
+        
+		healthBar = new Bar(null, ClientPrefs.data.downScroll ? 75 : FlxG.height - 70);
+		add(healthBar);
+		healthBar.cameras = [camHUD];
+		healthBar.x = FlxG.width / 2 - healthBar.width / 2;
+        healthBar.leftBar.color = opponentColor;
+        healthBar.rightBar.color = playerColor;
+        healthBar.orientation = RIGHT;
+
+		playerIcon = new HealthIcon(playerIconName);
+		add(playerIcon);
+		playerIcon.flipX = true;
+		playerIcon.cameras = [camHUD];
+		playerIcon.y = healthBar.y + healthBar.height / 2 - playerIcon.height / 2;
+
+		opponentIcon = new HealthIcon(opponentIconName);
+		add(opponentIcon);
+		opponentIcon.cameras = [camHUD];
+		opponentIcon.y = healthBar.y + healthBar.height / 2 - opponentIcon.height / 2;
+
+		scoreTxt = new FlxText(0, healthBar.y + healthBar.height + 20, FlxG.width, "", 16);
+		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, 'center');
+		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
+		scoreTxt.borderSize = 1;
+		scoreTxt.borderColor = FlxColor.BLACK;
+		scoreTxt.borderSize = 1.25;
+		add(scoreTxt);
+		scoreTxt.cameras = [camHUD];
+		scoreTxt.applyMarkup('Score: ' + score + '    Misses: ' + misses + '    Rating: *' + rankToString(rank) + '*', [new FlxTextFormatMarkerPair(new FlxTextFormat(rankToColor(rank)), '*')]);
 
         callOnScripts('postInitHUD');
     }
@@ -480,6 +719,64 @@ class PlayState extends ScriptState
                         FlxTween.tween(number, {alpha: 0}, 0.3);
                     }
                 });
+            }
+        }
+    }
+    
+    private function iconsZoomingFunction()
+    {
+        playerIcon.scale.set(1.2, 1.2);
+        playerIcon.updateHitbox();
+
+        opponentIcon.scale.set(1.2, 1.2);
+        opponentIcon.updateHitbox();
+        
+        iconsPositionFunction();
+    }
+
+    private function iconsZoomLerpFunction()
+    {
+        playerIcon.scale.x = CoolUtil.fpsLerp(playerIcon.scale.x, 1, 0.33);
+        playerIcon.scale.y = CoolUtil.fpsLerp(playerIcon.scale.y, 1, 0.33);
+        playerIcon.updateHitbox();
+
+        opponentIcon.scale.x = CoolUtil.fpsLerp(opponentIcon.scale.x, 1, 0.33);
+        opponentIcon.scale.y = CoolUtil.fpsLerp(opponentIcon.scale.y, 1, 0.33);
+        opponentIcon.updateHitbox();
+    }
+
+    private function iconsPositionFunction()
+    {
+        playerIcon.x = healthBar.x + healthBar.middlePoint - playerIcon.width / 10;
+
+        opponentIcon.x = healthBar.x + healthBar.middlePoint - opponentIcon.width + opponentIcon.width / 10;
+    }
+
+    private function iconsAnimationFunction()
+    {
+        if (playerIcon != null && playerIcon.animation != null && playerIcon.animation.curAnim != null)
+        {
+            if (health < 20 && playerIcon.animation.curAnim.curFrame != 1)
+            {
+                playerIcon.animation.curAnim.curFrame = 1;
+            }
+
+            if (health >= 20 && playerIcon.animation.curAnim.curFrame != 0)
+            {
+                playerIcon.animation.curAnim.curFrame = 0;
+            }
+        }
+
+        if (opponentIcon != null && opponentIcon.animation != null && opponentIcon.animation.curAnim != null)
+        {
+            if (health > 80 && opponentIcon.animation.curAnim.curFrame != 1)
+            {
+                opponentIcon.animation.curAnim.curFrame = 1;
+            }
+
+            if (health <= 80 && opponentIcon.animation.curAnim.curFrame != 0)
+            {
+                opponentIcon.animation.curAnim.curFrame = 0;
             }
         }
     }

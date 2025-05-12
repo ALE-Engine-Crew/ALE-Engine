@@ -100,6 +100,8 @@ class StrumLine extends FlxGroup
         }
 
         unspawnNotes.sort(sortByTime);
+
+        visible = character.type != EXTRA;
     }
 
     public var spawnTime:Int = 2000;
