@@ -630,7 +630,7 @@ class PlayState extends ScriptState
             comboGroup.add(number);
         }
         
-		healthBar = new Bar(null, ClientPrefs.data.downScroll ? 75 : FlxG.height - 70);
+		healthBar = new Bar(null, ClientPrefs.data.downScroll ? 75 : FlxG.height - 75);
 		add(healthBar);
 		healthBar.cameras = [camHUD];
 		healthBar.x = FlxG.width / 2 - healthBar.width / 2;

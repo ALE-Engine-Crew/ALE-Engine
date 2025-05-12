@@ -76,6 +76,11 @@ class Character extends FlxSprite
                 offsetsCallback(name);
         });
 
+        animation.onFinish.add((name:String) -> {
+            if (animation.getByName(name).looped == false && animation.exists(name + '-loop'))
+                animation.play(name + '-loop');
+        });
+
         flipX = data.flipX == (type != PLAYER);
 
         if (animation.exists('idle'))
