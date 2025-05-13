@@ -134,7 +134,7 @@ class Main extends Sprite
 		addChild(new FlxGame(game.width, game.height, game.initialState, game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 		
 		#if linux
-		Lib.current.stage.window.setIcon(Image.fromFile('icon.png'));
+		openfl.Lib.current.stage.window.setIcon(lime.graphics.Image.fromFile(Paths.getPath('images/appIcon.png')));
 		#end
 
 		#if html5

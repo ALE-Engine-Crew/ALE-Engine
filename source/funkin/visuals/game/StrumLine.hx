@@ -34,7 +34,7 @@ class StrumLine extends FlxGroup
     public var noteHitCallback:(Note, Rating) -> Void;
     public var noteMissCallback:Note -> Void;
 
-    public function new(character:Character, chartNotes:Array<Array<Dynamic>>, startPosition:Float = 0)
+    public function new(character:Character, chartNotes:Array<Array<Dynamic>>, startPosition:Float)
     {
         super();
 

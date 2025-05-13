@@ -200,6 +200,8 @@ class PlayState extends ScriptState
         cameraZoom = STAGE.cameraZoom;
         
         cacheAssets();
+        
+        Conductor.bpm = SONG.bpm;
 
         initAudios();
 
@@ -207,14 +209,13 @@ class PlayState extends ScriptState
         
         initStrums();
 
-        initHUD();
-
-        moveCamera(0);
-        
-        Conductor.bpm = SONG.bpm;
-
         scrollSpeed = SONG.speed;
 
+        initHUD();
+        
+        initCountdown();
+
+        moveCamera(0);
         callOnScripts('postCreate');
     }
 
@@ -396,12 +397,11 @@ class PlayState extends ScriptState
     {
         callOnScripts('onCacheAssets');
 
-        var images:Array<String> = [
-            'ui/alphabet'
-        ];
-
-        for (image in images)
+        for (image in ['ui/alphabet', 'countdown/default'])
             Paths.image(image);
+
+        for (name in ['three', 'two', 'one', 'go'])
+            Paths.sound('countdown/default/' + name);
         
         callOnScripts('postCacheAssets');
     }
@@ -425,17 +425,12 @@ class PlayState extends ScriptState
         
 		@:privateAccess FlxG.sound.playMusic(instrumental._sound, 1, false);
         FlxG.sound.music.volume = 0.6;
-        FlxG.sound.pause();
+        FlxG.sound.music.pause();
 
 		FlxG.sound.music.time = startPosition;
 
         for (voice in voices)
             voice.time = startPosition;
-
-        FlxG.sound.music.play();
-        
-        for (voice in voices)
-            voice.play();
 
         startPosition = 0;
         
@@ -522,7 +517,7 @@ class PlayState extends ScriptState
                     if (note[4] == index)
                         notes.push(note);
 
-            var strl:StrumLine = new StrumLine(character, notes);
+            var strl:StrumLine = new StrumLine(character, notes, FlxG.sound.music.time);
             strl.noteHitCallback = function(note:Note, rating:Rating)
             {
                 showRatings(rating);
@@ -662,8 +657,89 @@ class PlayState extends ScriptState
         callOnScripts('postInitHUD');
     }
 
-    public dynamic function showRatings(rating:Rating)
+    var countdownSprite:FlxSprite;
+
+    function initCountdown()
     {
+        callOnScripts('onInitCountdown');
+
+        var names:Array<String> = ['three', 'two', 'one', 'go'];
+
+        callOnScripts('onCountdownTick', [0]);
+
+        iconsZoomingFunction();
+
+        FlxG.sound.play(Paths.sound('countdown/default/three'));
+
+        countdownSprite = new FlxSprite();
+        countdownSprite.frames = Paths.getSparrowAtlas('countdown/default');
+        countdownSprite.cameras = [camHUD];
+
+        for (i in 1...4)
+            countdownSprite.animation.addByPrefix(names[i], names[i]);
+
+        add(countdownSprite);
+
+        countdownSprite.x = FlxG.width / 2 - countdownSprite.width / 2;
+        countdownSprite.y = FlxG.height / 2 - countdownSprite.height / 2;
+
+        countdownSprite.animation.onFrameChange.add((name:String, frameNumber:Int, frameIndex:Int) -> {
+            countdownSprite.centerOffsets();
+            countdownSprite.centerOrigin();
+        });
+
+        countdownSprite.scale.set(0.75, 0.75);
+        
+        countdownSprite.alpha = 0;
+
+        callOnScripts('postCountdownTick', [0]);
+
+        FlxTimer.loop(60 / Conductor.bpm,
+            function(loop:Int)
+            {
+                if (loop == 4)
+                {
+                    initSong();
+                } else {
+                    callOnScripts('onCountdownTick', [loop]);
+
+                    iconsZoomingFunction();
+                    
+                    FlxG.sound.play(Paths.sound('countdown/default/' + names[loop]));
+
+                    countdownSprite.animation.play(names[loop]);
+
+                    FlxTween.cancelTweensOf(countdownSprite);
+                    FlxTween.cancelTweensOf(countdownSprite.scale);
+
+                    countdownSprite.alpha = 1;
+
+                    countdownSprite.scale.set(0.75, 0.75);
+
+                    FlxTween.tween(countdownSprite, {alpha: 0}, 45 / Conductor.bpm);
+                    FlxTween.tween(countdownSprite.scale, {x: 0.65, y: 0.65}, 60 / Conductor.bpm, {ease: FlxEase.cubeOut});
+
+                    callOnScripts('postCountdownTick', [loop]);
+                }
+            },
+            4
+        );
+        
+        callOnScripts('postnitCountdown');
+    }
+
+    function initSong()
+    {
+        FlxG.sound.music.play();
+        
+        for (voice in voices)
+            voice.play();
+    }
+
+    public function showRatings(rating:Rating)
+    {
+        callOnScripts('onShowRatings', [rating]);
+
         if (rating != null)
         {
             if (noteCombo >= 999)
@@ -721,6 +797,8 @@ class PlayState extends ScriptState
                 });
             }
         }
+
+        callOnScripts('postShowRatings', [rating]);
     }
     
     private function iconsZoomingFunction()

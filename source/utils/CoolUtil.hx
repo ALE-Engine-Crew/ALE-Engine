@@ -368,7 +368,10 @@ class CoolUtil
                 iconImage = CoolVars.data.icon;
 
                 openfl.Lib.current.stage.window.setIcon(lime.graphics.Image.fromFile(Paths.getPath(CoolVars.data.icon + '.png')));
-            }
+            } else {
+
+                openfl.Lib.current.stage.window.setIcon(lime.graphics.Image.fromFile(Paths.getPath('images/appIcon.png')));
+			}
         }
 
         FlxG.stage.window.title = CoolVars.data.title;

@@ -71,6 +71,13 @@ class MusicBeatSubState extends flixel.FlxSubState
         super.destroy();
     }
 
+    override public function update(elapsed:Float)
+    {
+        super.update(elapsed);
+
+        updateMusic();
+    }
+
     private function updateMusic()
     {
         if (curStep != Conductor.curStep)
