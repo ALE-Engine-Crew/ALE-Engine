@@ -19,6 +19,7 @@ class LuaPreset
         new LuaKeys(lua);
         new LuaMouse(lua);
         new LuaTimer(lua);
+        new LuaGroups(lua);
 
         new LuaReflect(lua);
         new LuaFileSystem(lua);

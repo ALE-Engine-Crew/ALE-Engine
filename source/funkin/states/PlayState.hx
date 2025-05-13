@@ -50,7 +50,6 @@ class PlayState extends ScriptState
 
     public static var songRoute:String = null;
 
-    public var instrumental:FlxSound;
     public var voices:FlxTypedGroup<FlxSound> = new FlxTypedGroup<FlxSound>();
 
 	public var camPosition:FlxObject;
@@ -410,11 +409,6 @@ class PlayState extends ScriptState
     {
         callOnScripts('onInitAudios');
         
-		instrumental = new FlxSound().loadEmbedded(Paths.inst(songRoute));
-        instrumental.volume = 0.6;
-
-		FlxG.sound.list.add(instrumental);
-
         loadVoice();
         
         loadVoice('Player');
@@ -423,7 +417,7 @@ class PlayState extends ScriptState
         
         loadVoice('Opponent');
         
-		@:privateAccess FlxG.sound.playMusic(instrumental._sound, 1, false);
+		FlxG.sound.music.loadEmbedded(Paths.inst(songRoute));
         FlxG.sound.music.volume = 0.6;
         FlxG.sound.music.pause();
 
