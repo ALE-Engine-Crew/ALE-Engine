@@ -8,9 +8,13 @@ class ScriptState extends MusicBeatState
 {
     public static var instance:ScriptState;
 
+    private static var requestedCancel:Bool = false;
+    
     override public function new()
     {
         super();
+
+        requestedCancel = false;
     }
 
     #if HSCRIPT_ALLOWED
@@ -244,4 +248,29 @@ class ScriptState extends MusicBeatState
         }
         #end
     }
+
+    public function runCancelable(call:String, hArgs:Array<Dynamic>, lArgs:Array<Dynamic>, func:Dynamic)
+    {
+        requestedCancel = false;
+        
+        if (lArgs != null && hArgs == null)
+            hArgs = lArgs;
+
+        if (lArgs == null && hArgs != null)
+            lArgs = hArgs;
+
+        callOnHScripts(call, hArgs);
+
+        callOnLuaScripts(call, lArgs);
+
+        if (!requestedCancel && func != null && Reflect.isFunction(func))
+            func();
+
+        requestedCancel = false;
+    }
+
+    @:allow(utils.scripting.haxe.HScript)
+    @:allow(utils.scripting.lua.LuaScript)
+    private function CancelSuperFunction():Void
+        requestedCancel = true;
 }

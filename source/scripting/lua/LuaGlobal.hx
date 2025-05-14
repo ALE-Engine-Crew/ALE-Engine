@@ -5,11 +5,15 @@ import flixel.FlxObject;
 
 import core.enums.PrintType;
 
+@:access(core.backend.ScriptState)
+@:access(core.backend.ScriptSubState)
 class LuaGlobal extends LuaPresetBase
 {
     public function new(lua:LuaScript)
     {
         super(lua);
+
+        set('CancelSuperFunction', type == STATE ? ScriptState.instance.CancelSuperFunction : ScriptSubState.instance.CancelSuperFunction);
 
         set('add', function(tag:String)
         {

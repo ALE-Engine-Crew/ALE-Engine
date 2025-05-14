@@ -10,6 +10,8 @@ import scripting.sscript.tea.SScript.TeaCall;
 
 import core.enums.ScriptType;
 
+@:access(core.backend.ScriptState)
+@:access(core.backend.ScriptSubState)
 class HScript extends SScript
 {
 	public var type:ScriptType;
@@ -85,7 +87,8 @@ class HScript extends SScript
 				'insert' => FlxG.state.insert,
 				'controls' => ScriptState.instance.controls,
 				'openSubState' => FlxG.state.openSubState,
-				'debugPrint' => ScriptState.instance.debugPrint
+				'debugPrint' => ScriptState.instance.debugPrint,
+				'CancelSuperFunction' => ScriptState.instance.CancelSuperFunction
 			];
 		} else if (type == SUBSTATE) {
 			instanceVariables = [
@@ -94,7 +97,8 @@ class HScript extends SScript
 				'insert' => FlxG.state.subState.insert,
 				'controls' => ScriptSubState.instance.controls,
 				'close' => FlxG.state.subState.close,
-				'debugPrint' => ScriptSubState.instance.debugPrint
+				'debugPrint' => ScriptSubState.instance.debugPrint,
+				'CancelSuperFunction' => ScriptSubState.instance.CancelSuperFunction
 			];
 		}
 

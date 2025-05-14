@@ -72,7 +72,18 @@ class PlayState extends ScriptState
 		
 		healthBar.percent = health;
 
-		scoreTxt.applyMarkup('Score: ' + score + '    Misses: ' + misses + '    Rating: *' + rankToString(rank) + '*' + (rank == null ? '' : ' - ' + CoolUtil.floorDecimal(accuracy, 2) + '%'), [new FlxTextFormatMarkerPair(new FlxTextFormat(rankToColor(rank)), '*')]);
+		scoreTxt.applyMarkup('Score: ' + score + '    Misses: ' + misses + '    Rating: *' + rankToString(rank) + '*' + (rank == null ? '' : ' - ' + CoolUtil.floorDecimal(accuracy, 2) + '%'), [new FlxTextFormatMarkerPair(new FlxTextFormat(rankToColor(rank)), '*')]);        
+
+        if (health <= 0)
+        {
+            pauseSong();
+
+            dead = true;
+
+            deathCounter++;
+
+            CoolUtil.openSubState(new CustomSubState(CoolVars.data.gameOverScreen));
+        }
 
         return health;
     }
@@ -118,48 +129,6 @@ class PlayState extends ScriptState
             return PERFECT;
     }
 
-    public function rankToString(rank:Null<Rank>):String
-    {
-        return switch(rank)
-        {
-            case null:
-                '[N/A]';
-            case LOSS:
-                'L';
-            case GOOD:
-                'G';
-            case GREAT:
-                'G+';
-            case EXCELLENT:
-                'E';
-            case SICK:
-                'S';
-            case PERFECT:
-                'S++';
-        }
-    }
-
-    public function rankToColor(rank:Null<Rank>):FlxColor
-    {
-        return switch(rank)
-        {
-            case null:
-                0xFF909090;
-            case LOSS:
-                0xFFFF0000;
-            case GOOD:
-                0xFFFFAE00;
-            case GREAT:
-                0xFFFFFF00;
-            case EXCELLENT:
-                0xFF66FF66;
-            case SICK:
-                0xFF00FFFF;
-            case PERFECT:
-                0xFFFF00FF;
-        }
-    }
-
     public var comboGroup:FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
 
     public var opponentIcon:HealthIcon;
@@ -181,26 +150,28 @@ class PlayState extends ScriptState
 
     public var paused:Bool = false;
 
+    public var skipCountdown:Bool = false;
+
     override function create()
     {
         super.create();
 
         instance = this;
 
-        initScripts();
-        
-        callOnScripts('onCreate');
-
 		camPosition = new FlxObject(0, 0, 1, 1);
 		add(camPosition);
+        
+        Conductor.bpm = SONG.bpm;
+
+        initScripts();
 		
 		camGame.target = camPosition;
 		camGame.followLerp = 2.4 * STAGE.cameraSpeed;
         cameraZoom = STAGE.cameraZoom;
+
+        callOnScripts('onCreate');
         
         cacheAssets();
-        
-        Conductor.bpm = SONG.bpm;
 
         initAudios();
 
@@ -215,6 +186,7 @@ class PlayState extends ScriptState
         initCountdown();
 
         moveCamera(0);
+
         callOnScripts('postCreate');
     }
 
@@ -408,6 +380,9 @@ class PlayState extends ScriptState
     private function initAudios()
     {
         callOnScripts('onInitAudios');
+
+        if (FlxG.sound.music != null && FlxG.sound.music.playing)
+            FlxG.sound.music.stop();
         
         loadVoice();
         
@@ -419,15 +394,7 @@ class PlayState extends ScriptState
         
 		FlxG.sound.music.loadEmbedded(Paths.inst(songRoute));
         FlxG.sound.music.volume = 0.6;
-        FlxG.sound.music.pause();
 
-		FlxG.sound.music.time = startPosition;
-
-        for (voice in voices)
-            voice.time = startPosition;
-
-        startPosition = 0;
-        
         callOnScripts('postInitAudios');
     }
 
@@ -511,7 +478,7 @@ class PlayState extends ScriptState
                     if (note[4] == index)
                         notes.push(note);
 
-            var strl:StrumLine = new StrumLine(character, notes, FlxG.sound.music.time);
+            var strl:StrumLine = new StrumLine(character, notes, startPosition);
             strl.noteHitCallback = function(note:Note, rating:Rating)
             {
                 showRatings(rating);
@@ -545,17 +512,6 @@ class PlayState extends ScriptState
 
                     health -= 2.5;
                 }
-
-                if (health <= 0)
-                {
-                    pauseSong();
-
-                    dead = true;
-
-                    deathCounter++;
-
-                    CoolUtil.openSubState(new CustomSubState(CoolVars.data.gameOverScreen));
-                }
                 
                 callOnScripts('onNoteMiss', [note]);
             }
@@ -572,6 +528,48 @@ class PlayState extends ScriptState
         }
         
         callOnScripts('postInitStrums');
+    }
+
+    public function rankToString(rank:Null<Rank>):String
+    {
+        return switch(rank)
+        {
+            case null:
+                '[N/A]';
+            case LOSS:
+                'L';
+            case GOOD:
+                'G';
+            case GREAT:
+                'G+';
+            case EXCELLENT:
+                'E';
+            case SICK:
+                'S';
+            case PERFECT:
+                'S++';
+        }
+    }
+
+    public function rankToColor(rank:Null<Rank>):FlxColor
+    {
+        return switch(rank)
+        {
+            case null:
+                0xFF909090;
+            case LOSS:
+                0xFFFF0000;
+            case GOOD:
+                0xFFFFAE00;
+            case GREAT:
+                0xFFFFFF00;
+            case EXCELLENT:
+                0xFF66FF66;
+            case SICK:
+                0xFF00FFFF;
+            case PERFECT:
+                0xFFFF00FF;
+        }
     }
 
     private function initHUD()
@@ -655,79 +653,103 @@ class PlayState extends ScriptState
 
     function initCountdown()
     {
-        callOnScripts('onInitCountdown');
+        if (startPosition != 0 || skipCountdown)
+        {
+            initSong();
 
-        var names:Array<String> = ['three', 'two', 'one', 'go'];
+            return;
+        }
 
-        callOnScripts('onCountdownTick', [0]);
+        runCancelable('onInitCountdown', [], [],
+            () -> {
+                var names:Array<String> = ['three', 'two', 'one', 'go'];
 
-        iconsZoomingFunction();
+                callOnScripts('onCountdownTick', [0]);
 
-        FlxG.sound.play(Paths.sound('countdown/default/three'));
+                iconsZoomingFunction();
 
-        countdownSprite = new FlxSprite();
-        countdownSprite.frames = Paths.getSparrowAtlas('countdown/default');
-        countdownSprite.cameras = [camHUD];
+                FlxG.sound.play(Paths.sound('countdown/default/three'));
 
-        for (i in 1...4)
-            countdownSprite.animation.addByPrefix(names[i], names[i]);
+                countdownSprite = new FlxSprite();
+                countdownSprite.frames = Paths.getSparrowAtlas('countdown/default');
+                countdownSprite.cameras = [camHUD];
 
-        add(countdownSprite);
+                for (i in 1...4)
+                    countdownSprite.animation.addByPrefix(names[i], names[i]);
 
-        countdownSprite.x = FlxG.width / 2 - countdownSprite.width / 2;
-        countdownSprite.y = FlxG.height / 2 - countdownSprite.height / 2;
+                add(countdownSprite);
 
-        countdownSprite.animation.onFrameChange.add((name:String, frameNumber:Int, frameIndex:Int) -> {
-            countdownSprite.centerOffsets();
-            countdownSprite.centerOrigin();
-        });
+                countdownSprite.x = FlxG.width / 2 - countdownSprite.width / 2;
+                countdownSprite.y = FlxG.height / 2 - countdownSprite.height / 2;
 
-        countdownSprite.scale.set(0.75, 0.75);
-        
-        countdownSprite.alpha = 0;
+                countdownSprite.animation.onFrameChange.add((name:String, frameNumber:Int, frameIndex:Int) -> {
+                    countdownSprite.centerOffsets();
+                    countdownSprite.centerOrigin();
+                });
 
-        callOnScripts('postCountdownTick', [0]);
+                countdownSprite.scale.set(0.75, 0.75);
+                
+                countdownSprite.alpha = 0;
 
-        FlxTimer.loop(60 / Conductor.bpm,
-            function(loop:Int)
-            {
-                if (loop == 4)
-                {
-                    initSong();
-                } else {
-                    callOnScripts('onCountdownTick', [loop]);
+                callOnScripts('postCountdownTick', [0]);
 
-                    iconsZoomingFunction();
-                    
-                    FlxG.sound.play(Paths.sound('countdown/default/' + names[loop]));
+                FlxTimer.loop(60 / Conductor.bpm,
+                    function(loop:Int)
+                    {
+                        if (loop == 4)
+                        {
+                            initSong();
+                        } else {
+                            callOnScripts('onCountdownTick', [loop]);
 
-                    countdownSprite.animation.play(names[loop]);
+                            iconsZoomingFunction();
+                            
+                            FlxG.sound.play(Paths.sound('countdown/default/' + names[loop]));
 
-                    FlxTween.cancelTweensOf(countdownSprite);
-                    FlxTween.cancelTweensOf(countdownSprite.scale);
+                            countdownSprite.animation.play(names[loop]);
 
-                    countdownSprite.alpha = 1;
+                            FlxTween.cancelTweensOf(countdownSprite);
+                            FlxTween.cancelTweensOf(countdownSprite.scale);
 
-                    countdownSprite.scale.set(0.75, 0.75);
+                            countdownSprite.alpha = 1;
 
-                    FlxTween.tween(countdownSprite, {alpha: 0}, 45 / Conductor.bpm);
-                    FlxTween.tween(countdownSprite.scale, {x: 0.65, y: 0.65}, 60 / Conductor.bpm, {ease: FlxEase.cubeOut});
+                            countdownSprite.scale.set(0.75, 0.75);
 
-                    callOnScripts('postCountdownTick', [loop]);
-                }
-            },
-            4
+                            FlxTween.tween(countdownSprite, {alpha: 0}, 45 / Conductor.bpm);
+                            FlxTween.tween(countdownSprite.scale, {x: 0.65, y: 0.65}, 60 / Conductor.bpm, {ease: FlxEase.cubeOut});
+
+                            callOnScripts('postCountdownTick', [loop]);
+                        }
+                    },
+                    4
+                );
+                
+                callOnScripts('postnitCountdown');
+            }
         );
-        
-        callOnScripts('postnitCountdown');
     }
 
     function initSong()
     {
-        FlxG.sound.music.play();
-        
-        for (voice in voices)
-            voice.play();
+        runCancelable('onInitSong', [], [],
+            () -> {
+                FlxG.sound.music.play();
+                
+                for (voice in voices)
+                    voice.play();
+                        
+                FlxG.sound.music.time = startPosition;
+
+                for (voice in voices)
+                    voice.time = startPosition;
+
+                startPosition = 0;
+
+                iconsZoomingFunction();
+
+                callOnScripts('postInitSong');
+            }
+        );
     }
 
     public function showRatings(rating:Rating)
