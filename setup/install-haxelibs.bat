@@ -5,7 +5,7 @@ echo Installing dependencies
 
 @if not exist ".haxelib\" mkdir .haxelib
 
-haxelib git hxcpp https://github.com/MobilePorting/hxcpp --skip-dependencies
+haxelib git hxcpp https://github.com/AlejoGDOfficial/MobilePorting-hxcpp --skip-dependencies
 haxelib git linc_luajit https://github.com/superpowers04/linc_luajit 633fcc051399afed6781dd60cbf30ed8c3fe2c5a --skip-dependencies
 
 haxelib install openfl 9.4.1
