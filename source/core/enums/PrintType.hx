@@ -9,6 +9,7 @@ enum abstract PrintType(String)
     var LUA = 'lua';
     var MISSING_FILE = 'missing_file';
     var CUSTOM = 'custom';
+    var POP_UP = 'pop-up';
 
     private static var dataMap:Map<PrintType, Array<Dynamic>> = [
         ERROR => ['ERROR', 0xFFFF5555],
@@ -16,7 +17,8 @@ enum abstract PrintType(String)
         TRACE => ['TRACE', 0xFFFFFFFF],
         HSCRIPT => ['HSCRIPT', 0xFF88CC44],
         LUA => ['LUA', 0xFF4466DD],
-        MISSING_FILE => ['MISSING FILE', 0xFFFF7F00]
+        MISSING_FILE => ['MISSING FILE', 0xFFFF7F00],
+        POP_UP => ['POP-UP', 0xFFFF00FF]
     ];
 
     public static function typeToString(type:PrintType):String

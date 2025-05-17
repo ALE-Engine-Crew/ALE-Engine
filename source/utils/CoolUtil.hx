@@ -154,7 +154,15 @@ class CoolUtil
 	 * @param message Information to be displayed
 	 */
 	public static function showPopUp(title:String, message:String):Void
+	{
+		debugTrace(title + ' | ' + message, POP_UP);
+
+		#if (windows && cpp)
+		cpp.WindowsCPP.showMessageBox(title, message, INFORMATION);
+		#else
 		FlxG.stage.window.alert(message, title);
+		#end
+	}
 
 	/**
 	 * Used to reset and clean the game.
@@ -392,7 +400,7 @@ class CoolUtil
 		}
     }
 
-	private static function transitionSwitch(state:NextState, skipTransIn, skipTransOut)
+	private static function transitionSwitch(state:NextState, skipTransIn:Bool = null, skipTransOut:Bool = null)
 	{
 		if (skipTransIn != null)
 			CoolVars.skipTransIn = skipTransIn;

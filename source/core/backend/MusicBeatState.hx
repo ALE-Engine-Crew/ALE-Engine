@@ -44,7 +44,7 @@ class MusicBeatState extends FlxState
         {
             CoolVars.skipTransOut = false;
         } else {
-            #if (cpp)
+            #if cpp
             CoolUtil.openSubState(new CustomTransition(false));
             #end
         }

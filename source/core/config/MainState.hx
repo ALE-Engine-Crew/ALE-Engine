@@ -13,6 +13,10 @@ import core.backend.Mods;
  */
 class MainState extends MusicBeatState
 {
+    #if mobile
+    private var showedModMenu:Bool = false;
+    #end
+
     public static var debugCounter:DebugCounter;
 
     override function create()
@@ -50,7 +54,16 @@ class MainState extends MusicBeatState
             cpp.WindowsTerminalCPP.allocConsole();
         #end
 
+        #if mobile
+        if (!showedModMenu)
+        {
+            CoolUtil.openSubState(new funkin.substates.ModsMenuSubState());
+
+            showedModMenu = true;
+        }
+        #else
         CoolUtil.switchState(() -> new CustomState(CoolVars.data.initialState), true, true);
+        #end
     }
 
     function openalFix()

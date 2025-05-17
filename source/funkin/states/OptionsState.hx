@@ -355,48 +355,39 @@ class OptionsState extends MusicBeatState
             {
                 name: 'Graphics',
                 options: [
-                    /*
-                    {
-                        name: 'V-Sync',
-                        description: 'If checked, Enables VSync fixing any screen tearing at the cost of capping the FPS to screen refresh rate.\n(Must restart the game to have an effect)',
-                        variable: 'vSync',
-                        type: cast 'bool',
-                        initialValue: false
-                    },
-                    */
                     {
                         name: 'Low Quality',
                         description: 'If checked, disables some background details, decreases loading times and improves performance.',
                         variable: 'lowQuality',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: false
                     },
                     {
                         name: 'Anti-Aliasing',
                         description: 'If unchecked, disables anti-aliasing, increases performance at the cost of sharper visuals.',
                         variable: 'antialiasing',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: true
                     },
                     {
                         name: 'Shaders',
                         description: 'If unchecked, disables shaders. It\'s used for some visual effects, and also CPU intensive for weaker PCs.',
                         variable: 'shaders',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: true
                     },
                     {
                         name: 'GPU Caching',
                         description: 'If checked, allows the GPU to be used for caching textures, decreasing RAM usage. Don\'t turn this on if you have a shitty Graphics Card.',
                         variable: 'cacheOnGPU',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: true
                     },
                     {
                         name: 'Framerate',
                         description: 'Pretty self explanatory, isn\'t it?',
                         variable: 'framerate',
-                        type: cast 'integer',
+                        type: INTEGER,
                         min: 60,
                         max: 240,
                         change: 1,
@@ -411,7 +402,7 @@ class OptionsState extends MusicBeatState
                         name: 'Note Splash Opacity',
                         description: 'How much transparent should the Note Splashes be.',
                         variable: 'splashAlpha',
-                        type: cast 'integer',
+                        type: INTEGER,
                         min: 0,
                         max: 100,
                         change: 1,
@@ -421,28 +412,28 @@ class OptionsState extends MusicBeatState
                         name: 'Flashing Lights',
                         description: 'Uncheck this if you\'re sensitive to flashing lights!',
                         variable: 'flashing',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: true
                     },
                     {
                         name: 'Check for Updates',
                         description: 'Turn this on to check for updates when you start the game.',
                         variable: 'checkForUpdates',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: true
                     },
                     {
                         name: 'Discord Rich Presence',
                         description: 'Uncheck this to prevent accidental leaks, it will hide the Application from your "Playing" box on Discord.',
                         variable: 'discordRPC',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: true
                     },
                     {
                         name: 'Open Console at Start Up',
                         description: 'Automatically opens the Console at Game Startup.',
                         variable: 'openConsoleOnStart',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: false
                     }
                 ]
@@ -454,21 +445,21 @@ class OptionsState extends MusicBeatState
                         name: 'Downscroll',
                         description: 'If checked, notes go Down instead of Up, simple enough.',
                         variable: 'downScroll',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: false
                     },
                     {
                         name: 'Ghost Tapping',
                         description: 'If checked, you won\'t get misses from pressing keys while there are no notes able to hit.',
                         variable: 'ghostTapping',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: true
                     },
                     {
                         name: 'Disable Reset Button',
                         description: 'If checked, pressing Reset won\'t do anything.',
                         variable: 'noReset',
-                        type: cast 'bool',
+                        type: BOOL,
                         initialValue: false
                     }
                 ]

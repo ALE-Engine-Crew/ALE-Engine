@@ -4,6 +4,13 @@ import lime.app.Application;
 
 #if android
 import android.content.Context;
+import android.os.Environment as AndroidEnvironment;
+import android.Permissions as AndroidPermissions;
+import android.os.Build.VERSION as AndroidVersion;
+import android.Settings as AndroidSettings;
+import android.os.Build.VERSION_CODES as AndroidVersionCode;
+
+import lime.system.System as LimeSystem;
 #end
 
 import haxe.io.Path;
@@ -54,7 +61,7 @@ class Main extends Sprite
 	private static var game = {
 		width: 1280,
 		height: 720,
-		initialState: #if android CopyState #else MainState #end,
+		initialState: #if mobile CopyState #else MainState #end,
 		zoom: -1.0,
 		framerate: 60,
 		skipSplash: true,
@@ -86,10 +93,15 @@ class Main extends Sprite
 		Application.current.window.y = Std.int((Application.current.window.display.bounds.height - Application.current.window.height) / 2);
 		#end
 
-		#if android
-		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
-		#elseif ios
-		Sys.setCwd(lime.system.System.applicationStorageDirectory);
+		#if mobile
+		// requestPermissions();
+		
+		var dir:String = Context.getExternalFilesDir();
+
+		if (!FileSystem.exists(dir))
+			FileSystem.createDirectory(dir);
+
+		Sys.setCwd(Path.addTrailingSlash(dir));
 		#end
 
 		if (stage == null)
@@ -199,4 +211,43 @@ class Main extends Sprite
 
 		Sys.exit(1);
 	}
+	
+	#if mobile
+	public static function requestPermissions():Void
+	{
+		var isAPI33 = AndroidVersion.SDK_INT >= AndroidVersionCode.TIRAMISU;
+
+		debugTrace("Check Permissions...", CUSTOM, 'ANDROID', FlxColor.LIME);
+		
+		if (!isAPI33)
+		{
+			debugTrace('Requesting EXTERNAL_STORAGE...', CUSTOM, 'ANDROID', FlxColor.LIME);
+
+			for (perm in ['READ_EXTERNAL_STORAGE', 'WRITE_EXTERNAL_STORAGE'])
+				AndroidPermissions.requestPermission(perm);
+		}
+
+		if (!AndroidEnvironment.isExternalStorageManager())
+			AndroidSettings.requestSetting('MANAGE_APP_ALL_FILES_ACCESS_PERMISSION');
+
+		var has_MANAGE_EXTERNAL_STORAGE = AndroidEnvironment.isExternalStorageManager();
+
+		var has_READ_EXTERNAL_STORAGE = AndroidPermissions.getGrantedPermissions().contains('android.permission.READ_EXTERNAL_STORAGE');
+		
+		if ((isAPI33 && !has_MANAGE_EXTERNAL_STORAGE) || (!isAPI33 && !has_READ_EXTERNAL_STORAGE))
+			CoolUtil.showPopUp('Notice', 'If you accepted the permissions you are all good!' + '\nIf you didn\'t then expect a crash' + '\nPress OK to see what happens');
+
+		debugTrace('Checking Game Directory...', CUSTOM, 'ANDROID', FlxColor.LIME);
+
+		try
+		{
+			if (!FileSystem.exists(Context.getExternalFilesDir()))
+				FileSystem.createDirectory(Context.getExternalFilesDir());
+		} catch (e:Dynamic) {
+			CoolUtil.showPopUp('Error', 'Please create directory to\n' + Context.getExternalFilesDir() + '\nPress OK to close the game');
+
+			LimeSystem.exit(1);
+		}
+	}
+	#end
 }

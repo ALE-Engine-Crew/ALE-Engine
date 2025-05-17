@@ -2,27 +2,11 @@ package core.config;
 
 import flixel.util.FlxSave;
 
+import lime.app.Application;
+
 @:structInit class SaveData
 {
-	/*
-	public var vSync(default, set):Bool = false;
-	function set_vSync(value:Bool):Bool
-	{
-		vSync = value;
-
-		FlxG.stage.application.window.setVSyncMode(
-			switch (value)
-			{
-				case false:
-					lime.ui.WindowVSyncMode.OFF;
-				case true:
-					lime.ui.WindowVSyncMode.ON;
-			}
-		);
-
-		return value;
-	}
-		*/
+	public var vSync:Bool = false;
 
     public var antialiasing:Bool = true;
     public var flashing:Bool = true;
@@ -84,6 +68,10 @@ class ClientPrefs
 			FlxG.drawFramerate = ClientPrefs.data.framerate;
 			FlxG.updateFramerate = ClientPrefs.data.framerate;
 		}
+
+		#if android
+		FlxG.android.preventDefaultKeys = [BACK];
+		#end
 	}
 
 	public static function savePrefs()

@@ -4,6 +4,8 @@
 
 	<app title="Friday Night Funkin': ALE Engine" file="ALEEngine" main="core.Main" packageName="com.aleenginecrew.aleengine" package="com.alejogdofficial.aleengine" version="Alpha 5" company="ALEEngineCrew" />
 
+	<set name="APP_ID" value="0x0100f6c013bbc000" />
+
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB" />
 
 	<app preloader="flixel.system.FlxPreloader" />
@@ -75,7 +77,10 @@
 	<haxedef name="DISABLED_MACRO_SUPERLATIVE" if="android" />
 
 	<haxedef name="hscriptPos" if="HSCRIPT_ALLOWED" />
-	
+
+	<config:android target-sdk-version="33" />
+	<config:android minimum-sdk-version="21" />
+
 	<assets path='art/iconOG.png' rename='icon.png' if="linux" />
 	
 	<icon path="art/icon16.png" size='16' />
@@ -87,4 +92,6 @@
 		<assets path="alsoft.txt" rename="plugins/alsoft.ini" type="text" if="windows"/>
 		<assets path="alsoft.txt" rename="plugins/alsoft.conf" type="text" unless="windows"/>
 	</section>
+	
+	<certificate path="androidsign.jks" password="aleengine" alias="aleengineandroid" alias-password="aleengine" if="android" unless="debug" />
 </project>
