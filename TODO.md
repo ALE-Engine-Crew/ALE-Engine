@@ -80,6 +80,7 @@
 - Editors [ ]
     - Chart Editor [ ]
     - Character Editor [ ]
+    - Stage Editor (Optional) [ ]
     - Modchart Editor (Optional) [ ]
     - Dialogue Editor [ ]
     - Dialogue Portrait Editor [ ]

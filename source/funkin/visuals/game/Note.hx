@@ -31,6 +31,7 @@ class Note extends FlxSprite
 	public var parentNote:Note;
 
 	public var characterIndex:Int;
+	public var selected:Bool = false;
 
 	public var ableToHit(get, never):Bool;
 	function get_ableToHit():Bool
@@ -85,6 +86,8 @@ class Note extends FlxSprite
         return texture;
     }
 
+	public var shaderRef:RGBShaderReference;
+
     public function new(strumTime:Float, data:Int, noteLenght:Float, type:ALECharacterType, noteType:NoteType, texture:String = 'note')
     {
 		super();
@@ -99,7 +102,7 @@ class Note extends FlxSprite
         this.texture = texture;
 
 		var rgbPalette = new RGBPalette();
-		var shaderRef = new RGBShaderReference(this, rgbPalette);
+		shaderRef = new RGBShaderReference(this, rgbPalette);
 		var shaderArray:Array<FlxColor> = ClientPrefs.data.arrowRGB[data];
 		shaderRef.r = shaderArray[0];
 		shaderRef.g = shaderArray[1];
