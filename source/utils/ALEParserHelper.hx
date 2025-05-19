@@ -14,8 +14,6 @@ class ALEParserHelper
 		if (json.format == null || json.format != 'psych_v1')
 			json = json.song;
 
-		var psychJson:PsychSong = cast json;
-
 		var formattedJson:ALESong = {
             characters: [
                 [json.player3 == null ? (json.gfVersion == null ? 'gf' : json.gfVersion) : json.player3, 'extra'],
@@ -42,7 +40,9 @@ class ALEParserHelper
 			format: 'ale-format-v0.1'
 		}
 
-		for (section in psychJson.notes)
+		var psychSections:Array<PsychSection> = cast json.notes;
+
+		for (section in psychSections)
 		{
 			var newSection = {
 				notes: [],
@@ -183,4 +183,47 @@ class ALEParserHelper
             }
         }
 	}
+
+    public static function getALEDialogueCharacter(name:String):ALEDialogueCharacter
+    {
+        var data:Dynamic = Json.parse(File.getContent(Paths.getPath('dialogue/' + name + '.json')));
+
+        if (data.format == 'ale-format-v0.1')
+            return cast data;
+
+        var formattedJson:ALEDialogueCharacter = {
+            image: data.image,
+            position: switch(data.dialogue_pos)
+                {
+                    case 'right':
+                        RIGHT;
+                    case 'center':
+                        CENTERED;
+                    default:
+                        LEFT;
+                },
+            format: 'ale-format-v0.1',
+            scale: data.scale,
+            screenPosition: data.position,
+            antialiasing: data.no_antialiasing == null ? true : !data.no_antialiasing,
+            animations: []
+        }
+
+        var psychAnimArray:Array<PsychDialogueCharacterJSONAnimation> = cast data.animations;
+
+        for (anim in psychAnimArray)
+        {
+            var formattedAnimation:ALEDialogueCharacterJSONAnimation = {
+                animation: anim.anim,
+                idleName: anim.idle_name,
+                idleOffset: anim.idle_offsets,
+                name: anim.loop_name,
+                offset: anim.loop_offsets
+            };
+
+            formattedJson.animations.push(formattedAnimation);
+        }
+
+        return formattedJson;
+    }
 }

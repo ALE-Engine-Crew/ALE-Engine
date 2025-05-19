@@ -8,6 +8,8 @@ import haxe.ds.StringMap;
 import scripting.sscript.tea.SScript;
 import scripting.sscript.tea.SScript.TeaCall;
 
+import funkin.visuals.cutscenes.DialogueCharacter;
+
 import core.enums.ScriptType;
 
 @:access(core.backend.ScriptState)
@@ -70,6 +72,7 @@ class HScript extends SScript
 			funkin.visuals.objects.AttachedSprite,
 			funkin.visuals.objects.AttachedText,
 			funkin.visuals.objects.Alphabet,
+			funkin.visuals.objects.TypedAlphabet,
 			funkin.visuals.objects.AttachedAlphabet,
 			funkin.states.OptionsState
         ];
