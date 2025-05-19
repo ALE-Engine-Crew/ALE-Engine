@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Windows Build
+    name: Windows Build 32 Bits
     permissions: write-all
     runs-on: windows-latest
 
@@ -21,12 +21,12 @@ jobs:
 
       - name: Install Libraries
         run: setup/install-haxelibs.bat
-
-      - name: Build for Windows
-        run: haxelib run lime build windows
+        
+      - name: Build for Windows (32 Bits)
+        run: haxelib run lime build windows -32 -D 32bits -D HXCPP_M32
 
       - name: Upload Game
         uses: actions/upload-artifact@v4
         with:
           name: ALE Engine - Windows Build
-          path: export/release/windows/bin
+          path: export/32bit/windows/bin
