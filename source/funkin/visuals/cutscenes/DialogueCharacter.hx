@@ -65,7 +65,7 @@ class DialogueCharacter extends FlxSprite
         return texture;
     }
 
-    override function new(x:Float = 0, y:Float = 0, character:String)
+    override public function new(x:Float = 0, y:Float = 0, character:String)
     {
         super(x, y);
 

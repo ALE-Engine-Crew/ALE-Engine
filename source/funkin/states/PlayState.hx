@@ -20,6 +20,8 @@ import funkin.visuals.objects.HealthIcon;
 import flixel.sound.FlxSound;
 import flixel.FlxObject;
 
+import funkin.substates.DialogueSubState;
+
 class PlayState extends ScriptState
 {
     public static var instance:PlayState;
