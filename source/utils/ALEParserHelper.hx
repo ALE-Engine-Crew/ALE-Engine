@@ -226,4 +226,34 @@ class ALEParserHelper
 
         return formattedJson;
     }
+
+    public static function getALEDialogue(json:Dynamic):ALEDialogue
+    {
+        if (json.format == 'ale-format-v0.1')
+            return json;
+        
+        var formattedJson:ALEDialogue = {
+            format: 'ale-format-v0.1',
+
+            lines: []
+        };
+
+        var psychJson:PsychDialogue = cast json;
+
+        for (line in psychJson.dialogue)
+        {
+            var formattedLine:ALEDialogueLine = {
+                character: line.portrait,
+                animation: line.expression,
+                text: line.text,
+                boxState: cast line.boxState,
+                speed: line.speed,
+                sound: line.sound
+            };
+
+            formattedJson.lines.push(formattedLine);
+        }
+
+        return formattedJson;
+    }
 }

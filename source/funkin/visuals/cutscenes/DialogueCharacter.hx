@@ -12,7 +12,7 @@ class DialogueCharacter extends FlxSprite
 
     public var data:ALEDialogueCharacter;
 
-    public var initialPosition:Array<Int> = [];
+    public var defaultY:Float = 0;
 
     public var name(default, set):String;
     public function set_name(value:String):String
