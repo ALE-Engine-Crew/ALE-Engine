@@ -171,6 +171,13 @@ class CoolUtil
 	{
 		resizeGame(Main.game.width, Main.game.height);
 
+		PlayState.SONG = null;
+		PlayState.STAGE = null;
+		PlayState.difficulty = null;
+		PlayState.songRoute = null;
+		PlayState.startPosition = 0;
+		PlayState.mode = FREEPLAY;
+
 		CoolVars.skipTransIn = CoolVars.skipTransOut = true;
 
 		if (ScriptState.instance != null)
@@ -369,18 +376,14 @@ class CoolUtil
 			debugTrace('Error While Loading Game Data (data.json): ' + error, ERROR);
 		}
 
-        if (iconImage != CoolVars.data.icon)
-        {
-            if (Paths.fileExists(CoolVars.data.icon + '.png'))
-            {
-                iconImage = CoolVars.data.icon;
+		if (Paths.fileExists(CoolVars.data.icon + '.png'))
+		{
+			iconImage = CoolVars.data.icon;
 
-                openfl.Lib.current.stage.window.setIcon(lime.graphics.Image.fromFile(Paths.getPath(CoolVars.data.icon + '.png')));
-            } else {
-
-                openfl.Lib.current.stage.window.setIcon(lime.graphics.Image.fromFile(Paths.getPath('images/appIcon.png')));
-			}
-        }
+			openfl.Lib.current.stage.window.setIcon(lime.graphics.Image.fromFile(Paths.getPath(CoolVars.data.icon + '.png')));
+		} else {
+			openfl.Lib.current.stage.window.setIcon(lime.graphics.Image.fromFile(Paths.getPath('images/appIcon.png')));
+		}
 
         FlxG.stage.window.title = CoolVars.data.title;
 	}

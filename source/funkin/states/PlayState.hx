@@ -5,6 +5,7 @@ import utils.ALEParserHelper;
 import core.enums.ALECharacterType;
 import core.enums.Rating;
 import core.enums.Rank;
+import core.enums.PlayStateMode;
 
 import core.structures.ALESong;
 import core.structures.ALEStage;
@@ -51,6 +52,8 @@ class PlayState extends ScriptState
     public static var difficulty:String = null;
 
     public static var songRoute:String = null;
+
+    public static var mode:PlayStateMode = FREEPLAY;
 
     public var voices:FlxTypedGroup<FlxSound> = new FlxTypedGroup<FlxSound>();
 

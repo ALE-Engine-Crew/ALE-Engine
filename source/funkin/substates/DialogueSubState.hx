@@ -110,6 +110,8 @@ class DialogueSubState extends MusicBeatSubState
 
         bubble.scale.set(0.9, 0.9);
 
+        bubble.antialiasing = ClientPrefs.data.antialiasing;
+
         text = new TypedAlphabet(175, FlxG.height - 220, '');
         text.setScale(0.7);
         text.cameras = [subCamera];
@@ -171,8 +173,8 @@ class DialogueSubState extends MusicBeatSubState
     {
         super.update(elapsed);
         
-        if (canSelect && (controls.ACCEPT || FlxG.keys.justPressed.RIGHT || FlxG.keys.justPressed.LEFT))
-            changeDialogue(FlxG.keys.justPressed.LEFT ? -1 : 1);
+        if (canSelect && (controls.ACCEPT || controls.UI_LEFT_P || controls.UI_RIGHT_P))
+            changeDialogue(controls.UI_LEFT_P ? -1 : 1);
     }
 
     var curCharacter:DialogueCharacter;
