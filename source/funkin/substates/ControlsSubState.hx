@@ -6,8 +6,6 @@ import core.structures.ControlsOption;
 
 import funkin.visuals.objects.ControlsAlphabet;
 
-import flixel.input.keyboard.FlxKey;
-
 import flixel.addons.display.FlxGridOverlay;
 import flixel.effects.FlxFlicker;
 
@@ -85,7 +83,7 @@ class ControlsSubState extends MusicBeatSubState
 
         spawnOptions();
 
-        changeShit();
+        changeOption();
     }
 
     function spawnOptions()
@@ -113,13 +111,22 @@ class ControlsSubState extends MusicBeatSubState
                 var opt:ControlsAlphabet = new ControlsAlphabet(curMenuHeight + optHeight, option, CATEGORY);
                 add(opt);
 
-                var keyData:Array<Int> = Reflect.field(Reflect.field(ClientPrefs.data.controls, superOption.name), option);
+                var keyData:Array<Null<Int>> = Reflect.field(Reflect.field(ClientPrefs.data.controls, superOption.name), option);
 
-                var main:ControlsAlphabet = new ControlsAlphabet(opt.y, FlxKey.toStringMap.get(keyData[0]), MAIN_OPTION, superOption.name, option);
+                var main:ControlsAlphabet = new ControlsAlphabet(opt.y, '', MAIN_OPTION, superOption.name, option);
                 add(main);
 
-                var alt:ControlsAlphabet = new ControlsAlphabet(opt.y, FlxKey.toStringMap.get(keyData[1]), ALT_OPTION, superOption.name, option);
+                if (keyData[0] == 0)
+                    main.setKeyText(null);
+                else
+                    main.setKeyText(keyData[0]);
+
+                var alt:ControlsAlphabet = new ControlsAlphabet(opt.y, '', ALT_OPTION, superOption.name, option);
                 add(alt);
+                if (keyData[1] == 0)
+                    alt.setKeyText(null);
+                else
+                    alt.setKeyText(keyData[1]);
 
                 for (obj in [opt, main, alt])
                     obj.cameras = [subCamera];
@@ -155,10 +162,10 @@ class ControlsSubState extends MusicBeatSubState
 
         if (canSelect.options)
         {
-            if (controls.UI_UP_P || controls.UI_DOWN_P || controls.UI_RIGHT_P || controls.UI_LEFT_P)
-                changeShit(controls.UI_RIGHT_P ? 1 : controls.UI_LEFT_P ? -1 : null, controls.UI_UP_P ? -1 : controls.UI_DOWN_P ? 1 : null);
+            if (FlxG.keys.justPressed.UP || FlxG.keys.justPressed.DOWN || FlxG.keys.justPressed.RIGHT || FlxG.keys.justPressed.LEFT)
+                changeOption(FlxG.keys.justPressed.RIGHT ? 1 : FlxG.keys.justPressed.LEFT ? -1 : null, FlxG.keys.justPressed.UP ? -1 : FlxG.keys.justPressed.DOWN ? 1 : null);
             else if (controls.MOUSE_WHEEL)
-                changeShit(controls.MOUSE_WHEEL_UP ? -1 : 1, 0);
+                changeOption(controls.MOUSE_WHEEL_UP ? -1 : 1, 0);
 
             if (FlxG.keys.justPressed.ENTER)
             {
@@ -175,6 +182,8 @@ class ControlsSubState extends MusicBeatSubState
 
             if (FlxG.keys.justPressed.ESCAPE)
             {
+                FlxG.sound.play(Paths.sound('cancelMenu'));
+
                 ClientPrefs.savePrefs();
 
                 close();
@@ -196,13 +205,18 @@ class ControlsSubState extends MusicBeatSubState
 
                 canSelect.key = false;
                 canSelect.options = true;
+
+                for (option in options)
+                    for (object in option)
+                        if (object != selected && object.category == selected.category && object.key == selected.key)
+                            object.setKeyText(null);
             }
         }
         
         subCamera.scroll.y = CoolUtil.fpsLerp(subCamera.scroll.y, (sectionHeight + 300) / options.length * selInt.y / 2 + 50, 0.15);
     }
 
-    function changeShit(?x:Int = 0, ?y:Int = 0)
+    function changeOption(?x:Int = 0, ?y:Int = 0)
     {
         selInt.x += x;
         
@@ -213,23 +227,24 @@ class ControlsSubState extends MusicBeatSubState
             selInt.y--;
         } else if (selInt.x > 1) {
             selInt.x = 0;
+
             selInt.y++;
         }
 
         selInt.y += y;
         
         if (selInt.y < 0)
-        {
             selInt.y = options.length - 1;
-        } else if (selInt.y > options.length - 1) {
+        else if (selInt.y > options.length - 1)
             selInt.y = 0;
-        }
 
         for (index => option in options)
         {
             option[0].alpha = selInt.x == 0 && selInt.y == index ? 0.85 : 0.3;
             option[1].alpha = selInt.x == 1 && selInt.y == index ? 0.85 : 0.3;
         }
+    
+        FlxG.sound.play(Paths.sound('scrollMenu'));
     }
 
     override function destroy()

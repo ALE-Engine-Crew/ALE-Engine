@@ -5,8 +5,9 @@ import openfl.events.KeyboardEvent;
 import openfl.ui.Keyboard;
 
 import flixel.input.keyboard.FlxKey;
-
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
+
+import core.structures.EngineControls;
 
 class DebugCounter extends Sprite implements IFlxDestroyable
 {
@@ -133,24 +134,26 @@ class DebugCounter extends Sprite implements IFlxDestroyable
     {
         var key = correctKey(event);
     
+        var controls:EngineControls = ClientPrefs.data.controls.engine;
+
         if (FlxG.keys.pressed.CONTROL && FlxG.keys.pressed.SHIFT)
         {
-            switch (key)
+            if (key == controls.reset_game[0] || key == controls.reset_game[1])
             {
-                case FlxKey.F3:
-                    CoolUtil.resetEngine();
-                case FlxKey.M:
-                    if (FlxG.state.subState == null && !Std.isOfType(FlxG.state, funkin.states.PlayState))
-                        CoolUtil.openSubState(new funkin.substates.ModsMenuSubState());
+                CoolUtil.resetEngine();
+            } else if (key == controls.switch_mod[0] || key == controls.switch_mod[1]) {
+                if (FlxG.state.subState == null && !Std.isOfType(FlxG.state, funkin.states.PlayState))
+                    CoolUtil.openSubState(new funkin.substates.ModsMenuSubState());
             }
     
             keysPressed.push(key);
+
             return;
         }
     
         keysPressed.push(key);
     
-        if (key == FlxKey.F3)
+        if (key == controls.fps_counter[0] || key == controls.fps_counter[1])
             debugMode = (debugMode + 1) % 3;
     
         switch (debugMode)

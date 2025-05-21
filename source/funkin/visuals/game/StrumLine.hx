@@ -9,6 +9,8 @@ import core.enums.Rating;
 
 import core.structures.ALESection;
 
+import core.backend.Controls;
+
 class StrumLine extends FlxGroup
 {
     public var strums:FlxTypedGroup<Strum>;
@@ -229,18 +231,28 @@ class StrumLine extends FlxGroup
 
     function useKeys():Void
     {
-        var keysJustPressed:Array<Bool> = [
-            FlxG.keys.justPressed.D,
-            FlxG.keys.justPressed.F,
-            FlxG.keys.justPressed.J,
-            FlxG.keys.justPressed.K
+        var keysJustPressed:Array<Bool> = FlxG.state.subState == null ? [
+            MusicBeatState.instance.controls.NOTE_LEFT_P,
+            MusicBeatState.instance.controls.NOTE_DOWN_P,
+            MusicBeatState.instance.controls.NOTE_UP_P,
+            MusicBeatState.instance.controls.NOTE_RIGHT_P
+        ] : [
+            MusicBeatSubState.instance.controls.NOTE_LEFT_P,
+            MusicBeatSubState.instance.controls.NOTE_DOWN_P,
+            MusicBeatSubState.instance.controls.NOTE_UP_P,
+            MusicBeatSubState.instance.controls.NOTE_RIGHT_P
         ];
 
-        var keysJustReleased:Array<Bool> = [
-            FlxG.keys.justReleased.D,
-            FlxG.keys.justReleased.F,
-            FlxG.keys.justReleased.J,
-            FlxG.keys.justReleased.K
+        var keysJustReleased:Array<Bool> = FlxG.state.subState == null ?  [
+            MusicBeatState.instance.controls.NOTE_LEFT_R,
+            MusicBeatState.instance.controls.NOTE_DOWN_R,
+            MusicBeatState.instance.controls.NOTE_UP_R,
+            MusicBeatState.instance.controls.NOTE_RIGHT_R
+        ] : [
+            MusicBeatSubState.instance.controls.NOTE_LEFT_R,
+            MusicBeatSubState.instance.controls.NOTE_DOWN_R,
+            MusicBeatSubState.instance.controls.NOTE_UP_R,
+            MusicBeatSubState.instance.controls.NOTE_RIGHT_R
         ];
         
         var pressedData:Int = -1;

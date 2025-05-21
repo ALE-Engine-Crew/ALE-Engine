@@ -11,6 +11,8 @@ class ControlsAlphabet extends Alphabet
     public var category:String;
     public var variable:String;
 
+    public var key:Null<Int> = null;
+
     override public function new(y:Float, theText:String = '---', type:ControlsAlphabetType, category:String = '', variable:String = '')
     {
         super(0, y, theText.toUpperCase().replace('_', ' ').replace('-', '_'), type == MENU || type == TITLE);
@@ -33,9 +35,14 @@ class ControlsAlphabet extends Alphabet
         this.variable = variable;
     }
 
-    public function setKeyText(int:Int)
+    public function setKeyText(int:Null<Int>)
     {
-        text = FlxKey.toStringMap.get(int);
+        if (int == null)
+            text = '___';
+        else
+            text = FlxKey.toStringMap.get(int);
+
+        key = int;
 
         for (letter in this)
             if (letter != null)

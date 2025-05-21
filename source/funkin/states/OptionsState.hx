@@ -141,7 +141,7 @@ class OptionsState extends MusicBeatState
                 }
             }
 
-            if (controls.CANCEL)
+            if (controls.BACK)
             {
                 ClientPrefs.loadPrefs();
 
@@ -216,7 +216,7 @@ class OptionsState extends MusicBeatState
                     option.value = !option.value;
             }
     
-            if (controls.CANCEL)
+            if (controls.BACK)
             {
                 ClientPrefs.savePrefs();
 

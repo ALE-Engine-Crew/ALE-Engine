@@ -84,7 +84,7 @@ class ModsMenuSubState extends MusicBeatSubState
         modCamera.scroll.x = CoolUtil.fpsLerp(modCamera.scroll.x, camPos.x, 0.2);
         modCamera.scroll.y = CoolUtil.fpsLerp(modCamera.scroll.y, camPos.y, 0.2);
 
-        if (controls.CANCEL)
+        if (controls.BACK)
             close();
 
         if (controls.ACCEPT)

@@ -29,10 +29,10 @@ import lime.app.Application;
 			pause: [FlxKey.ENTER, FlxKey.ESCAPE]
 		},
 		engine: {
-			switch_mod: [FlxKey.SHIFT, FlxKey.M],
-			reset_game: [FlxKey.SHIFT, FlxKey.F3],
-			fps_counter: [FlxKey.F3, null],
-			master_menu: [FlxKey.SEVEN, null]
+			switch_mod: [FlxKey.M, null],
+			reset_game: [FlxKey.R, null],
+			master_menu: [FlxKey.SEVEN, null],
+			fps_counter: [FlxKey.F3, null]
 		}
 	};
 

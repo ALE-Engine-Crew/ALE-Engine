@@ -19,6 +19,7 @@ import openfl.filters.BitmapFilter;
 import core.config.MainState;
 import core.Main;
 import core.backend.Mods;
+import core.backend.Controls;
 
 import core.enums.PrintType;
 
@@ -196,13 +197,14 @@ class CoolUtil
 			CoolVars.globalVars.remove(key);
 
 		FlxG.game.removeChild(MainState.debugCounter);
+		
 		MainState.debugCounter.destroy();
 		MainState.debugCounter = null;
 
         #if (windows && cpp)
 		cpp.WindowsCPP.setWindowBorderColor(255, 255, 255);
 		#end
-		
+
 		FlxTween.globalManager.clear();
 
 		FlxG.camera.bgColor = FlxColor.BLACK;
