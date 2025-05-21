@@ -37,8 +37,9 @@ class ControlsAlphabet extends Alphabet
     {
         text = FlxKey.toStringMap.get(int);
 
-        for (letter in members)
-            letter.colorTransform.blueOffset = letter.colorTransform.redOffset = letter.colorTransform.greenOffset = 255;
+        for (letter in this)
+            if (letter != null)
+                letter.colorTransform.blueOffset = letter.colorTransform.redOffset = letter.colorTransform.greenOffset = 255;
 
         x = Math.floor(type == ALT_OPTION ? FlxG.width - 150 - width : FlxG.width / 2 - width / 2);
 
