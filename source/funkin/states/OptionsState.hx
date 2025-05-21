@@ -11,6 +11,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import funkin.visuals.objects.Alphabet;
 import funkin.visuals.objects.OptionText;
 
+import funkin.substates.ControlsSubState;
+
 typedef SelInt =
 {
     var menus:Int;
@@ -335,14 +337,14 @@ class OptionsState extends MusicBeatState
                 name: 'Note Colors',
                 stateData: {
                     script: false,
-                    subState: 'game.substates.NotesSubState'
+                    subState: 'funkin.substates.NotesSubState'
                 }
             },
             {
                 name: 'Controls',
                 stateData: {
                     script: false,
-                    subState: 'game.substates.ControlsSubState'
+                    subState: 'funkin.substates.ControlsSubState'
                 }
             },
             {

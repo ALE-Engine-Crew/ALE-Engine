@@ -1,12 +1,40 @@
 package core.config;
 
 import flixel.util.FlxSave;
+import flixel.input.keyboard.FlxKey;
+
+import core.structures.ClientControls;
 
 import lime.app.Application;
 
 @:structInit class SaveData
 {
 	public var vSync:Bool = false;
+
+	public var controls:ClientControls = {
+		notes: {
+			left: [FlxKey.A, FlxKey.LEFT],
+			down: [FlxKey.S, FlxKey.DOWN],
+			up: [FlxKey.W, FlxKey.UP],
+			right: [FlxKey.D, FlxKey.RIGHT]
+		},
+		ui: {
+			left: [FlxKey.A, FlxKey.LEFT],
+			down: [FlxKey.S, FlxKey.DOWN],
+			up: [FlxKey.W, FlxKey.UP],
+			right: [FlxKey.D, FlxKey.RIGHT],
+			accept: [FlxKey.ENTER, FlxKey.SPACE],
+			back: [FlxKey.ESCAPE, null],
+			reset: [FlxKey.R, FlxKey.F5],
+			pause: [FlxKey.ENTER, FlxKey.ESCAPE]
+		},
+		engine: {
+			switch_mod: [FlxKey.SHIFT, FlxKey.M],
+			reset_game: [FlxKey.SHIFT, FlxKey.F3],
+			fps_counter: [FlxKey.F3, null],
+			master_menu: [FlxKey.SEVEN, null]
+		}
+	};
 
     public var antialiasing:Bool = true;
     public var flashing:Bool = true;

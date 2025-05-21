@@ -47,7 +47,7 @@ class DiscordRPC
 
                         Discord.RunCallbacks();
 
-                        Sys.sleep(2);
+                        Sys.sleep(1);
                     }
                 }
             );
@@ -70,7 +70,7 @@ class DiscordRPC
         Discord.Shutdown();
     }
 
-    public static function changePresence(details:String, ?state:String, ?largeImage:String, ?smallImage:String, ?usesTime:Bool, ?endTime:Float)
+    public static function changePresence(details:String, ?state:String, ?largeImage:String, ?smallImage:String, ?usesTime:Bool = false, ?endTime:Float = 0)
     {
         var startTime:Float = 0;
 
@@ -83,9 +83,10 @@ class DiscordRPC
         presence.state = state;
         presence.details = details;
         presence.largeImageKey = largeImage;
+        presence.largeImageText = 'Engine Version: ' + CoolVars.engineVersion;
         presence.smallImageKey = smallImage;
-        presence.startTimestamp = Std.int(startTime);
-        presence.endTimestamp = Std.int(endTime);
+        presence.startTimestamp = Std.int(startTime / 1000);
+        presence.endTimestamp = Std.int(endTime / 1000);
 
         updatePresence();
     }

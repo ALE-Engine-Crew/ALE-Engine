@@ -207,7 +207,9 @@ class Main extends Sprite
 		Application.current.window.alert(errMsg, 'ALE Engine ' + CoolVars.engineVersion + ' | Crash Handler');
 		#end
 
-		Sys.println(errMsg);
+		debugTrace(errMsg, ERROR);
+
+		DiscordRPC.shutdown();
 
 		Sys.exit(1);
 	}

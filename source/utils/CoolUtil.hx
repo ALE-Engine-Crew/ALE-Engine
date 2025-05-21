@@ -26,6 +26,7 @@ import core.structures.*;
 
 import utils.ALEParserHelper;
 
+import sys.thread.Thread;
 
 /**
  * It contains functions that can be quite useful
@@ -519,5 +520,17 @@ class CoolUtil
 			filterArray.push(new ShaderFilter(shader));
 
 		camera.filters = filterArray;
+	}
+
+	public static function createSafeThread(func:Void -> Void):Thread
+	{
+		return Thread.create(function()
+		{
+			try {
+				func();
+			} catch(e) {
+				debugTrace(e.details(), ERROR);
+			}
+		});
 	}
 }
