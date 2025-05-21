@@ -45,6 +45,8 @@ class MainState extends MusicBeatState
 
         CoolUtil.reloadGameMetadata();
 
+        DiscordRPC.initialize(CoolVars.data.discordID);
+
         #if cpp
         debugCounter = new DebugCounter();
         

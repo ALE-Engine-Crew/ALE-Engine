@@ -24,6 +24,7 @@ import core.backend.MusicBeatSubState;
 import core.backend.ScriptState;
 import core.backend.ScriptSubState;
 import core.backend.Conductor;
+import core.backend.DiscordRPC;
 
 import core.config.ClientPrefs;
 

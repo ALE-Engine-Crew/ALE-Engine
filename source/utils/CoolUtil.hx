@@ -171,6 +171,8 @@ class CoolUtil
 	{
 		resizeGame(Main.game.width, Main.game.height);
 
+		DiscordRPC.shutdown();
+
 		PlayState.SONG = null;
 		PlayState.STAGE = null;
 		PlayState.difficulty = null;

@@ -67,6 +67,7 @@ class HScript extends SScript
 			ClientPrefs,
             Conductor,
             core.backend.MusicBeatState,
+			core.backend.DiscordRPC,
             CustomState,
 			CustomSubState,
 			funkin.visuals.objects.AttachedSprite,
