@@ -9,8 +9,6 @@ import core.enums.Rating;
 
 import core.structures.ALESection;
 
-import core.backend.Controls;
-
 class StrumLine extends FlxGroup
 {
     public var strums:FlxTypedGroup<Strum>;
@@ -231,28 +229,18 @@ class StrumLine extends FlxGroup
 
     function useKeys():Void
     {
-        var keysJustPressed:Array<Bool> = FlxG.state.subState == null ? [
-            MusicBeatState.instance.controls.NOTE_LEFT_P,
-            MusicBeatState.instance.controls.NOTE_DOWN_P,
-            MusicBeatState.instance.controls.NOTE_UP_P,
-            MusicBeatState.instance.controls.NOTE_RIGHT_P
-        ] : [
-            MusicBeatSubState.instance.controls.NOTE_LEFT_P,
-            MusicBeatSubState.instance.controls.NOTE_DOWN_P,
-            MusicBeatSubState.instance.controls.NOTE_UP_P,
-            MusicBeatSubState.instance.controls.NOTE_RIGHT_P
+        var keysJustPressed:Array<Bool> = [
+            FlxG.keys.anyJustPressed(ClientPrefs.data.controls.notes.left),
+            FlxG.keys.anyJustPressed(ClientPrefs.data.controls.notes.down),
+            FlxG.keys.anyJustPressed(ClientPrefs.data.controls.notes.up),
+            FlxG.keys.anyJustPressed(ClientPrefs.data.controls.notes.right)
         ];
 
-        var keysJustReleased:Array<Bool> = FlxG.state.subState == null ?  [
-            MusicBeatState.instance.controls.NOTE_LEFT_R,
-            MusicBeatState.instance.controls.NOTE_DOWN_R,
-            MusicBeatState.instance.controls.NOTE_UP_R,
-            MusicBeatState.instance.controls.NOTE_RIGHT_R
-        ] : [
-            MusicBeatSubState.instance.controls.NOTE_LEFT_R,
-            MusicBeatSubState.instance.controls.NOTE_DOWN_R,
-            MusicBeatSubState.instance.controls.NOTE_UP_R,
-            MusicBeatSubState.instance.controls.NOTE_RIGHT_R
+        var keysJustReleased:Array<Bool> = [
+            FlxG.keys.anyJustReleased(ClientPrefs.data.controls.notes.left),
+            FlxG.keys.anyJustReleased(ClientPrefs.data.controls.notes.down),
+            FlxG.keys.anyJustReleased(ClientPrefs.data.controls.notes.up),
+            FlxG.keys.anyJustReleased(ClientPrefs.data.controls.notes.right)
         ];
         
         var pressedData:Int = -1;
