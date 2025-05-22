@@ -2,6 +2,8 @@ package scripting.lua;
 
 import funkin.visuals.shaders.ALERuntimeShader;
 
+import scripting.lua.flixel.LuaCamera;
+
 class LuaCoolUtil extends LuaPresetBase
 {
     override public function new(lua:LuaScript)
@@ -58,7 +60,7 @@ class LuaCoolUtil extends LuaPresetBase
                     if (tagIs(tag, ALERuntimeShader))
                         procShaders.push(getTag(tag));
 
-                CoolUtil.setCameraShaders(cameraFromString(lua, camera), procShaders);
+                CoolUtil.setCameraShaders(LuaCamera.cameraFromString(lua, camera), procShaders);
             }
         );
 
@@ -176,22 +178,5 @@ class LuaCoolUtil extends LuaPresetBase
                 }
             }
         );
-    }
-
-    function cameraFromString(lua:LuaScript, camera:String):FlxCamera
-    {
-        return switch (camera.toLowerCase().trim())
-        {
-            case 'camhud', 'hud', 'camerahud':
-                if (lua.type == STATE)
-                    ScriptState.instance.camHUD;
-                else
-                    ScriptState.instance.camGame;
-            default:
-                if (lua.type == STATE)
-                    ScriptState.instance.camGame;
-                else
-                    ScriptState.instance.camGame;
-        };
     }
 }

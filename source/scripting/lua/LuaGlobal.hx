@@ -3,6 +3,8 @@ package scripting.lua;
 import flixel.FlxBasic;
 import flixel.FlxObject;
 
+import scripting.lua.flixel.LuaCamera;
+
 import core.enums.PrintType;
 
 @:access(core.backend.ScriptState)
@@ -65,7 +67,7 @@ class LuaGlobal extends LuaPresetBase
                 var theCameras:Array<FlxCamera> = [];
 
                 for (cam in cameras)
-                    theCameras.push(cameraFromString(lua, cam));
+                    theCameras.push(LuaCamera.cameraFromString(lua, cam));
 
                 if (tagIs(tag, FlxObject))
                 {
@@ -107,29 +109,5 @@ class LuaGlobal extends LuaPresetBase
         {
             set('close', FlxG.state.subState.close);
         }
-    }
-
-    public static function cameraFromString(lua:LuaScript, name:String):FlxCamera
-    {
-        var result:FlxCamera = null;
-        
-        if (lua.type == STATE)
-        {
-            result = switch(name.toUpperCase())
-            {
-                case 'HUD', 'CAMHUD', 'CAMERAHUD':
-                    ScriptState.instance.camHUD;
-                default:
-                    ScriptState.instance.camGame;
-            };
-        } else {
-            result = switch(name.toUpperCase())
-            {
-                default:
-                    ScriptSubState.instance.camGame;
-            };
-        }
-
-        return result;
     }
 }

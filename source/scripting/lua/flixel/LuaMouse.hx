@@ -64,7 +64,7 @@ class LuaMouse extends LuaPresetBase
 
         set('mouseOverlaps', function(tag:String, ?camera:String = 'camGame')
             {
-                return FlxG.mouse.overlaps(getTag(tag), LuaGlobal.cameraFromString(lua, camera));
+                return FlxG.mouse.overlaps(getTag(tag), LuaCamera.cameraFromString(lua, camera));
             }
         );
 
@@ -91,9 +91,9 @@ class LuaMouse extends LuaPresetBase
                 return switch (type)
                 {
                     case 'y':
-                        FlxG.mouse.getWorldPosition(cameraFromString(lua, camera)).y;
+                        FlxG.mouse.getWorldPosition(LuaCamera.cameraFromString(lua, camera)).y;
                     default:
-                        FlxG.mouse.getWorldPosition(cameraFromString(lua, camera)).x;
+                        FlxG.mouse.getWorldPosition(LuaCamera.cameraFromString(lua, camera)).x;
                 }
             }
         );
@@ -103,9 +103,9 @@ class LuaMouse extends LuaPresetBase
                 return switch (type)
                 {
                     case 'y':
-                        FlxG.mouse.getViewPosition(cameraFromString(lua, camera)).y;
+                        FlxG.mouse.getViewPosition(LuaCamera.cameraFromString(lua, camera)).y;
                     default:
-                        FlxG.mouse.getViewPosition(cameraFromString(lua, camera)).x;
+                        FlxG.mouse.getViewPosition(LuaCamera.cameraFromString(lua, camera)).x;
                 }
             }
         );
@@ -115,22 +115,5 @@ class LuaMouse extends LuaPresetBase
                 return FlxG.mouse.wheel;
             }
         );
-    }
-
-    function cameraFromString(lua:LuaScript, camera:String):FlxCamera
-    {
-        return switch (camera.toLowerCase().trim())
-        {
-            case 'camhud', 'hud', 'camerahud':
-                if (lua.type == STATE)
-                    ScriptState.instance.camHUD;
-                else
-                    ScriptState.instance.camGame;
-            default:
-                if (lua.type == STATE)
-                    ScriptState.instance.camGame;
-                else
-                    ScriptState.instance.camGame;
-        };
     }
 }

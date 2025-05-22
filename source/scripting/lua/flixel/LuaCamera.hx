@@ -12,6 +12,47 @@ class LuaCamera extends LuaPresetBase
             }
         );
 
-        /*set('addCamera', function(tag:String))'*/
+        set('addCamera', function(tag:String, ?defaultDraw:Bool)
+            {
+                if (tagIs(tag, FlxCamera))
+                    FlxG.cameras.add(getTag(tag), defaultDraw);
+            }
+        );
+
+        set('removeCamera', function(tag:String)
+            {
+                if (tagIs(tag, FlxCamera))
+                    if (FlxG.cameras.list.indexOf(getTag(tag)) != -1)
+                        FlxG.cameras.remove(getTag(tag));
+            }
+        );
+    }
+
+    public static function cameraFromString(lua:LuaScript, name:String):FlxCamera
+    {
+        if (lua.variables.exists(name))
+            if (lua.variables.get(name) is FlxCamera)
+                return lua.variables.get(name);
+
+        var result:FlxCamera = null;
+        
+        if (lua.type == STATE)
+        {
+            result = switch(name.toUpperCase())
+            {
+                case 'HUD', 'CAMHUD', 'CAMERAHUD':
+                    ScriptState.instance.camHUD;
+                default:
+                    ScriptState.instance.camGame;
+            };
+        } else {
+            result = switch(name.toUpperCase())
+            {
+                default:
+                    ScriptSubState.instance.camGame;
+            };
+        }
+
+        return result;
     }
 }
