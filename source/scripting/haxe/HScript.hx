@@ -94,7 +94,6 @@ class HScript extends SScript
 				'insert' => FlxG.state.insert,
 				'controls' => ScriptState.instance.controls,
 				'openSubState' => FlxG.state.openSubState,
-				'debugPrint' => ScriptState.instance.debugPrint,
 				'CancelSuperFunction' => ScriptState.instance.CancelSuperFunction
 			];
 		} else if (type == SUBSTATE) {
@@ -104,7 +103,6 @@ class HScript extends SScript
 				'insert' => FlxG.state.subState.insert,
 				'controls' => ScriptSubState.instance.controls,
 				'close' => FlxG.state.subState.close,
-				'debugPrint' => ScriptSubState.instance.debugPrint,
 				'CancelSuperFunction' => ScriptSubState.instance.CancelSuperFunction
 			];
 		}

@@ -56,13 +56,7 @@ class LuaGlobal extends LuaPresetBase
             }
         );
 
-        set('debugPrint', function(text:Dynamic, ?theType:PrintType = TRACE, ?customType:String = 'CUSTOM', ?customColor:FlxColor = FlxColor.GRAY)
-        {
-            if (type == STATE)
-                ScriptState.instance.debugPrint(text, theType, customType, customColor);
-            else
-                ScriptSubState.instance.debugPrint(text, theType, customType, customColor);
-        });
+        set('debugPrint', CoolUtil.debugPrint);
 
         set('debugTrace', CoolUtil.debugTrace);
 
