@@ -114,7 +114,8 @@ class HScript extends SScript
 			'FlxColor' => FlxColorClass,
 			'FlxKey' => FlxKeyClass,
 			'Json' => utils.ALEJson,
-			'debugTrace' => CoolUtil.debugTrace
+			'debugTrace' => CoolUtil.debugTrace,
+			'debugPrint' => CoolUtil.debugPrint
 		];
 
 		for (preVar in presetVariables.keys())
