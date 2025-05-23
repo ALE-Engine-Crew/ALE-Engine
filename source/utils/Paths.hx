@@ -175,7 +175,7 @@ class Paths
             return null;
         }
 
-        return File.getContent(getPath(path));
+        return getPath(path);
     }
 
     /**

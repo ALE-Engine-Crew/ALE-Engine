@@ -40,10 +40,5 @@ import sys.io.*;
 import utils.ALEJson as Json;
 import utils.CoolUtil;
 
-import flx3d.Flx3DUtil;
-import flx3d.Flx3DView;
-import flx3d.FlxView3D;
-import flx3d.Flx3DCamera;
-
 using StringTools;
 #end

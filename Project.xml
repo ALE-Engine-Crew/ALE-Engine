@@ -45,8 +45,6 @@
 
 	<haxelib name="flixel"/>
 	<haxelib name="flixel-addons"/>
-	
-	<haxelib name="away3d"/>
 
 	<haxelib name="ale-ui"/>
 
