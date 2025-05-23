@@ -111,7 +111,7 @@ class ControlsSubState extends MusicBeatSubState
                 var opt:ControlsAlphabet = new ControlsAlphabet(curMenuHeight + optHeight, option, CATEGORY);
                 add(opt);
 
-                var keyData:Array<Null<Int>> = Reflect.field(Reflect.field(ClientPrefs.data.controls, superOption.name), option);
+                var keyData:Array<Null<Int>> = Reflect.field(Reflect.field(ClientPrefs.controls, superOption.name), option);
 
                 var main:ControlsAlphabet = new ControlsAlphabet(opt.y, '', MAIN_OPTION, superOption.name, option);
                 add(main);
@@ -184,7 +184,7 @@ class ControlsSubState extends MusicBeatSubState
             {
                 FlxG.sound.play(Paths.sound('cancelMenu'));
 
-                ClientPrefs.savePrefs();
+                CoolUtil.save.saveControls();
 
                 close();
             }

@@ -74,7 +74,7 @@ class Main extends Sprite
 
 		Lib.application.window.onClose.add(function()
 			{
-				ClientPrefs.savePrefs();
+				CoolUtil.save.savePreferences();
 			}
 		);
 	}

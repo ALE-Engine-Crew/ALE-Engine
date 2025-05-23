@@ -50,6 +50,6 @@ class ControlsAlphabet extends Alphabet
 
         x = Math.floor(type == ALT_OPTION ? FlxG.width - 150 - width : FlxG.width / 2 - width / 2);
 
-        Reflect.field(Reflect.field(ClientPrefs.data.controls, category), variable)[type == ALT_OPTION ? 1 : 0] = int;
+        Reflect.field(Reflect.field(ClientPrefs.controls, category), variable)[type == ALT_OPTION ? 1 : 0] = int;
     }
 }

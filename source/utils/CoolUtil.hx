@@ -34,6 +34,8 @@ import sys.thread.Thread;
  */
 class CoolUtil
 {
+	public static var save:ALESave;
+
 	/**
 	 * Used to capitalize a text
 	 * @param text Text to capitalize
@@ -123,7 +125,7 @@ class CoolUtil
 	{
 		final company:String = FlxG.stage.application.meta.get('company');
 		
-		return company + '/' + flixel.util.FlxSave.validate(FlxG.stage.application.meta.get('file')) + (modSupport ? ('/' + (Mods.folder == '' ? 'ALEEngineDefaultSavePath' : Mods.folder)) : '');
+		return company + '/' + flixel.util.FlxSave.validate(FlxG.stage.application.meta.get('file')) + (modSupport ? ((Mods.folder.trim() == '' ? '' : '/' + Mods.folder)) : '');
 	}
 
 	/**

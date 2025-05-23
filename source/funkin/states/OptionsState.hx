@@ -143,8 +143,6 @@ class OptionsState extends MusicBeatState
 
             if (controls.BACK)
             {
-                ClientPrefs.loadPrefs();
-
                 if (inPlayState)
                 {
                     CoolUtil.switchState(() -> new funkin.states.PlayState());
@@ -218,9 +216,7 @@ class OptionsState extends MusicBeatState
     
             if (controls.BACK)
             {
-                ClientPrefs.savePrefs();
-
-                ClientPrefs.loadPrefs();
+                CoolUtil.save.savePreferences();
 
                 spawnCategories();
     

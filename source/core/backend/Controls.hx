@@ -13,7 +13,7 @@ class Controls
 
     // Notes
 
-    @:unreflective var notes:NotesControls = ClientPrefs.data.controls.notes;
+    @:unreflective var notes:NotesControls = ClientPrefs.controls.notes;
 
     public var NOTE_LEFT(get, never):Bool;
     function get_NOTE_LEFT():Bool
@@ -65,7 +65,7 @@ class Controls
 
     // UI
     
-    @:unreflective var ui:UIControls = ClientPrefs.data.controls.ui;
+    @:unreflective var ui:UIControls = ClientPrefs.controls.ui;
 
     public var UI_LEFT(get, never):Bool;
     function get_UI_LEFT():Bool

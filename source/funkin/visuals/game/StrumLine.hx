@@ -230,17 +230,17 @@ class StrumLine extends FlxGroup
     function useKeys():Void
     {
         var keysJustPressed:Array<Bool> = [
-            FlxG.keys.anyJustPressed(ClientPrefs.data.controls.notes.left),
-            FlxG.keys.anyJustPressed(ClientPrefs.data.controls.notes.down),
-            FlxG.keys.anyJustPressed(ClientPrefs.data.controls.notes.up),
-            FlxG.keys.anyJustPressed(ClientPrefs.data.controls.notes.right)
+            FlxG.keys.anyJustPressed(ClientPrefs.controls.notes.left),
+            FlxG.keys.anyJustPressed(ClientPrefs.controls.notes.down),
+            FlxG.keys.anyJustPressed(ClientPrefs.controls.notes.up),
+            FlxG.keys.anyJustPressed(ClientPrefs.controls.notes.right)
         ];
 
         var keysJustReleased:Array<Bool> = [
-            FlxG.keys.anyJustReleased(ClientPrefs.data.controls.notes.left),
-            FlxG.keys.anyJustReleased(ClientPrefs.data.controls.notes.down),
-            FlxG.keys.anyJustReleased(ClientPrefs.data.controls.notes.up),
-            FlxG.keys.anyJustReleased(ClientPrefs.data.controls.notes.right)
+            FlxG.keys.anyJustReleased(ClientPrefs.controls.notes.left),
+            FlxG.keys.anyJustReleased(ClientPrefs.controls.notes.down),
+            FlxG.keys.anyJustReleased(ClientPrefs.controls.notes.up),
+            FlxG.keys.anyJustReleased(ClientPrefs.controls.notes.right)
         ];
         
         var pressedData:Int = -1;

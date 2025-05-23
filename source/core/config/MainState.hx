@@ -1,5 +1,7 @@
 package core.config;
 
+import utils.ALESave;
+
 import funkin.debug.DebugCounter;
 
 import flixel.input.keyboard.FlxKey;
@@ -11,7 +13,7 @@ import core.backend.Mods;
 /**
  * Used to configure and add the necessary elements before starting the game
  */
-class MainState extends MusicBeatState
+class MainState extends flixel.FlxState
 {
     #if mobile
     private var showedModMenu:Bool = false;
@@ -22,8 +24,6 @@ class MainState extends MusicBeatState
     override function create()
     {
         CoolVars.skipTransOut = true;
-
-        super.create();
         
         openalFix();
 
@@ -38,9 +38,13 @@ class MainState extends MusicBeatState
 		FlxG.sound.volumeUpKeys = [NUMPADPLUS, PLUS];
 
         Mods.init();
-
-        ClientPrefs.loadPrefs();
     
+        if (CoolUtil.save == null)
+            CoolUtil.save = new ALESave();
+        
+        CoolUtil.save.loadPreferences();
+        CoolUtil.save.loadControls();
+
         CoolVars.engineVersion = lime.app.Application.current.meta.get('version');
 
         CoolUtil.reloadGameMetadata();
@@ -55,6 +59,12 @@ class MainState extends MusicBeatState
         if (ClientPrefs.data.openConsoleOnStart)
             cpp.WindowsTerminalCPP.allocConsole();
         #end
+
+		#if android
+		FlxG.android.preventDefaultKeys = [BACK];
+		#end
+
+        super.create();
 
         #if mobile
         if (!showedModMenu)

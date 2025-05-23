@@ -41,7 +41,7 @@ class OptionText extends FlxSpriteGroup
         }
 
         if (Reflect.field(ClientPrefs.data, variable) == null)
-            Reflect.setField(ClientPrefs.modData, variable, value);
+            Reflect.setField(ClientPrefs.custom, variable, value);
         else
             Reflect.setField(ClientPrefs.data, variable, value);
 

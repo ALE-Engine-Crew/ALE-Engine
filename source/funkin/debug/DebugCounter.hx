@@ -134,7 +134,7 @@ class DebugCounter extends Sprite implements IFlxDestroyable
     {
         var key = correctKey(event);
     
-        var controls:EngineControls = ClientPrefs.data.controls.engine;
+        var controls:EngineControls = ClientPrefs.controls.engine;
 
         if (FlxG.keys.pressed.CONTROL && FlxG.keys.pressed.SHIFT)
         {
