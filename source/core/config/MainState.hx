@@ -64,6 +64,26 @@ class MainState extends flixel.FlxState
 		FlxG.android.preventDefaultKeys = [BACK];
 		#end
 
+        /*
+		if (ClientPrefs.data.checkForUpdates)
+        {
+			var http = new haxe.Http("https://raw.githubusercontent.com/ShadowMario/FNF-PsychEngine/main/gitVersion.txt");
+
+			http.onData = function (data:String)
+			{
+				if (data.split('\n')[0].trim() != CoolVars.engineVersion)
+					CoolVars.mustUpdate = true;
+			}
+
+			http.onError = function (error)
+            {
+				debugPrint('Error During Update Checkout: ' + error, ERROR);
+			}
+
+			http.request();
+		}
+            */
+
         super.create();
 
         #if mobile

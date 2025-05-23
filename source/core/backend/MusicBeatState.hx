@@ -149,9 +149,8 @@ class MusicBeatState extends FlxState
             } else {
                 var closeMethod = Reflect.field(zombie, "close");
         
-                if (closeMethod != null && Reflect.isFunction(closeMethod)) {
+                if (closeMethod != null && Reflect.isFunction(closeMethod))
                     closeMethod.call(zombie, []);
-                }
             }
         }
         

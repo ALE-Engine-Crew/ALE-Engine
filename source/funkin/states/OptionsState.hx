@@ -217,6 +217,8 @@ class OptionsState extends MusicBeatState
             if (controls.BACK)
             {
                 CoolUtil.save.savePreferences();
+                
+                CoolUtil.save.loadPreferences();
 
                 spawnCategories();
     
