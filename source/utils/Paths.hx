@@ -164,6 +164,20 @@ class Paths
         return File.getContent(getPath(path));
     }
 
+    public static function model(file:String):String
+    {
+        var path = 'models/' + file + '.obj';
+
+        if (!fileExists(path))
+        {
+            debugTrace(path, MISSING_FILE);
+
+            return null;
+        }
+
+        return File.getContent(getPath(path));
+    }
+
     /**
      * Used to load image animations from XML
      * @param file File Name
