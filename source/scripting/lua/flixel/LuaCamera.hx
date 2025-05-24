@@ -45,15 +45,29 @@ class LuaCamera extends LuaPresetBase
             }
         );
 
-        set('fadeCamera', function(tag:String, ?color:FlxColor, ?duration:Float, ?fadeIn:Bool, ?onComplete:Void -> Void, ?force:Bool)
+        set('fadeCamera', function(tag:String, camera:String, ?color:FlxColor, ?duration:Float, ?fadeIn:Bool, ?force:Bool)
             {
-                cameraFromString(lua, tag).fade(color, duration, fadeIn, onComplete, force);
+                cameraFromString(lua, camera).fade(color, duration, fadeIn,
+                    () -> {
+                        if (type == STATE)
+                            ScriptState.instance.callOnLuaScripts('onCameraFadeComplete', [tag]);
+                        else
+                            ScriptSubState.instance.callOnLuaScripts('onCameraFadeComplete', [tag]);
+                    }
+                , force);
             }
         );
 
-        set('flashCamera', function(tag:String, ?color:FlxColor, ?duration:Float, ?onComplete:Void -> Void, ?force:Bool)
+        set('flashCamera', function(tag:String, camera:String, ?color:FlxColor, ?duration:Float, ?force:Bool)
             {
-                cameraFromString(lua, tag).flash(color, duration, onComplete, force);
+                cameraFromString(lua, camera).flash(color, duration,
+                    () -> {
+                        if (type == STATE)
+                            ScriptState.instance.callOnLuaScripts('onCameraFlashComplete', [tag]);
+                        else
+                            ScriptSubState.instance.callOnLuaScripts('onCameraFlashComplete', [tag]);
+                    }
+                , force);
             }
         );
 
@@ -82,9 +96,16 @@ class LuaCamera extends LuaPresetBase
             }
         );
 
-        set('shakeCamera', function(tag:String, ?intensity:Float, ?duration:Float, ?onComplete:Void -> Void, ?force:Bool)
+        set('shakeCamera', function(tag:String, camera:String, ?intensity:Float, ?duration:Float, ?force:Bool)
             {
-                cameraFromString(lua, tag).shake(intensity, duration, onComplete, force);
+                cameraFromString(lua, camera).shake(intensity, duration, 
+                    () -> {
+                        if (type == STATE)
+                            ScriptState.instance.callOnLuaScripts('onCameraShakeComplete', [tag]);
+                        else
+                            ScriptSubState.instance.callOnLuaScripts('onCameraShakeComplete', [tag]);
+                    }
+                , force);
             }
         );
 
