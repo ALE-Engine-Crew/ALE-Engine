@@ -443,6 +443,11 @@ class CoolUtil
 					'transIn' => true,
 					'transOut' => false,
 					'finishCallback' => () -> { FlxG.switchState(state); }
+				],
+				[
+					'transIn' => true,
+					'transOut' => false,
+					'finishCallback' => () -> { FlxG.switchState(state); }
 				]
 			));
 			#end
