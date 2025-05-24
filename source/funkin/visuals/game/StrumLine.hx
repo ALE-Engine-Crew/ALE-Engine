@@ -1,5 +1,7 @@
 package funkin.visuals.game;
 
+import flixel.sound.FlxSound;
+
 import flixel.group.FlxGroup;
 import flixel.util.FlxSort;
 import flixel.math.FlxRect;
@@ -33,6 +35,8 @@ class StrumLine extends FlxGroup
 
     public var noteHitCallback:(Note, Rating) -> Void;
     public var noteMissCallback:Note -> Void;
+
+    public var voices:Array<FlxSound> = [];
 
     public function new(character:Character, chartNotes:Array<Array<Dynamic>>, startPosition:Float)
     {
@@ -302,6 +306,10 @@ class StrumLine extends FlxGroup
             }) + 'miss',
             true
         );
+
+        for (sound in voices)
+            if (sound.volume != 0)
+                sound.volume = 0;
     }
 
     public function onNoteHit(note:Note, ?rating:Rating)
@@ -333,6 +341,10 @@ class StrumLine extends FlxGroup
             },
             true
         );
+
+        for (sound in voices)
+            if (sound.volume != 1)
+                sound.volume = 1;
     }
 
     public function addNote(note:Note)

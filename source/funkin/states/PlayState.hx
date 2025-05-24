@@ -186,11 +186,11 @@ class PlayState extends ScriptState
         
         cacheAssets();
 
-        initAudios();
-
         initCharacters();
         
         initStrums();
+
+        initAudios();
 
         scrollSpeed = SONG.speed;
 
@@ -398,14 +398,31 @@ class PlayState extends ScriptState
 
         if (FlxG.sound.music != null && FlxG.sound.music.playing)
             FlxG.sound.music.stop();
-        
-        loadVoice();
-        
-        loadVoice('Player');
-        
-        loadVoice('Extra');
-        
-        loadVoice('Opponent');
+
+        for (prefix in ['', 'Player', 'Extra', 'Opponent'])
+        {
+            var sound:FlxSound = loadVoice(prefix);
+
+            if (sound != null)
+            {
+                switch (prefix)
+                {
+                    case 'Player':
+                        for (strl in strumLines.players)
+                            strl.voices.push(sound);
+                    case 'Extra':
+                        for (strl in strumLines.extras)
+                            strl.voices.push(sound);
+                    case 'Opponent':
+                        for (strl in strumLines.opponents)
+                            strl.voices.push(sound);
+                    default:
+                        for (grp in strumLines.getGroups())
+                            for (strl in grp)
+                                strl.voices.push(sound);
+                }
+            }
+        }
         
 		FlxG.sound.music.loadEmbedded(Paths.inst(songRoute));
         FlxG.sound.music.volume = 0.6;
