@@ -1,5 +1,7 @@
 package funkin.substates;
 
+import haxe.ds.StringMap;
+
 class CustomSubState extends ScriptSubState
 {
     public static var instance:CustomSubState;
@@ -7,14 +9,20 @@ class CustomSubState extends ScriptSubState
     public var scriptName:String = '';
 
     public var arguments:Array<Dynamic>;
+    
+    public var hsVariables:StringMap<Dynamic>;
+    public var luaVariables:StringMap<Dynamic>;
 
-    override public function new(script:String, ?arguments:Array<Dynamic>)
+    override public function new(script:String, ?arguments:Array<Dynamic>, ?hsVariables:StringMap<Dynamic>, ?luaVariables:StringMap<Dynamic>)
     {
         super();
 
         scriptName = script;
 
         this.arguments = arguments;
+
+        this.hsVariables = hsVariables;
+        this.luaVariables = luaVariables;
     }
 
     override public function create()
@@ -25,14 +33,20 @@ class CustomSubState extends ScriptSubState
 
         loadScripts();
 
-        callOnScripts('onCreate');
-
         setOnScripts('arguments', arguments);
+
+        for (map in [hsVariables, luaVariables])
+            if (map != null)
+                for (key in map.keys())
+                    if (map == hsVariables)
+                        setOnHScripts(key, map.get(key));
+                    else
+                        setOnLuaScripts(key, map.get(key));
 
         openCallback = function() { callOnScripts('onOpen'); };
         closeCallback = function() { callOnScripts('onClose'); };
 
-        setOnHScripts('camGame', FlxG.camera);
+        callOnScripts('onCreate');
 
         callOnScripts('postCreate');
     }

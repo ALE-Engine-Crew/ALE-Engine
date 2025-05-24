@@ -1,5 +1,7 @@
 package funkin.states;
 
+import haxe.ds.StringMap;
+
 class CustomState extends ScriptState
 {
     public static var instance:CustomState;
@@ -7,14 +9,20 @@ class CustomState extends ScriptState
     public var scriptName:String = '';
 
     public var arguments:Array<Dynamic>;
+    
+    public var hsVariables:StringMap<Dynamic>;
+    public var luaVariables:StringMap<Dynamic>;
 
-    override public function new(script:String, ?arguments:Array<Dynamic>)
+    override public function new(script:String, ?arguments:Array<Dynamic>, ?hsVariables:StringMap<Dynamic>, ?luaVariables:StringMap<Dynamic>)
     {
         super();
 
         scriptName = script;
 
         this.arguments = arguments;
+
+        this.hsVariables = hsVariables;
+        this.luaVariables = luaVariables;
     }
 
     override public function create()
@@ -24,12 +32,20 @@ class CustomState extends ScriptState
         instance = this;
 
         loadScripts();
-        
-        callOnScripts('onCreate');
 
         setOnScripts('arguments', arguments);
 
+        for (map in [hsVariables, luaVariables])
+            if (map != null)
+                for (key in map.keys())
+                    if (map == hsVariables)
+                        setOnHScripts(key, map.get(key));
+                    else
+                        setOnLuaScripts(key, map.get(key));
+
         setOnScripts('resetCustomState', resetCustomState);
+        
+        callOnScripts('onCreate');
 
         callOnScripts('postCreate');
     }

@@ -62,6 +62,8 @@ class PlayState extends ScriptState
     public var cameraZoom:Float = 1;
     public var hudZoom:Float = 1;
 
+    private var deadCharacter:String = 'bf-dead';
+
     public var health(default, set):Float = 50;
     public function set_health(value:Float):Float
     {
@@ -87,7 +89,7 @@ class PlayState extends ScriptState
 
             deathCounter++;
 
-            CoolUtil.openSubState(new CustomSubState(CoolVars.data.gameOverScreen));
+            CoolUtil.openSubState(new CustomSubState(CoolVars.data.gameOverScreen, null, [ 'deadCharacter' => deadCharacter ], [ 'deadCharacter' => deadCharacter ]));
         }
 
         return health;
@@ -548,6 +550,9 @@ class PlayState extends ScriptState
                 if (strl.character.type == PLAYER)
                 {
                     misses++;
+
+                    if (health - 2.5 <= 0)
+                        deadCharacter = character.data.deadVariant;
 
                     health -= 2.5;
                 }

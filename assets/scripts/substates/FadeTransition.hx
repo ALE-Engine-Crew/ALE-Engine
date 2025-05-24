@@ -1,5 +1,7 @@
 import flixel.util.FlxGradient;
 
+import flixel.FlxState;
+
 var transBlack:FlxSprite;
 var transGradient:FlxSprite;
 
@@ -7,6 +9,8 @@ var transCamera:FlxCamera;
 
 function onCreate()
 {
+	FlxState.transitioning = true;
+
 	transCamera = new FlxCamera();
     transCamera.bgColor = FlxColor.TRANSPARENT;
     FlxG.cameras.add(transCamera, false);
@@ -40,4 +44,8 @@ function onUpdate(elapsed:Float)
 }
 
 function onDestroy()
+{
+	FlxState.transitioning = false;
+
     FlxG.cameras.remove(transCamera);
+}

@@ -79,7 +79,7 @@ class Note extends FlxSprite
 		if (prevNote != null && prevNote.noteType != NORMAL)
 		{
 			prevNote.animation.play('idle');
-			prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
+			prevNote.scale.y *= Conductor.stepCrochet / 1000 * 1.05;
 			prevNote.updateHitbox();
 		}
 

@@ -10,8 +10,6 @@ import funkin.visuals.ALECamera;
 
 import funkin.visuals.shaders.ALERuntimeShader;
 
-import funkin.substates.CustomTransition;
-
 import openfl.system.Capabilities;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
@@ -438,7 +436,15 @@ class CoolUtil
 			FlxG.switchState(state);
 		} else {
             #if (cpp)
-            CoolUtil.openSubState(new CustomTransition(true, () -> { FlxG.switchState(state); }));
+			CoolUtil.openSubState(new CustomSubState(
+				CoolVars.data.transition,
+				null,
+				[
+					'transIn' => true,
+					'transOut' => false,
+					'finishCallback' => () -> { FlxG.switchState(state); }
+				]
+			));
 			#end
 		}
 	}

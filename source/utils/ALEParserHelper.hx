@@ -113,7 +113,9 @@ class ALEParserHelper
                 
                     scale: theJson.scale,
                 
-                    format: 'ale-format-v0.1'
+                    format: 'ale-format-v0.1',
+
+                    deadVariant: 'bf-dead'
                 };
 
                 return cast formattedJson;
@@ -137,6 +139,8 @@ class ALEParserHelper
                 scale: 1,
             
                 format: 'ale-format-v0.1',
+
+                    deadVariant: 'bf-dead'
             };
         }
     }

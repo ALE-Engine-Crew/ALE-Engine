@@ -20,4 +20,6 @@ typedef ALECharacter = {
     var scale:Float;
 
     var format:String;
+    
+    var deadVariant:String;
 }

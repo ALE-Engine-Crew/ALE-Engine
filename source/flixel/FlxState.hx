@@ -221,10 +221,12 @@ class FlxState extends FlxContainer
 	 */
 	public function onResize(Width:Int, Height:Int):Void {}
 
+	public static var transitioning:Bool = false;
+
 	@:allow(flixel.FlxGame)
 	function tryUpdate(elapsed:Float):Void
 	{
-		if (allowUpdate && (persistentUpdate || subState == null || subState is funkin.substates.CustomTransition))
+		if (allowUpdate && (persistentUpdate || subState == null || transitioning))
 			update(elapsed);
 
 		if (_requestSubStateReset)

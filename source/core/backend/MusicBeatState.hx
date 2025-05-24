@@ -14,8 +14,6 @@ import core.enums.PrintType;
 
 import funkin.visuals.objects.DebugText;
 
-import funkin.substates.CustomTransition;
-
 /**
  * It is a FlxState extension that calculates the Beats, Steps and Sections of the game music (FlxG.sound.music)
  */
@@ -45,7 +43,20 @@ class MusicBeatState extends FlxState
             CoolVars.skipTransOut = false;
         } else {
             #if cpp
-            CoolUtil.openSubState(new CustomTransition(false));
+            CoolUtil.openSubState(new CustomSubState(
+                CoolVars.data.transition,
+                null,
+                [
+                    'transIn' => false,
+                    'transOut' => true,
+                    'finishCallback' => null
+                ],
+                [
+                    'transIn' => false,
+                    'transOut' => true,
+                    'finishCallback' => null
+                ]
+            ));
             #end
         }
 
