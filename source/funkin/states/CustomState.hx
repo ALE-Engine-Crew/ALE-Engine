@@ -30,9 +30,6 @@ class CustomState extends ScriptState
         setOnScripts('arguments', arguments);
 
         setOnScripts('resetCustomState', resetCustomState);
-        
-        setOnHScripts('camGame', camGame);
-        setOnHScripts('camHUD', camHUD);
 
         callOnScripts('postCreate');
     }
@@ -114,9 +111,11 @@ class CustomState extends ScriptState
     {
         super.openSubState(substate);
 
-        callOnScripts('onOpenSubState', [substate]);
+        callOnHScripts('onOpenSubState', [substate]);
+        callOnLuaScripts('onOpenSubState', [Type.getClassName(Type.getClass(substate))]);
 
-        callOnScripts('postOpenSubState', [substate]);
+        callOnHScripts('postOpenSubState', [substate]);
+        callOnLuaScripts('postOpenSubState', [Type.getClassName(Type.getClass(substate))]);
     }
 
     override public function closeSubState():Void

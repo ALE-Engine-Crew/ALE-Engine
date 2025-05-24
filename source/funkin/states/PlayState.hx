@@ -318,9 +318,11 @@ class PlayState extends ScriptState
     {
         super.openSubState(substate);
 
-        callOnScripts('onOpenSubState', [substate]);
+        callOnHScripts('onOpenSubState', [substate]);
+        callOnLuaScripts('onOpenSubState', [Type.getClassName(Type.getClass(substate))]);
 
-        callOnScripts('postOpenSubState', [substate]);
+        callOnHScripts('postOpenSubState', [substate]);
+        callOnLuaScripts('postOpenSubState', [Type.getClassName(Type.getClass(substate))]);
     }
 
     override public function closeSubState():Void
@@ -536,7 +538,8 @@ class PlayState extends ScriptState
                     health += 1.5;
                 }
                 
-                callOnScripts('onNoteHit', [note, rating]);
+                callOnHScripts('onNoteHit', [note, rating]);
+                callOnLuaScripts('onNoteHit', [note.data, note.strumTime, note.noteLenght, Std.string(note.type), Std.string(note.noteType), Std.string(rating)]);
             }
             strl.noteMissCallback = function(note:Note)
             {
@@ -549,7 +552,13 @@ class PlayState extends ScriptState
                     health -= 2.5;
                 }
                 
-                callOnScripts('onNoteMiss', [note]);
+                callOnHScripts('onNoteMiss', [note]);
+                callOnLuaScripts('onNoteMiss', [note.data, note.strumTime, note.noteLenght, Std.string(note.type), Std.string(note.noteType)]);
+            }
+            strl.noteSpawnCallback = function(note:Note)
+            {
+                callOnHScripts('onNoteSpawn', [note]);
+                callOnLuaScripts('onNoteSpawn', [note.data, note.strumTime, note.noteLenght, Std.string(note.type), Std.string(note.noteType)]);
             }
 
             switch (character.type)
@@ -835,7 +844,8 @@ class PlayState extends ScriptState
 
     public function showRatings(rating:Rating)
     {
-        callOnScripts('onShowRatings', [rating]);
+        callOnHScripts('onShowRatings', [rating]);
+        callOnLuaScripts('onShowRatings', [Std.string(rating)]);
 
         if (rating != null)
         {
@@ -895,7 +905,8 @@ class PlayState extends ScriptState
             }
         }
 
-        callOnScripts('postShowRatings', [rating]);
+        callOnHScripts('postShowRatings', [rating]);
+        callOnLuaScripts('postShowRatings', [Std.string(rating)]);
     }
     
     private function iconsZoomingFunction()

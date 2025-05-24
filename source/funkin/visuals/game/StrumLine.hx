@@ -35,6 +35,7 @@ class StrumLine extends FlxGroup
 
     public var noteHitCallback:(Note, Rating) -> Void;
     public var noteMissCallback:Note -> Void;
+    public var noteSpawnCallback:Note -> Void;
 
     public var voices:Array<FlxSound> = [];
 
@@ -131,6 +132,9 @@ class StrumLine extends FlxGroup
                 uNote.spawned = true;
 
                 addNote(uNote);
+
+                if (noteSpawnCallback != null)
+                    noteSpawnCallback(uNote);
 
                 unspawnIndex++;
             }
