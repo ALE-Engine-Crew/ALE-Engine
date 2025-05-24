@@ -2,6 +2,9 @@ package scripting.lua.flixel;
 
 import flixel.util.FlxGradient;
 
+import funkin.visuals.objects.Alphabet;
+import funkin.visuals.objects.TypedAlphabet;
+
 class LuaSprite extends LuaPresetBase
 {
     public function new(lua:LuaScript)
@@ -84,6 +87,18 @@ class LuaSprite extends LuaPresetBase
             {
                 if (tagIs(tag, FlxSprite))
                     getTag(tag).updateHitbox();
+            }
+        );
+
+        set('newAlphabet', function(tag:String, x:Float, y:Float, text:String = '', ?bold:Bool = true)
+            {
+                setTag(tag, new Alphabet(x, y, text, bold));
+            }
+        );
+
+        set('newTypedAlphabet', function(tag:String, x:Float, y:Float, text:String = "", ?delay:Float = 0.05, ?bold:Bool = false)
+            {
+                setTag(tag, new TypedAlphabet(x, y, text, delay, bold));
             }
         );
     }

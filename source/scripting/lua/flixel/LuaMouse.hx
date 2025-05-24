@@ -1,5 +1,8 @@
 package scripting.lua.flixel;
 
+import openfl.ui.MouseCursor;
+import openfl.ui.Mouse;
+
 class LuaMouse extends LuaPresetBase
 {
     override public function new(lua:LuaScript)
@@ -113,6 +116,12 @@ class LuaMouse extends LuaPresetBase
         set('getMouseWheel', function():Float
             {
                 return FlxG.mouse.wheel;
+            }
+        );
+
+        set('setMouseCursor', function(type:MouseCursor)
+            {
+                Mouse.cursor = type;
             }
         );
     }
