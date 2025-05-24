@@ -38,14 +38,15 @@ class DebugCounter extends Sprite implements IFlxDestroyable
         return keysEnabled;
     }
 
-    var fpsCounter:DebugField;
+    var fpsCounter:FPSField;
+    var updateCounter:UpdateField;
 
     override public function new()
     {
         super();
 
         if (instance != null)
-            throw 'Can\'t Create Another Instance';
+            throw 'Can\'t Create Another FPS Counter Instance';
 
         instance = this;
 
@@ -61,8 +62,25 @@ class DebugCounter extends Sprite implements IFlxDestroyable
         addField(new ConductorField());
         addField(new FlixelField());
         addField(new SystemField());
+        
+        updateCounter = new UpdateField();
+
+        addField(updateCounter, false);
 
         keysEnabled = true;
+    }
+
+    public function showUpdatePopup(onlineVersion:String)
+    {
+        var keys:Array<String> = [];
+
+        for (k in ClientPrefs.controls.engine.update_engine)
+            if (k != null)
+                keys.push(FlxKey.toStringMap.get(k));
+
+        updateCounter.updateTimer = 0;
+        updateCounter.enabled = true;
+        updateCounter.text.text = 'Your Version: ' + CoolVars.engineVersion + '\n' + 'Online Version: ' + onlineVersion + '\n' + 'Press Ctrl + Shift + ' + keys.join(' / ') + ' to Go to GitHub';
     }
 
     var keysPressed:Array<Int> = [];
@@ -144,6 +162,8 @@ class DebugCounter extends Sprite implements IFlxDestroyable
             } else if (key == controls.switch_mod[0] || key == controls.switch_mod[1]) {
                 if (FlxG.state.subState == null && !Std.isOfType(FlxG.state, funkin.states.PlayState))
                     CoolUtil.openSubState(new funkin.substates.ModsMenuSubState());
+            } else if ((key == controls.update_engine[0] || key == controls.update_engine[1]) && CoolVars.mustUpdate) {
+                CoolUtil.browserLoad('https://github.com/ALE-Engine-Crew/ALE-Engine');
             }
     
             keysPressed.push(key);

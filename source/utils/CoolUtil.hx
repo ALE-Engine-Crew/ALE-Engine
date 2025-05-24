@@ -173,6 +173,9 @@ class CoolUtil
 	 */
 	public static function resetEngine():Void
 	{
+		CoolUtil.save.savePreferences();
+		CoolUtil.save.saveControls();
+
 		resizeGame(Main.game.width, Main.game.height);
 
 		DiscordRPC.shutdown();
