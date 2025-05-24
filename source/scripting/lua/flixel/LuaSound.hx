@@ -6,13 +6,29 @@ class LuaSound extends LuaPresetBase
     {
         super(lua);
 
-        set('newSound', function(tag:String, sound:String)
+        set('newSound', function(tag:String, ?sound:Null<String>)
             {
                 var soundObj:FlxSound = new FlxSound();
-                soundObj.loadEmbedded(Paths.sound(sound));
+                soundObj.onComplete = () -> {
+                    if (type == STATE)
+                        ScriptState.instance.callOnLuaScripts('onSoundComplete', [tag]);
+                    else
+                        ScriptSubState.instance.callOnLuaScripts('onSoundComplete', [tag]);
+                };
+
+                if (sound != null)
+                    soundObj.loadEmbedded(Paths.sound(sound));
+
                 FlxG.sound.list.add(soundObj);
 
                 setTag(tag, soundObj);
+            }
+        );
+
+        set('loadSound', function(tag:String, sound:String)
+            {
+                if (tagIs(tag, FlxSound))
+                    getTag(tag).loadEmbedded(Paths.sound(sound));
             }
         );
 

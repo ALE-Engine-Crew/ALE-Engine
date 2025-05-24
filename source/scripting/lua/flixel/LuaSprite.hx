@@ -10,7 +10,25 @@ class LuaSprite extends LuaPresetBase
 
         set('newSprite', function(tag:String, ?x:Float, ?y:Float, ?sprite:String)
             {
-                setTag(tag, new FlxSprite(x, y, sprite == null ? null : Paths.image(sprite)));
+                var sprite:FlxSprite = new FlxSprite(x, y, sprite == null ? null : Paths.image(sprite));
+                sprite.animation.onFrameChange.add(
+                    function(name:String, number:Int, index:Int)
+                    {
+                        if (type == STATE)
+                            ScriptState.instance.callOnLuaScripts('onSpriteAnimationFrameChange', [tag, name, number, index]);
+                        else
+                            ScriptSubState.instance.callOnLuaScripts('onSpriteAnimationFrameChange', [tag, name, number, index]);
+                    }
+                );
+                sprite.animation.onFinish.add(
+                    (name:String) -> {
+                        if (type == STATE)
+                            ScriptState.instance.callOnLuaScripts('onSpriteAnimationFinish', [tag, name]);
+                        else
+                            ScriptSubState.instance.callOnLuaScripts('onSpriteAnimationFinish', [tag, name]);
+                    }
+                );
+                setTag(tag, sprite);
             }
         );
 

@@ -94,7 +94,8 @@ class HScript extends SScript
 				'insert' => FlxG.state.insert,
 				'controls' => ScriptState.instance.controls,
 				'openSubState' => FlxG.state.openSubState,
-				'CancelSuperFunction' => ScriptState.instance.CancelSuperFunction
+				'CancelSuperFunction' => ScriptState.instance.CancelSuperFunction,
+				'debugPrint' => ScriptState.instance.debugPrint
 			];
 		} else if (type == SUBSTATE) {
 			instanceVariables = [
@@ -103,7 +104,8 @@ class HScript extends SScript
 				'insert' => FlxG.state.subState.insert,
 				'controls' => ScriptSubState.instance.controls,
 				'close' => FlxG.state.subState.close,
-				'CancelSuperFunction' => ScriptSubState.instance.CancelSuperFunction
+				'CancelSuperFunction' => ScriptSubState.instance.CancelSuperFunction,
+				'debugPrint' => ScriptSubState.instance.debugPrint
 			];
 		}
 
@@ -114,8 +116,7 @@ class HScript extends SScript
 			'FlxColor' => FlxColorClass,
 			'FlxKey' => FlxKeyClass,
 			'Json' => utils.ALEJson,
-			'debugTrace' => CoolUtil.debugTrace,
-			'debugPrint' => CoolUtil.debugPrint
+			'debugTrace' => CoolUtil.debugTrace
 		];
 
 		for (preVar in presetVariables.keys())

@@ -64,10 +64,10 @@ class LuaTween extends LuaPresetBase
 				if (type == STATE)
 				{
 					if (ScriptState.instance != null)
-						ScriptState.instance.callOnLuaScripts('onTweenCompleted', [ogTag]);
+						ScriptState.instance.callOnLuaScripts('onTweenComplete', [ogTag]);
 				} else {
 					if (ScriptSubState.instance != null)
-						ScriptSubState.instance.callOnLuaScripts('onTweenCompleted', [ogTag]);
+						ScriptSubState.instance.callOnLuaScripts('onTweenComplete', [ogTag]);
 				}
 			},
 			onUpdate: function(twn:FlxTween)
