@@ -72,7 +72,7 @@ class StrumLine extends FlxGroup
             if (chartNote[0] < startPosition)
                 continue;
 
-            var note:Note = new Note(chartNote[0], chartNote[1], chartNote[2], character.type, NORMAL);
+            var note:Note = new Note(chartNote[0], chartNote[1], chartNote[2], chartNote[3], character.type, NORMAL);
 
             /*
             var length:Float = chartNote[2];

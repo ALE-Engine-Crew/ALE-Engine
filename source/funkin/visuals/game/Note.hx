@@ -25,6 +25,8 @@ class Note extends FlxSprite
 	public var type:ALECharacterType;
     public var noteType:NoteType = NORMAL;
 
+	public var noteVariant:String = '';
+
     public var noteLenght:Float = 0;
 
 	public var prevNote:Note;
@@ -88,9 +90,11 @@ class Note extends FlxSprite
 
 	public var shaderRef:RGBShaderReference;
 
-    public function new(strumTime:Float, data:Int, noteLenght:Float, type:ALECharacterType, noteType:NoteType, texture:String = 'note')
+    public function new(strumTime:Float, data:Int, noteLenght:Float, noteVariant:Null<String>, type:ALECharacterType, noteType:NoteType, texture:String = 'note')
     {
 		super();
+
+		this.noteVariant = noteVariant;
 
 		this.strumTime = strumTime;
 		this.data = data;
