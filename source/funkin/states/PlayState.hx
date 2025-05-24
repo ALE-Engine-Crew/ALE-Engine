@@ -157,6 +157,14 @@ class PlayState extends ScriptState
 
     public var skipCountdown:Bool = false;
 
+    public static var playlist:Array<String> = [];
+
+    public static var playlistIndex:Int = 0;
+    
+    public var finished:Bool = false;
+
+    public var started:Bool = false;
+
     override function create()
     {
         super.create();
@@ -207,7 +215,7 @@ class PlayState extends ScriptState
         iconsZoomLerpFunction();
         iconsPositionFunction();
 
-        if (FlxG.keys.justPressed.ENTER && !dead)
+        if (FlxG.keys.justPressed.ENTER && !dead && !finished)
         {
             pauseSong();
 
@@ -219,6 +227,8 @@ class PlayState extends ScriptState
 
     override public function destroy()
     {
+        FlxG.sound.music.onComplete = () -> {};
+
         super.destroy();
 
         callOnScripts('onDestroy');
@@ -399,6 +409,10 @@ class PlayState extends ScriptState
         
 		FlxG.sound.music.loadEmbedded(Paths.inst(songRoute));
         FlxG.sound.music.volume = 0.6;
+
+        FlxG.sound.music.onComplete = () -> {
+            endSong();
+        }
 
         callOnScripts('postInitAudios');
     }
@@ -703,7 +717,8 @@ class PlayState extends ScriptState
                     {
                         if (loop == 4)
                         {
-                            initSong();
+                            if (!paused)
+                                initSong();
                         } else {
                             callOnScripts('onCountdownTick', [loop]);
 
@@ -734,10 +749,12 @@ class PlayState extends ScriptState
         );
     }
 
-    function initSong()
+    private function initSong()
     {
         runCancelable('onInitSong', [], [],
             () -> {
+                started = true;
+
                 FlxG.sound.music.play();
                 
                 for (voice in voices)
@@ -755,6 +772,48 @@ class PlayState extends ScriptState
                 callOnScripts('postInitSong');
             }
         );
+    }
+
+    private function endSong()
+    {
+        finished = true;
+                
+        runCancelable('onEndSong', [], [],
+            () -> {
+                if (mode == FREEPLAY)
+                {
+                    goToMenu(mode);
+                } else {
+                    if (playlistIndex >= playlist.length - 1)
+                    {
+                        playlistIndex = 0;
+                        playlist = [];
+
+                        goToMenu(mode);
+
+                        mode = FREEPLAY;
+                    } else {
+                        playlistIndex++;
+
+                        CoolVars.skipTransIn = CoolVars.skipTransOut = true;
+
+                        CoolUtil.loadSong(playlist[playlistIndex], difficulty, STORY);
+                    }
+                }
+
+                callOnScripts('postEndSong');
+            }
+        );
+    }
+
+    public function goToMenu(mode:PlayStateMode)
+    {
+        if (mode == FREEPLAY)
+            CoolUtil.switchState(new CustomState(CoolVars.data.freeplayState));
+        else
+            CoolUtil.switchState(new CustomState(CoolVars.data.storyMenuState));
+
+        FlxG.sound.playMusic(Paths.music('freakyMenu'));
     }
 
     public function showRatings(rating:Rating)

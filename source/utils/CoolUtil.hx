@@ -22,6 +22,7 @@ import core.backend.Mods;
 import core.backend.Controls;
 
 import core.enums.PrintType;
+import core.enums.PlayStateMode;
 
 import core.structures.*;
 
@@ -262,7 +263,7 @@ class CoolUtil
 	 * @param name Song Name
 	 * @param difficulty Song Difficulty
 	 */
-	public static function loadSong(name:String, diff:String):Void
+	public static function loadSong(name:String, diff:String, mode:PlayStateMode = FREEPLAY):Void
 	{
 		var jsonData:Dynamic = {};
 
@@ -300,8 +301,17 @@ class CoolUtil
 
 		PlayState.SONG = ALEParserHelper.getALESong(jsonData);
 		PlayState.difficulty = diff;
+		PlayState.mode = mode;
 
 		switchState(() -> new PlayState());
+	}
+
+	public static function loadWeek(names:Array<String>, difficulty:String)
+	{
+		PlayState.playlistIndex = 0;
+		PlayState.playlist = names;
+
+		loadSong(names[0], difficulty, STORY);
 	}
 
 	public static function resizeGame(width:Int, height:Int)

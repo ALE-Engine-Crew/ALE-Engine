@@ -40,6 +40,8 @@ class LuaCoolUtil extends LuaPresetBase
         set('formatSongPath', CoolUtil.formatSongPath);
 
         set('loadSong', CoolUtil.loadSong);
+
+        set('loadWeek', CoolUtil.loadWeek);
         
         set('resizeGame', CoolUtil.resizeGame);
 

@@ -388,7 +388,7 @@ class OptionsState extends MusicBeatState
                         description: 'Pretty self explanatory, isn\'t it?',
                         variable: 'framerate',
                         type: INTEGER,
-                        min: 60,
+                        min: 30,
                         max: 240,
                         change: 1,
                         initialValue: 60
